@@ -7,7 +7,7 @@
 // =============================================================
 
 export const CONFIG = {
-  VERSION: 'v0.6',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v0.7',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // Resolución lógica: todo se dibuja en 1600×900 y luego se escala
   // a la ventana manteniendo la proporción (con bandas negras).
@@ -60,10 +60,9 @@ export const CONFIG = {
   // Intervalo (s) entre "oportunidades de movimiento" de cada uno.
   // En cada oportunidad se tira un número del 1 al 20: si sale <= que
   // su nivel de IA, actúa.
+  // (El Insecto y El Largo tienen los suyos en night/night2.js.)
   INTERVALS: {
     specimen: 5.0,
-    alto: 5.2,
-    rastrero: 5.6,
   },
   // Al llegar a una compuerta, el enemigo espera un tiempo aleatorio
   // entre estos valores antes de intentar entrar. Es el margen que
@@ -78,12 +77,8 @@ export const CONFIG = {
     B: ['reactor', 'greenhouse', 'comms', 'eastHall', 'right_door'],
   },
 
-  // --- Criaturas de la noche 2 (nombres provisionales) ---
-  ALTO: { start: 'hangar', door: 'left_door', useVents: false },
-  RASTRERO: { start: 'medbay', door: 'right_door', useVents: true },
-  // Probabilidad de que una criatura elija el camino que la acerca a
-  // su compuerta (el resto de veces elige una sala vecina al azar).
-  STALKER_FORWARD_BIAS: 0.7,
+  // --- El Insecto, El Largo y la fuga de gas (noche 2 en adelante) ---
+  // Todos sus valores están en src/night/night2.js.
 
   // --- El Congelado (CAM 05) ---
   CRYO: {
@@ -112,7 +107,9 @@ export const CONFIG = {
   // Para añadir uno nuevo, se pone aquí (desde qué noche se muestra)
   // y se programa su efecto en Game._runCommand.
   TERMINAL_COMMANDS: [
-    { cmd: '/reset', desc: 'Restaura la luz y desbloquea las compuertas tras un apagon', night: 1 },
+    { cmd: '/reset', desc: 'Arregla un apagon (luz y compuertas)', night: 1 },
+    { cmd: 'get-update', desc: 'Activa las camaras de ventilacion', night: 2 },
+    { cmd: '/InsecP', desc: 'Sella una fuga de gas del insecticida', night: 2 },
   ],
   BLACKOUT_EARLIEST_HOUR: 1,  // los apagones caen entre estas horas
   BLACKOUT_LATEST_HOUR: 5,

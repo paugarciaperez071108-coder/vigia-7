@@ -14,9 +14,9 @@ import { Random } from '../core/Random.js';
 import { CONFIG } from '../config.js';
 import { drawCreature } from './CreatureArt.js';
 
-const KIND_SCALE = { specimen: 0.95, alto: 1.02, rastrero: 0.5, frozen: 0.9 };
+const KIND_SCALE = { specimen: 0.95, largo: 1.02, insecto: 0.5, frozen: 0.9 };
 // Desplazamiento horizontal para que la cabeza quede dentro del marco
-const KIND_OFFSET = { specimen: -0.12, alto: 0, rastrero: -0.25, frozen: -0.15 };
+const KIND_OFFSET = { specimen: -0.12, largo: 0, insecto: -0.25, frozen: -0.15 };
 
 const DOORWAY = {
   left: { x: 70, y: 150, w: 300, h: 610 },
@@ -37,7 +37,7 @@ const BUTTONS = {
 const WINDOW = { x: 540, y: 110, w: 520, h: 300 };
 const MONITOR = { x: 650, y: 560, w: 300, h: 180 };
 // Cartel con los comandos de la consola (encima de la computadora)
-const COMMAND_SIGN = { x: 560, y: 426, w: 480, h: 120 };
+const COMMAND_SIGN = { x: 560, y: 418, w: 480, h: 136 };
 
 const inside = (r, x, y) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 
@@ -81,6 +81,8 @@ export class OfficeView {
    * @param state.reactor      Reactor (para la pantalla de la consola)
    * @param state.locked       compuertas y luces bloqueadas (apagón/enfriamiento)
    * @param state.night        número de noche (qué comandos salen en el cartel)
+   * @param state.cameras      CameraSystem (estado de la ventilación en la pantalla)
+   * @param state.gasLeak      fuga de gas activa
    */
   draw(ctx, office, state) {
     this._drawWalls(ctx);
@@ -235,7 +237,7 @@ export class OfficeView {
     ctx.font = 'bold 16px "Courier New", monospace';
     ctx.fillText('COMANDOS DE CONSOLA', r.x + 20, r.y + 12);
     let y = r.y + 38;
-    const descX = r.x + 110;
+    const descX = r.x + 130;
     for (const c of CONFIG.TERMINAL_COMMANDS.filter((c) => c.night <= night)) {
       ctx.font = 'bold 15px "Courier New", monospace';
       ctx.fillText(c.cmd, r.x + 20, y);
@@ -525,8 +527,11 @@ export class OfficeView {
     });
   }
 
-  /** Contenido de la pantalla verde: estado normal o terminal del apagón. */
-  _drawMonitorScreen(ctx, { blackout, terminal, reactor }) {
+  /**
+   * Contenido de la pantalla verde: terminal del apagón, terminal
+   * normal (cuando se está escribiendo) o estado del sistema.
+   */
+  _drawMonitorScreen(ctx, { blackout, terminal, reactor, cameras, gasLeak }) {
     const m = MONITOR;
     ctx.save();
     ctx.fillStyle = '#06150d';
@@ -553,14 +558,40 @@ export class OfficeView {
         ctx.font = '12px "Courier New", monospace';
         ctx.fillText('[Enter] o clic aqui para escribir', m.x + 14, m.y + 152);
       }
+    } else if (terminal.focused) {
+      // Consola normal: se puede escribir en cualquier momento
+      ctx.fillStyle = gasLeak && Math.floor(this.time * 3) % 2 ? '#ff6060' : green;
+      ctx.font = 'bold 16px "Courier New", monospace';
+      ctx.fillText(gasLeak ? '!! FUGA DE GAS' : 'VIGIA-7 // CONSOLA', m.x + 14, m.y + 12);
+      ctx.fillStyle = green;
+      ctx.font = '14px "Courier New", monospace';
+      terminal.lines.forEach((l, i) => ctx.fillText(l, m.x + 14, m.y + 40 + i * 18));
+      ctx.font = 'bold 16px "Courier New", monospace';
+      ctx.fillText(`> ${terminal.input}${cursor}`, m.x + 14, m.y + 118);
+      ctx.font = '12px "Courier New", monospace';
+      ctx.fillText('[Enter] ejecutar  [Esc] salir', m.x + 14, m.y + 152);
     } else {
       ctx.fillStyle = green;
       ctx.font = 'bold 18px "Courier New", monospace';
       ctx.fillText('VIGIA-7  // CONTROL', m.x + 16, m.y + 16);
       ctx.font = '15px "Courier New", monospace';
-      ctx.fillText('CAMARAS: 10/10 EN LINEA', m.x + 16, m.y + 56);
-      ctx.fillText(`REACTOR: ${Math.floor(reactor.level)}%`, m.x + 16, m.y + 80);
-      ctx.fillText(`> ${cursor}`, m.x + 16, m.y + 112);
+      ctx.fillText('CAMARAS: 10/10 EN LINEA', m.x + 16, m.y + 48);
+      if (cameras?.hasVents) {
+        ctx.fillStyle = cameras.ventsUnlocked ? green : '#ffb050';
+        ctx.fillText(cameras.ventsUnlocked ? 'VENTILACION: EN LINEA' : 'VENTILACION: SIN SEÑAL', m.x + 16, m.y + 70);
+        ctx.fillStyle = green;
+      }
+      ctx.fillText(`REACTOR: ${Math.floor(reactor.level)}%`, m.x + 16, m.y + 92);
+      if (gasLeak) {
+        ctx.fillStyle = Math.floor(this.time * 3) % 2 ? '#ff6060' : '#ff9090';
+        ctx.font = 'bold 15px "Courier New", monospace';
+        ctx.fillText('!! FUGA DE GAS', m.x + 16, m.y + 116);
+        ctx.fillStyle = green;
+      } else {
+        ctx.fillText(`> ${cursor}`, m.x + 16, m.y + 116);
+      }
+      ctx.font = '12px "Courier New", monospace';
+      ctx.fillText('[Enter] o clic aqui para escribir', m.x + 16, m.y + 152);
     }
     // Líneas de barrido del monitor
     ctx.fillStyle = 'rgba(0,0,0,0.25)';
