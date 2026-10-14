@@ -61,6 +61,9 @@ export class DoorEnemy extends Enemy {
     this.room = opts.start;     // sala actual (id de StationMap o nodo de puerta)
     this.home = opts.start;     // a dónde vuelve al ser bloqueado
     this.doorTimer = 0;
+    // Segundos que espera en la compuerta antes de intentar entrar
+    // [mín, máx]. Cada noche puede cambiarlo (doorWait en nights.js).
+    this.doorWait = [CONFIG.DOOR_WAIT_MIN, CONFIG.DOOR_WAIT_MAX];
   }
 
   /** Lado de la compuerta en la que está ('left'/'right') o null. */
@@ -77,7 +80,7 @@ export class DoorEnemy extends Enemy {
     // imagen se llena de estática: sabes que algo se ha movido.
     world.cameras.glitchIfWatching([from, room], CONFIG.CAMERA_MOVE_GLITCH);
     if (this.atDoor) {
-      this.doorTimer = world.rng.range(CONFIG.DOOR_WAIT_MIN, CONFIG.DOOR_WAIT_MAX);
+      this.doorTimer = world.rng.range(this.doorWait[0], this.doorWait[1]);
       world.events.emit('enemyAtDoor', { enemy: this, side: this.atDoor });
     }
   }

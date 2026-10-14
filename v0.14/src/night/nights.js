@@ -19,6 +19,9 @@
 //   marginMin/Max:    con cuántos grados de margen empieza cada requisito.
 //   grace:            segundos de alarma antes de que salga a por ti.
 // blackouts:    cuántos apagones de la oficina hay esa noche.
+// doorWait:     [mín, máx] segundos que espera El Espécimen en la
+//               compuerta antes de entrar (si no se pone: DOOR_WAIT_MIN/MAX
+//               de config.js, 5-9 s). Más = más margen para cerrar.
 // ambient:      [mín, máx] segundos entre ruidos de la nave (caídas,
 //               crujidos, golpes lejanos...): más seguidos cada noche.
 // endingDuct:   true = al llegar a las 6 AM se oye algo metálico que se
@@ -44,8 +47,12 @@ export const NIGHTS = [
     ambient: [16, 34],
     // El Espécimen y El Congelado, un poco más agresivos que en la noche 1.
     // El Largo se activa a las 2 AM (NIGHT2.LARGO.START_HOUR).
-    ai: { specimen: 4, insecto: 6, largo: 7 },
-    hourly: { 4: { specimen: 1, largo: 1 }, 5: { insecto: 1 } },
+    // Suavizada en v0.14 (dificultad ~4,5/10, medida con 1.000 partidas):
+    // El Insecto 6 → 5, sin subida de El Espécimen a las 4 AM y 1 s más
+    // de margen en la compuerta (5-9 s → 6-10 s).
+    ai: { specimen: 4, insecto: 5, largo: 7 },
+    hourly: { 4: { largo: 1 }, 5: { insecto: 1 } },
+    doorWait: [6, 10],
     reactorMultiplier: 1.05,
     coolCharges: 3,
     cryo: { changeEveryHours: 2, driftInterval: 6.5, marginMin: 4, marginMax: 6, grace: 18 },
