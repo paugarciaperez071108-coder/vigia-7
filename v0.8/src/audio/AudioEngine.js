@@ -66,9 +66,10 @@ export class AudioEngine {
     events.on('blackout', ({ on }) => (on ? this.powerDown() : this.powerUp()));
 
     // Noche 2: conductos, El Insecto, El Largo, insecticida y fuga de gas.
-    // El conducto de la oficina sale por su lado izquierdo: cuanto más
-    // cerca está El Insecto, más fuerte y más a la izquierda se le oye.
-    const insectSide = (dist) => (dist <= 1 ? 'left' : 'center');
+    // Los conductos V6/V7 entran en la oficina por su lado derecho:
+    // cuanto más cerca está El Insecto, más fuerte se le oye, y en V6/V7
+    // suena por la derecha.
+    const insectSide = (dist) => (dist <= 1 ? 'right' : 'center');
     const insectVolume = (dist) => [0.5, 0.42, 0.22, 0.12][Math.min(dist ?? 3, 3)];
     events.on('insectNoise', ({ dist }) => this.insectScurry(insectVolume(dist), insectSide(dist)));
     events.on('insectMove', ({ dist }) => this.insectScurry(insectVolume(dist) * 1.3, insectSide(dist)));

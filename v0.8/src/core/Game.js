@@ -71,7 +71,7 @@ for (const [id, room] of Object.entries(ROOMS)) {
   CAM_KEYS[`Digit${n}`] = id;
   CAM_KEYS[`Numpad${n}`] = id;
 }
-// En el mapa de ventilación: teclas 1..5 → V1..V5
+// En el mapa de ventilación: teclas 1..7 → V1..V7
 const VENT_KEYS = {};
 for (const [id, vent] of Object.entries(VENTS)) {
   const n = vent.cam.slice(1);
@@ -448,9 +448,11 @@ export class Game {
       }
       if (code === 'KeyF') this.gas.trigger();
       if (code === 'KeyI') {
+        // El Insecto paso a paso: aparece (V2-V5) → V1 → V6 o V7
         const ins = this.ai.insecto;
         if (ins.state === 'away') ins.appear(this.world);
-        else ins.room = 'v1';
+        else if (ins.room !== 'v1' && ins.enterIn === null) ins.moveTo('v1', this.world);
+        else if (ins.room === 'v1') ins.moveTo(this.rng.next() < 0.5 ? 'v6' : 'v7', this.world);
       }
       if (code === 'KeyY' && this.ai.largo.state === 'room') this.ai.largo.hit(this.world);
     }
@@ -487,13 +489,13 @@ export class Game {
   }
 
   /**
-   * Suelta insecticida en el conducto que se está viendo. Si El
-   * Insecto está ahí, se aleja (y, en la introducción, empieza la
-   * noche). Cada soltada cuenta para la fuga de gas.
+   * Suelta insecticida en el conducto que se está viendo (solo V6/V7,
+   * NIGHT2.GAS.VENTS). Si El Insecto está ahí, se aleja (y, en la
+   * introducción, empieza la noche). Cada soltada cuenta para la fuga.
    */
   _spray() {
     const cams = this.cameras;
-    if (cams.mapMode !== 'vent' || !cams.signal || !this.gas.spray()) {
+    if (cams.mapMode !== 'vent' || !cams.signal || !NIGHT2.GAS.VENTS.includes(cams.active) || !this.gas.spray()) {
       this.events.emit('denied', 'center');
       return;
     }
@@ -514,7 +516,7 @@ export class Game {
     }
     this.lureCooldown = NIGHT2.LARGO.LURE_COOLDOWN;
     this.events.emit('lure', { room: this.cameras.active });
-    this.ai.largo.hearLure(this.cameras.active);
+    this.ai.largo.hearLure(this.cameras.active, this.world);
   }
 
   /** El Insecto se ha ido: arranca la noche de verdad. */
@@ -753,7 +755,7 @@ export class Game {
 
     let hint;
     if (this.terminal.focused) hint = 'Escribiendo en la consola...   Enter: ejecutar   Esc: salir';
-    else if (this.cameras.open && this.cameras.mapMode === 'vent') hint = 'Teclas 1-5: conducto   G: insecticida   Tab: mapa de salas   Espacio: bajar';
+    else if (this.cameras.open && this.cameras.mapMode === 'vent') hint = 'Teclas 1-7: conducto   G: insecticida (V6/V7)   Tab: mapa de salas   Espacio: bajar';
     else if (this.cameras.open && this.cameras.hasVents) hint = 'Teclas 1-0: camara   G: golpes metalicos   Tab: ventilacion   Espacio: bajar';
     else if (this.cameras.open) hint = 'Clic en el mapa o teclas 1-0: cambiar camara   Espacio: bajar monitor';
     else if (this.blackout.active) hint = 'Enter: escribir en la consola';
@@ -858,9 +860,11 @@ export class Game {
     const lg = this.ai.largo;
     const back = ins.state === 'away' && isFinite(ins.returnIn) ? ` vuelve en ${ins.returnIn.toFixed(0)} s` : '';
     const intro = this.intro ? `   INTRO ${this.intro.time.toFixed(0)}/${NIGHT2.INTRO.TIME_LIMIT} s` : '';
-    const crawl = lg.state === 'crawling' ? ` llega en ${lg.crawlLeft.toFixed(1)} s` : '';
+    const crawl = lg.state === 'crawling' ? ` llega en ${lg.crawlLeft.toFixed(1)} s`
+      : lg.state === 'hidden' ? ` vuelve en ${lg.hiddenIn.toFixed(0)} s` : '';
+    const enter = ins.enterIn !== null ? ` ENTRA en ${ins.enterIn.toFixed(1)} s` : '';
     const leak = this.gas.active ? ` FUGA ${this.gas.countdown.toFixed(1)} s` : '';
-    return `Insecto: ${ins.state} ${ins.room ?? ''} IA ${ins.level}${back}${intro}   `
+    return `Insecto: ${ins.state} ${ins.room ?? ''} IA ${ins.level}${back}${enter}${intro}   `
       + `Largo: ${lg.state} ${lg.room ?? ''} golpes ${lg.breakStage}/${NIGHT2.LARGO.BREAK_STAGES} IA ${lg.level}${crawl}   `
       + `Gas: usos ${this.gas.uses} riesgo ${Math.round(this.gas.nextRisk * 100)}%${leak}`;
   }
@@ -870,7 +874,7 @@ export class Game {
     const where = (e) => `${e.room ?? '-'}${e.atDoor ? ` (entra en ${e.doorTimer.toFixed(1)}s)` : ''} IA ${e.level}`;
     return [
       `[DEBUG] x${this.speed}  T:acelerar P:reactor 97% H:+1h B:apagon W:grieta K:romper temp`,
-      `        N:saltar intro  J:ir a las 2:00  F:fuga de gas  I:insecto aparece / a V1  Y:Largo golpea`,
+      `        N:saltar intro  J:ir a las 2:00  F:fuga de gas  I:insecto aparece > V1 > V6/V7  Y:Largo golpea`,
       `noche ${this.clock.elapsed.toFixed(1)} s   reactor ${this.reactor.level.toFixed(1)}%  usos ${this.reactor.bars}  riesgo apagon ${Math.round(this.reactor.blackoutRisk * 100)}%`,
       `Especimen: muro ${sp.wallStage}/${CONFIG.WALL_STAGES} ruta ${sp.routeName ?? '-'} sala ${where(sp)}`,
       this._debugNight2(),

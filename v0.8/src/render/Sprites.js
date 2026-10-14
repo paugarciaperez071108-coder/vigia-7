@@ -13,7 +13,7 @@
 //
 // Claves que se consultan ahora mismo:
 //   cam_<sala>  → fondo de cada cámara (p. ej. cam_hangar, cam_lab)
-//   cam_v1 ... cam_v5 → cámaras de los conductos de ventilación
+//   cam_v1 ... cam_v7 → cámaras de los conductos de ventilación
 //                 Tamaño recomendado: 1600×900.
 // (Los sonidos propios van en el mismo manifiesto, en "sounds":
 //  ver AudioEngine.js.)

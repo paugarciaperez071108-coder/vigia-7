@@ -113,32 +113,63 @@ for (const [a, b] of ROOM_ADJACENCY_PAIRS) {
 // =============================================================
 // Conductos de ventilación (noche 2 en adelante).
 //
-// Se ven con el botón TOGGLE del monitor. La oficina ("TÚ") está a
-// la derecha; de su lado izquierdo sale el conducto de acceso (V1),
-// que se abre hacia una red de secciones a la izquierda.
-//   mapRect: botón de la cámara en el mapa de ventilación.
+// Se ven con el botón TOGGLE del monitor. La red está a la izquierda
+// de la oficina ("TÚ") y se junta en V1 (Bifurcación). Desde V1 salen
+// dos conductos que rodean la oficina: uno por arriba (V6, Lateral
+// norte) y otro por abajo (V7, Lateral sur), y entran en ella por su
+// lado derecho. V6 y V7 son las ÚNICAS secciones con acceso a la
+// oficina, y V1 es la única conectada con ellas: todo lo que llega a
+// la oficina por los conductos tiene que pasar por V1.
+//   mapRect:  botón de la cámara en el mapa de ventilación.
+//   officeAccess: true = desde aquí se entra en la oficina (y es donde
+//             se puede soltar insecticida, ver NIGHT2.GAS.VENTS).
 // =============================================================
 
 export const VENTS = {
-  v1: { cam: 'V1', name: 'Acceso oficina', mapRect: { x: 1300, y: 622, w: 104, h: 50 } },
-  v2: { cam: 'V2', name: 'Ramal norte',    mapRect: { x: 1176, y: 512, w: 104, h: 50 } },
-  v3: { cam: 'V3', name: 'Ramal sur',      mapRect: { x: 1176, y: 732, w: 104, h: 50 } },
-  v4: { cam: 'V4', name: 'Nudo central',   mapRect: { x: 1062, y: 622, w: 104, h: 50 } },
-  v5: { cam: 'V5', name: 'Colector oeste', mapRect: { x: 1062, y: 812, w: 104, h: 50 } },
+  v1: { cam: 'V1', name: 'Bifurcacion',    mapRect: { x: 1276, y: 632, w: 104, h: 50 } },
+  v2: { cam: 'V2', name: 'Ramal norte',    mapRect: { x: 1160, y: 522, w: 104, h: 50 } },
+  v3: { cam: 'V3', name: 'Ramal sur',      mapRect: { x: 1160, y: 742, w: 104, h: 50 } },
+  v4: { cam: 'V4', name: 'Nudo central',   mapRect: { x: 1056, y: 632, w: 104, h: 50 } },
+  v5: { cam: 'V5', name: 'Colector oeste', mapRect: { x: 1056, y: 812, w: 104, h: 50 } },
+  v6: { cam: 'V6', name: 'Lateral norte',  mapRect: { x: 1413, y: 512, w: 104, h: 50 }, officeAccess: true },
+  v7: { cam: 'V7', name: 'Lateral sur',    mapRect: { x: 1413, y: 772, w: 104, h: 50 }, officeAccess: true },
 };
 export const VENT_IDS = Object.keys(VENTS);
 export const isVent = (id) => id in VENTS;
 
-/** Tramos de conducto entre secciones ('office' = la oficina). */
+/** La oficina en el mapa de ventilación (más a la izquierda que en el
+ *  de salas, para que quepan los conductos de su lado derecho). */
+export const VENT_OFFICE_RECT = { x: 1420, y: 622, w: 90, h: 70 };
+
+/**
+ * Tramos de conducto (grafo por el que se mueve El Insecto; 'office'
+ * = la oficina) y su recorrido en el mapa, con recodos en ángulo recto.
+ */
 export const VENT_LINKS = [
-  ['office', 'v1'],
   ['v1', 'v2'],
   ['v1', 'v3'],
   ['v2', 'v4'],
   ['v3', 'v4'],
   ['v3', 'v5'],
   ['v4', 'v5'],
+  ['v1', 'v6'],
+  ['v1', 'v7'],
+  ['v6', 'office'],
+  ['v7', 'office'],
 ];
+export const VENT_LINK_PATHS = {
+  'v1|v2': [[1328, 657], [1212, 657], [1212, 547]],
+  'v1|v3': [[1328, 657], [1212, 657], [1212, 767]],
+  'v2|v4': [[1212, 547], [1108, 547], [1108, 657]],
+  'v3|v4': [[1212, 767], [1108, 767], [1108, 657]],
+  'v3|v5': [[1212, 767], [1212, 837], [1108, 837]],
+  'v4|v5': [[1108, 657], [1108, 837]],
+  // Rodean la oficina por arriba y por abajo y entran por su lado derecho
+  'v1|v6': [[1328, 657], [1328, 537], [1465, 537]],
+  'v1|v7': [[1328, 657], [1328, 797], [1465, 797]],
+  'v6|office': [[1465, 537], [1545, 537], [1545, 642], [1510, 642]],
+  'v7|office': [[1465, 797], [1545, 797], [1545, 672], [1510, 672]],
+};
 
 /** Vecinos de una sección de conducto (incluye 'office' si conecta). */
 export function ventNeighbors(id) {

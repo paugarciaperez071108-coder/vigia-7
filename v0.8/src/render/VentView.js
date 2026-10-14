@@ -17,13 +17,13 @@
 // sin perder la sensación de laberinto. Esos detalles están en
 // VENT_DETAILS y en makeVentDecor (semilla fija por conducto).
 //
-// Si existe una imagen propia cam_v1...cam_v5 en assets/manifest.json,
+// Si existe una imagen propia cam_v1...cam_v7 en assets/manifest.json,
 // CameraView la usa en lugar de este dibujo.
 // =============================================================
 
 import { CONFIG } from '../config.js';
 import { Random } from '../core/Random.js';
-import { VENTS, VENT_LINKS, OFFICE_RECT } from '../world/StationMap.js';
+import { VENTS, VENT_LINKS, VENT_LINK_PATHS, VENT_OFFICE_RECT } from '../world/StationMap.js';
 
 const W = CONFIG.WIDTH;
 const H = CONFIG.HEIGHT;
@@ -52,11 +52,14 @@ export function ductPoint(u, v, z) {
 //   puddle    charco en el suelo
 // -----------------------------------------------------------------
 const VENT_DETAILS = {
-  v1: { stencil: 'V-1  >> OFICINA', end: 'light', openings: [['left', 3], ['right', 3.4]], cable: [0.35, 2.6], screw: null, bigStain: ['floor', -0.3, 2.4, 70] },
+  v1: { stencil: 'V-1  BIFURCACION', end: 'turn', openings: [['left', 3], ['right', 3]], cable: [0.35, 2.6], screw: null, bigStain: ['floor', -0.3, 2.4, 70] },
   v2: { stencil: 'V-2', end: 'turn', openings: [['left', 4.4]], cable: null, screw: [0.4, 2.1], bigStain: ['left', -0.2, 2, 120] },
   v3: { stencil: 'V-3', end: 'grille', openings: [['right', 2.6], ['left', 5.2]], cable: null, screw: null, bigStain: ['right', 0.3, 2.8, 90], dent: true },
   v4: { stencil: 'V-4  NUDO', end: 'turn', openings: [['left', 2.8], ['right', 2.8]], cable: [-0.4, 3.4], screw: null, bigStain: ['floor', 0.2, 3.4, 60], insulation: true },
   v5: { stencil: 'V-5', end: 'grille', openings: [['right', 4]], cable: [0.1, 2.2], screw: [-0.5, 2.6], bigStain: ['floor', -0.1, 2.2, 90], puddle: true },
+  // Laterales de la oficina: al fondo, la rejilla con la luz de la oficina
+  v6: { stencil: 'V-6  >> OFICINA', end: 'light', openings: [], cable: [-0.3, 2.4], screw: null, bigStain: ['left', 0.1, 2.3, 100] },
+  v7: { stencil: 'V-7  >> OFICINA', end: 'light', openings: [], cable: null, screw: [0.3, 2.3], bigStain: ['floor', 0.25, 2.6, 80], dent: true },
 };
 
 /** Detalles fijos (semilla por conducto): óxido, abolladuras, polvo... */
@@ -384,11 +387,13 @@ function drawSideOpening(ctx, side, z, t) {
 
 const center = (r) => ({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
 
-/** Recorrido de un tramo en el mapa: con recodos en ángulo recto. */
+/** Recorrido de un tramo en el mapa (VENT_LINK_PATHS o línea recta). */
 function ventLinkPath(a, b) {
-  const pa = a === 'office' ? { x: OFFICE_RECT.x, y: OFFICE_RECT.y + OFFICE_RECT.h / 2 } : center(VENTS[a].mapRect);
-  const pb = b === 'office' ? { x: OFFICE_RECT.x, y: OFFICE_RECT.y + OFFICE_RECT.h / 2 } : center(VENTS[b].mapRect);
-  return [[pa.x, pa.y], [pb.x, pa.y], [pb.x, pb.y]];
+  const via = VENT_LINK_PATHS[`${a}|${b}`];
+  if (via) return via;
+  const pa = center(VENTS[a].mapRect);
+  const pb = center(VENTS[b].mapRect);
+  return [[pa.x, pa.y], [pb.x, pb.y]];
 }
 
 export function drawVentMap(ctx, active, unlocked) {
@@ -420,7 +425,7 @@ export function drawVentMap(ctx, active, unlocked) {
   }
 
   // Oficina (el jugador), a la derecha
-  const o = OFFICE_RECT;
+  const o = VENT_OFFICE_RECT;
   ctx.fillStyle = '#1b3a2a';
   ctx.fillRect(o.x, o.y, o.w, o.h);
   ctx.strokeStyle = '#7dffb0';
@@ -451,9 +456,9 @@ export function drawVentMap(ctx, active, unlocked) {
     ctx.fillStyle = '#ffb050';
     ctx.font = 'bold 15px "Courier New", monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('SIN SEÑAL', 1310, 806);
+    ctx.fillText('SIN SEÑAL', 1236, 846);
     ctx.font = '13px "Courier New", monospace';
-    ctx.fillText('consola: get-update', 1310, 830);
+    ctx.fillText('consola: get-update', 1236, 866);
   }
   ctx.restore();
 }
