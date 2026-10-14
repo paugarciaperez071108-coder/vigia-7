@@ -83,6 +83,7 @@ export class OfficeView {
    * @param state.night        número de noche (qué comandos salen en el cartel)
    * @param state.cameras      CameraSystem (estado de la ventilación en la pantalla)
    * @param state.gasLeak      fuga de gas activa
+   * @param state.easterEgg    secreto del ventanal (solo se ve en el apagón)
    */
   draw(ctx, office, state) {
     this._drawWalls(ctx);
@@ -99,6 +100,17 @@ export class OfficeView {
 
     if (state.blackout) {
       this._drawBlackout(ctx);
+      if (state.easterEgg?.active) {
+        // La cara está fuera, pegada al cristal: la barra del ventanal
+        // (en penumbra) queda por delante.
+        state.easterEgg.draw(ctx, WINDOW);
+        ctx.strokeStyle = '#0d1014';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(WINDOW.x + WINDOW.w / 2, WINDOW.y);
+        ctx.lineTo(WINDOW.x + WINDOW.w / 2, WINDOW.y + WINDOW.h);
+        ctx.stroke();
+      }
       this._drawMonitorScreen(ctx, state); // la pantalla verde sigue encendida
     } else if (Math.random() < 0.012) {
       // Fluorescente del techo que falla de vez en cuando

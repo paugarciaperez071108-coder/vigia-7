@@ -52,6 +52,7 @@ import { ROOMS, VENTS } from '../world/StationMap.js';
 import { drawHUD, TAPE_SKIP, TAPE_SUBS, TAPE_PLAY } from '../ui/HUD.js';
 import { drawJumpscare } from '../ui/Jumpscare.js';
 import { Terminal } from '../ui/Terminal.js';
+import { EasterEgg } from '../ui/EasterEgg.js';
 import { getNight, NIGHTS } from '../night/nights.js';
 import { NIGHT2 } from '../night/night2.js';
 import { SaveData } from './SaveData.js';
@@ -116,6 +117,7 @@ export class Game {
     this.intro = null;
     this.lureCooldown = 0;
     this.terminal = new Terminal();
+    this.easterEgg = new EasterEgg(this.events);
     this.officeView = new OfficeView();
     this.sprites = new Sprites();
     this.sprites.load(); // imágenes opcionales de assets/manifest.json
@@ -198,6 +200,7 @@ export class Game {
     this.office.reset();
     this.cameras.reset();
     this.terminal.reset();
+    this.easterEgg.reset();
     this.reactor.reset(night);
     this.cryo.reset(night.cryo);
     this.blackout.reset(night.blackouts);
@@ -251,6 +254,7 @@ export class Game {
   }
 
   _setState(s) {
+    if (s !== 'night') this.easterEgg.reset(); // fuera de la noche no queda nada
     this.state = s;
     this.stateTime = 0;
   }
@@ -559,6 +563,12 @@ export class Game {
       else this.terminal.print('No hay ninguna fuga');
       return;
     }
+    // Comando secreto (solo durante el apagón); si no, desconocido normal
+    const secret = this.easterEgg.tryCommand(cmd, this.blackout.active);
+    if (secret) {
+      this.terminal.print(secret);
+      return;
+    }
     this.terminal.print('Comando no reconocido');
   }
 
@@ -607,6 +617,7 @@ export class Game {
         this.tape.update(dt);
         this.office.update(dt);
         this.cameras.update(dt);
+        this.easterEgg.update(dt);
         this.lureCooldown = Math.max(0, this.lureCooldown - dt);
         this.gas.update(dt);
         if (this.state !== 'night') return; // la fuga de gas ha acabado contigo
@@ -719,6 +730,7 @@ export class Game {
         doorEnemies: { left: this.ai.atDoor('left'), right: this.ai.atDoor('right') },
         cameras: this.cameras,
         gasLeak: this.gas.active,
+        easterEgg: this.easterEgg,
       });
       this.effects.vignette(ctx);
       this.effects.static(ctx, 0.05);
