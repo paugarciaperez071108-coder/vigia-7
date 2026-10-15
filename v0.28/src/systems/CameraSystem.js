@@ -37,6 +37,7 @@ export class CameraSystem {
     this.switchStatic = 0;
     this.enabled = true;
     this.hasVents = false;
+    this.hasLure = false;     // botón GOLPES METÁLICOS (El Largo en las cámaras)
     this.ventsUnlocked = false;
     this.mapMode = 'main';
     this.lastMain = 'hangar';

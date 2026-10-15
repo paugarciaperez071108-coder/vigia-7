@@ -7,7 +7,7 @@
 // =============================================================
 
 export const CONFIG = {
-  VERSION: 'v0.25',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v0.28',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // Resolución lógica: todo se dibuja en 1600×900 y luego se escala
   // a la ventana manteniendo la proporción (con bandas negras).
@@ -33,9 +33,10 @@ export const CONFIG = {
   // --- Reactor (sustituye a la energía) ---
   // La temperatura del reactor SUBE sola poco a poco durante la noche
   // y, además, al usar compuertas y luces. Si llega a 100, la nave
-  // explota. Ritmos en % por segundo (se multiplican por el
-  // reactorMultiplier de cada noche).
+  // explota. Ritmos en % por segundo. Es IGUAL en todas las noches
+  // (el ritmo de la noche 1): para cambiarlo, solo SPEED.
   REACTOR: {
+    SPEED: 1.0,             // multiplicador global de todos los ritmos (todas las noches)
     START: 10,              // temperatura al empezar la noche
     PASSIVE_RATE: 0.22,     // calentamiento solo (noche de 360 s → +79 %)
     DOOR_RATE: 0.12,        // extra por cada compuerta cerrada
@@ -145,7 +146,7 @@ export const CONFIG = {
   // de cámaras; 'mujer' solo en minijuegos.
   TAPES: {
     1: { base: 'assets/audio/cintas/noche1', delay: 4, voz: 'hombre' },  // delay: segundos tras llegar a la oficina
-    2: { base: 'assets/audio/cintas/noche2', delay: 4, afterIntro: true, voz: 'hombre' },
+    2: { base: 'assets/audio/cintas/noche2', delay: 4, voz: 'hombre' },  // empieza sola, también durante la intro de El Insecto
     // "Audio 2.5": suena al coger la linterna a las 6 AM de la noche 2.
     // Voz propia: assets/audio/cintas/mujer_noche2_mia.(wav|mp3|ogg|m4a)
     mujer: { base: 'assets/audio/cintas/mujer_noche2', delay: 0, voz: 'mujer' },

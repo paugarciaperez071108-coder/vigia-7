@@ -6,7 +6,8 @@
 //   subida/s = (PASSIVE_RATE
 //             + compuertas cerradas × DOOR_RATE
 //             + luces encendidas    × LIGHT_RATE
-//             + monitor abierto     × MONITOR_RATE) × reactorMultiplier
+//             + monitor abierto     × MONITOR_RATE) × SPEED
+// SPEED (CONFIG.REACTOR) es el mismo en todas las noches.
 // Si llega a 100, la nave explota (game over).
 //
 // ENFRIAMIENTO (botón en la CAM 04, o R mirando esa cámara):
@@ -22,13 +23,12 @@ import { CONFIG } from '../config.js';
 export class Reactor {
   constructor(events) {
     this.events = events;
-    this.reset({ reactorMultiplier: 1, coolCharges: 3 });
+    this.reset({ coolCharges: 3 });
   }
 
   reset(nightCfg) {
     const R = CONFIG.REACTOR;
     this.level = R.START;
-    this.multiplier = nightCfg.reactorMultiplier;
     this.charges = nightCfg.coolCharges;
     this.used = 0;
     this.cooling = 0;          // segundos de enfriamiento que quedan
@@ -51,7 +51,7 @@ export class Reactor {
       (R.PASSIVE_RATE +
         office.doorsClosed * R.DOOR_RATE +
         office.lightsOn * R.LIGHT_RATE +
-        (monitorOpen ? R.MONITOR_RATE : 0)) * this.multiplier;
+        (monitorOpen ? R.MONITOR_RATE : 0)) * R.SPEED;
     this.level += rate * dt;
 
     if (this.cooling > 0) {
