@@ -9,7 +9,8 @@
 //             oportunidad ganada avanza una sección por el grafo
 //             VENT_LINKS, normalmente hacia la oficina. Para llegar a V6
 //             o V7 (las únicas entradas a la oficina) pasa siempre por
-//             V1, y en V1 elige al azar uno de los dos lados.
+//             V1, y desde V1 SOLO puede ir a V6 o V7 (nunca vuelve
+//             atrás a V2/V3); elige al azar uno de los dos lados.
 //             Al llegar a V6/V7 se queda quieto ENTER_TIME segundos
 //             (enterIn) y, si nadie le suelta insecticida, entra en la
 //             oficina: game over.
@@ -84,7 +85,10 @@ export class Insect extends Enemy {
   onOpportunity(world) {
     // En V6/V7 ya no se mueve: espera para entrar (ver tick)
     if (this.state !== 'vent' || this.enterIn !== null) return;
-    const options = ventNeighbors(this.room).filter((n) => n !== 'office');
+    let options = ventNeighbors(this.room).filter((n) => n !== 'office');
+    // Desde V1 (junto a las entradas) solo puede seguir hacia V6 o V7
+    const entries = options.filter((n) => VENTS[n]?.officeAccess);
+    if (entries.length) options = entries;
     let next;
     if (world.rng.next() < CFG.FORWARD_BIAS) {
       // Hacia la oficina; si hay empate (en V1: V6 o V7), uno al azar
