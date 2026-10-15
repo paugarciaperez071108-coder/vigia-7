@@ -53,6 +53,7 @@
 import { N2END } from '../night/night2ending.js';
 import { Terminal } from '../ui/Terminal.js';
 import { Flashlight } from '../render/Flashlight.js';
+import { setEyeShine } from '../render/CreatureArt.js';
 import {
   FirstPersonView, FLASH_DESK, OFFICE_EXITS, EXIT_SLOTS, exitLayout, REACTOR_CONSOLE, LORE_TERMINAL, RECORDER,
   CONSOLE_TAB, CORRIDORS, CORRIDOR_SPOTS, ROOM_SPOTS, OFFICE_SPOTS, P2_OPEN, POSES, faceOf, drawEnemy,
@@ -346,6 +347,7 @@ export class Night2Ending {
   }
 
   _evade(e, pan) {
+    e.movedAt = this.time; // solo para el dibujo (paso atrás)
     e.evadeIn = rand(N2END.EVADE_EVERY);
     e.state = 'dodge';
     if (Math.random() < N2END.MOVE_CHANCE && e.spots.length > 1) {
@@ -823,8 +825,16 @@ export class Night2Ending {
   // ---------------------------------------------------------------
 
   _drawEnemy(ctx, e) {
-    const [x, y, h] = this._pos(e);
-    drawEnemy(ctx, e.enemy, e.pose, x, y, h, this.time);
+    let [x, y, h] = this._pos(e);
+    // Solo visual: con la luz en la cara tiembla, y al cambiar de postura
+    // o de sitio da un paso atrás (se ve un poco más pequeño un instante)
+    if (e.state === 'lit') x += Math.sin(this.time * 38) * 2.5 * Math.min(1, e.lit);
+    const back = e.movedAt !== undefined ? Math.max(0, 1 - (this.time - e.movedAt) / 0.4) : 0;
+    // Los ojos brillan con la linterna (como los de un gato): los enemigos
+    // solo se dibujan dentro del haz, así que solo brillan con luz
+    setEyeShine(true);
+    drawEnemy(ctx, e.enemy, e.pose, x, y, h * (1 - 0.07 * back), this.time);
+    setEyeShine(false);
   }
 
   /** 0..1: destello de la luz roja de alarma. */
@@ -865,6 +875,8 @@ export class Night2Ending {
     const { x: mx, y: my } = this.mouse;
     const v = this.view;
     const darkness = N2END.FLASH_DARKNESS;
+    // Color del reactor: al límite (rojo) hasta que se enfría (azul)
+    g.cameraView.reactorHeat = 1 - this.cool;
     let hint = '';
     switch (this.where) {
       case 'office': {
@@ -884,10 +896,16 @@ export class Night2Ending {
         v.drawRoom(ctx, room, this._exits(), { console: this.where !== 'escape' });
         if (this.where === 'escape') {
           const red = this._red();
+          v.drawEscapeSteam(ctx);
           this._redTint(ctx, 0.08 + 0.2 * red);
           this.flash.draw(ctx, mx, my, null, darkness - N2END.ESCAPE.RED_REVEAL * red);
+          v.drawEscapeLights(ctx, red);
         } else this.flash.draw(ctx, mx, my);
-        if (room === 'reactor') this.flash.reveal(ctx, mx, my, (c) => v.drawRecorder(c));
+        if (room === 'reactor') {
+          v.drawCoreGlow(ctx, 1 - this.cool);
+          this.flash.reveal(ctx, mx, my, (c) => v.drawRecorder(c));
+          v.drawRecorderLed(ctx);
+        }
         if (this.roomEnemy && this.roomEnemy.state !== 'gone') this.flash.reveal(ctx, mx, my, (c) => this._drawEnemy(c, this.roomEnemy));
         hint = 'ESPACIO: linterna';
         break;
@@ -895,14 +913,16 @@ export class Night2Ending {
       case 'reactor':
         v.drawRoom(ctx, 'reactor', []);
         this.flash.draw(ctx, mx, my);
+        v.drawCoreGlow(ctx, 1 - this.cool);
         this.flash.reveal(ctx, mx, my, (c) => v.drawRecorder(c));
+        v.drawRecorderLed(ctx);
         v.drawConsoleScreen(ctx, this.term, this.term.focused);
         hint = this.term.focused ? 'Escribe el comando y pulsa Enter   ·   Esc: salir' : 'Clic en la consola para escribir   ·   ESPACIO: linterna';
         break;
       case 'corridors':
       case 'alarm': {
         if (this.panelAnim < 1) {
-          v.drawCorridors(ctx, this.camX);
+          v.drawCorridors(ctx, this.camX, 1 - this.cool);
           if (this.where === 'alarm') this._redTint(ctx, 0.12 + 0.25 * this._red());
           CORRIDORS.forEach((id, i) => {
             const ox = i * W - this.camX;

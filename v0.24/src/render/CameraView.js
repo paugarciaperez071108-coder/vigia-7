@@ -22,6 +22,7 @@ import { Random } from '../core/Random.js';
 import { drawCreature, drawFace } from './CreatureArt.js';
 import { drawDuct, makeVentDecor, ductPoint, drawVentMap, drawDuctEntrance } from './VentView.js';
 import { NIGHT2 } from '../night/night2.js';
+import { Dust, glitchSlices } from './Atmosphere.js';
 
 export const MONITOR_TAB = { x: 560, y: 846, w: 480, h: 42 };
 
@@ -183,10 +184,28 @@ export class CameraView {
     this.ventDecor = {};
     for (const id of VENT_IDS) this.ventDecor[id] = makeVentDecor(id);
     this.clouds = {};     // { conducto: segundos que le quedan a la nube }
+    // Polvo flotando en cada cámara
+    this.dust = {};
+    [...ROOM_IDS, ...VENT_IDS].forEach((id, i) => { this.dust[id] = new Dust(300 + i * 13, 60); });
+    // Escarcha de la lente de la CAM 05 (cristales que crecen desde los bordes)
+    this.lensFrost = makeLensFrost(new Random(9));
+    this.clockElapsed = 0;
+    // Noche 2 en adelante: la nave está peor (más destrozos por sala)
+    this.nightLevel = 1;
+    this.worse = {};
+    ROOM_IDS.forEach((id, i) => { this.worse[id] = makeWorse(new Random(2000 + i * 31)); });
+    // Color del núcleo del reactor: 0 = frío (azul), 1 = al límite (rojo)
+    this.reactorHeat = 0.1;
+    // Lienzo auxiliar para la sombra de El Largo en la pared
+    this.shadowCanvas = document.createElement('canvas');
+    this.shadowCanvas.width = CONFIG.WIDTH;
+    this.shadowCanvas.height = CONFIG.HEIGHT;
+    this.shadowCtx = this.shadowCanvas.getContext('2d');
   }
 
   update(dt) {
     this.time += dt;
+    for (const d of Object.values(this.dust)) d.update(dt);
     for (const id of Object.keys(this.clouds)) {
       this.clouds[id] -= dt;
       if (this.clouds[id] <= 0) delete this.clouds[id];
@@ -197,7 +216,11 @@ export class CameraView {
    * La sala vista "desde dentro" (final de la noche 2): el mismo dibujo
    * de su cámara, sin la interfaz (etiquetas, mapa, REC, estática).
    */
-  drawInterior(ctx, room) {
+  drawInterior(ctx, room, far = false) {
+    // Solo se usa en el final de la noche 2 (nave destrozada). Las salas
+    // lejanas (al fondo de una salida, pequeñas y borrosas) no llevan los
+    // destrozos extra: no se distinguirían y cuestan rendimiento.
+    this.nightLevel = far ? 1 : 2;
     if (this.sprites.draw(ctx, `cam_${room}`, 0, 0, CONFIG.WIDTH, CONFIG.HEIGHT)) return;
     (ROOM_DRAWERS[room] ?? genericRoom).call(this, ctx, this.time);
     drawShipDetails(ctx, SHIP_DETAILS[room], this.time);
@@ -253,6 +276,9 @@ export class CameraView {
     }
 
     const room = cameras.active;
+    this.clockElapsed = scene.clockElapsed ?? 0;
+    this.nightLevel = scene.night ?? 1;
+    if (scene.reactor) this.reactorHeat = scene.reactor.level / 100;
     if (isVent(room)) {
       this._drawVentCam(ctx, cameras, effects, scene);
       return;
@@ -289,9 +315,11 @@ export class CameraView {
       drawDuctEntrance(ctx, DUCT_SPOTS[room], stage, NIGHT2.LARGO.BREAK_STAGES, this.time);
     }
     this._drawCreatures(ctx, room, scene.roamers);
+    this.dust[room]?.draw(ctx, { alpha: 0.4, lights: [{ x: 800, y: 260, r: 760 }] });
     ctx.restore();
 
     this._postProcess(ctx, room, cameras.switchStatic, effects);
+    if (room === 'cryo') this._drawLensFrost(ctx, scene.cryo, scene.frozen);
     this._drawLabels(ctx, room);
     // Paneles de control (se ven nítidos, encima de la imagen)
     if (room === 'cryo') this._drawCryoPanel(ctx, scene.cryo, scene.frozen);
@@ -351,6 +379,7 @@ export class CameraView {
           ctx.fillRect(cx - 260, cy - 260, 520, 520);
         }
       }
+      this.dust[id]?.draw(ctx, { alpha: 0.3, color: '200,210,190', lights: [{ x: 800, y: 470, r: 600 }] });
       ctx.restore();
       this._postProcess(ctx, id, cameras.switchStatic, effects);
       this._drawLabels(ctx, id);
@@ -448,9 +477,10 @@ export class CameraView {
       const u = h / 100;
       // La rejilla que golpea, relativa a sus pies (en unidades de altura)
       const target = { x: (spot.x + spot.w / 2 - spot.lx) / u, y: (spot.y + spot.h / 2 - spot.ly) / u };
-      drawCreature(ctx, 'largo', spot.lx - hit, spot.ly, h, this.time, {
-        alpha: 0.92, pose: POSES.largo[room], target, look: LARGO_LOOKS.includes(room),
-      });
+      const opts = { alpha: 0.92, pose: POSES.largo[room], target, look: LARGO_LOOKS.includes(room) };
+      // Su sombra, enorme, en la pared (la luz está baja y delante de él)
+      this._wallShadow(ctx, spot.lx - hit, spot.ly, (c) => drawCreature(c, 'largo', spot.lx - hit, spot.ly, h, this.time, opts));
+      drawCreature(ctx, 'largo', spot.lx - hit, spot.ly, h, this.time, opts);
     }
     here.filter((e) => !(e === largo && spot)).forEach((e, i) => {
       const spots = ANCHORS[room] ?? ANCHORS.lab;
@@ -459,6 +489,28 @@ export class CameraView {
       const py = pose === 'ceiling' ? CEILING_Y[room] ?? 180 : y;
       drawCreature(ctx, e.id, x, py, h * KIND_SCALE[e.id], this.time, { alpha: 0.92, pose });
     });
+  }
+
+  /**
+   * Sombra de una criatura proyectada en la pared, más grande y estirada
+   * hacia arriba. drawFn(ctx) dibuja la criatura; (fx, fy) son sus pies.
+   */
+  _wallShadow(ctx, fx, fy, drawFn) {
+    const s = this.shadowCtx;
+    s.globalCompositeOperation = 'source-over';
+    s.clearRect(0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
+    drawFn(s);
+    s.globalCompositeOperation = 'source-in';
+    s.fillStyle = '#000';
+    s.fillRect(0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
+    ctx.save();
+    ctx.globalAlpha = 0.62;
+    ctx.filter = 'blur(3px)';
+    ctx.translate(fx + 70, fy - 30);
+    ctx.transform(1.55, 0, -0.18, 1.7, 0, 0);
+    ctx.translate(-fx, -fy);
+    ctx.drawImage(this.shadowCanvas, 0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
+    ctx.restore();
   }
 
   // ---------------------------------------------------------------
@@ -500,23 +552,86 @@ export class CameraView {
       return;
     }
 
-    // Grietas acumuladas hasta la etapa actual
-    ctx.strokeStyle = 'rgba(10,10,10,0.9)';
-    ctx.lineWidth = 3;
-    for (let s = 0; s < Math.min(specimen.wallStage, this.cracks.length); s++) {
+    const stage = Math.min(specimen.wallStage, this.cracks.length);
+    const k = stage / CONFIG.WALL_STAGES;
+    // La placa se abomba: trozos desplazados alrededor del centro
+    if (stage >= 2) {
+      const cx = w.x + w.w / 2;
+      const cy = w.y + w.h * 0.5;
+      ctx.fillStyle = 'rgba(70,82,77,0.9)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+      ctx.lineWidth = 2;
+      const n = Math.min(6, stage + 1);
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2 + 0.4;
+        const r = 26 + 10 * k;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * 6, cy + Math.sin(a) * 6);
+        ctx.lineTo(cx + Math.cos(a - 0.35) * r, cy + Math.sin(a - 0.35) * r);
+        ctx.lineTo(cx + Math.cos(a + 0.35) * r * 1.1, cy + Math.sin(a + 0.35) * r * 1.1);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+    // Luz verdosa que se cuela por las grietas (más cuanto más rotas)
+    const glow = 0.25 + 0.5 * k + 0.12 * Math.sin(this.time * 2.3);
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(140,255,190,0.9)';
+    ctx.shadowBlur = 14;
+    ctx.strokeStyle = `rgba(150,255,195,${glow})`;
+    ctx.lineWidth = 5;
+    for (let s = 0; s < stage; s++) {
       for (const path of this.cracks[s]) {
         ctx.beginPath();
         path.forEach(([px, py], i) => (i ? ctx.lineTo(w.x + px, w.y + py) : ctx.moveTo(w.x + px, w.y + py)));
         ctx.stroke();
       }
     }
-    // En la última etapa antes de romperse se ve algo por la grieta
+    ctx.restore();
+    // Grietas acumuladas hasta la etapa actual (el trazo oscuro encima)
+    ctx.strokeStyle = 'rgba(10,10,10,0.9)';
+    ctx.lineWidth = 2;
+    for (let s = 0; s < stage; s++) {
+      for (const path of this.cracks[s]) {
+        ctx.beginPath();
+        path.forEach(([px, py], i) => (i ? ctx.lineTo(w.x + px, w.y + py) : ctx.moveTo(w.x + px, w.y + py)));
+        ctx.stroke();
+      }
+    }
+    // Trozos del muro caídos al pie (uno más por cada etapa)
+    ctx.fillStyle = '#3a423e';
+    for (let i = 0; i < stage * 2; i++) {
+      const dx = ((i * 53) % 200) - 100;
+      const s = 6 + ((i * 17) % 10);
+      ctx.fillRect(w.x + w.w / 2 + dx, w.y + w.h - 4 - (i % 3) * 3, s, s * 0.6);
+    }
+    // Polvo que cae de la grieta de vez en cuando
+    if (stage > 0) {
+      const fall = (this.time * 0.9) % 1;
+      ctx.fillStyle = `rgba(190,200,195,${0.5 * (1 - fall)})`;
+      ctx.fillRect(w.x + w.w / 2 + 4, w.y + w.h * 0.55 + fall * w.h * 0.45, 2, 6);
+    }
+    // En la última etapa antes de romperse: unos ojos brillan dentro
     if (specimen.wallStage >= CONFIG.WALL_STAGES - 1) {
       const blink = Math.sin(this.time * 0.8) > -0.7;
       if (blink) {
-        ctx.fillStyle = 'rgba(230,255,235,0.9)';
-        ctx.fillRect(w.x + w.w / 2 - 14, w.y + w.h * 0.45, 5, 4);
-        ctx.fillRect(w.x + w.w / 2 + 6, w.y + w.h * 0.45 + 3, 4, 3);
+        const ex = w.x + w.w / 2;
+        const ey = w.y + w.h * 0.45;
+        ctx.save();
+        ctx.fillStyle = '#020302';
+        ctx.beginPath();
+        ctx.ellipse(ex - 3, ey + 2, 26, 12, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowColor = 'rgba(200,255,215,1)';
+        ctx.shadowBlur = 16;
+        ctx.fillStyle = 'rgba(235,255,240,0.95)';
+        ctx.beginPath();
+        ctx.arc(ex - 12, ey, 3.2, 0, Math.PI * 2);
+        ctx.arc(ex + 8, ey + 3, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
     }
   }
@@ -547,22 +662,106 @@ export class CameraView {
       }
       ctx.stroke();
     } else {
-      // Cara de El Congelado tras el cristal; abre los ojos con la alarma
-      drawFace(ctx, 'frozen', x, 360, 70, this.time, { eyesOpen: warn > 0.35 });
-      ctx.fillStyle = 'rgba(40,60,75,0.6)';
+      // Silueta de El Congelado tras el cristal: cabeza, hombros y cuerpo
+      ctx.fillStyle = 'rgba(25,38,50,0.85)';
       ctx.beginPath();
-      ctx.roundRect(x - 50, 410, 100, 190, 30);
+      ctx.ellipse(x, 362, 40, 48, 0, 0, Math.PI * 2);
       ctx.fill();
-      // Escarcha del cristal: se derrite a medida que avanza la alarma
-      ctx.fillStyle = `rgba(210,235,255,${0.45 * (1 - warn)})`;
+      ctx.beginPath();
+      ctx.moveTo(x - 30, 400);
+      ctx.quadraticCurveTo(x - 70, 420, x - 62, 600);
+      ctx.lineTo(x + 62, 600);
+      ctx.quadraticCurveTo(x + 70, 420, x + 30, 400);
+      ctx.closePath();
+      ctx.fill();
+      // Su cara se va viendo a medida que se derrite la escarcha;
+      // abre los ojos con la alarma
+      ctx.save();
+      ctx.globalAlpha = 0.3 + 0.7 * warn;
+      drawFace(ctx, 'frozen', x, 360, 70, this.time, { eyesOpen: warn > 0.35 });
+      ctx.restore();
+      // Escarcha del cristal (con vetas): se derrite con la alarma
+      const fa = 0.6 * (1 - warn);
+      const fg = ctx.createLinearGradient(0, 290, 0, 610);
+      fg.addColorStop(0, `rgba(225,242,255,${fa})`);
+      fg.addColorStop(0.5, `rgba(200,228,250,${fa * 0.75})`);
+      fg.addColorStop(1, `rgba(225,242,255,${fa})`);
+      ctx.fillStyle = fg;
       ctx.beginPath();
       ctx.roundRect(x - 75, 290, 150, 320, 70);
       ctx.fill();
+      ctx.strokeStyle = `rgba(255,255,255,${fa * 0.6})`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < 9; i++) {
+        const sx = x - 60 + ((i * 41) % 120);
+        const sy = 300 + ((i * 67) % 300);
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + 14, sy + 10);
+        ctx.moveTo(sx + 7, sy + 5);
+        ctx.lineTo(sx + 2, sy + 16);
+      }
+      ctx.stroke();
+      // Gotas de agua que bajan por el cristal cuando se derrite
+      if (warn > 0) {
+        ctx.fillStyle = 'rgba(200,230,255,0.6)';
+        for (let i = 0; i < 4; i++) {
+          const dy = ((this.time * 40 + i * 77) % 300);
+          ctx.fillRect(x - 50 + i * 30, 300 + dy, 2, 8);
+        }
+      }
     }
     if (warn > 0 && !escaped && Math.floor(this.time * 4) % 2 === 0) {
       ctx.fillStyle = 'rgba(255,40,40,0.18)';
       ctx.fillRect(x - 110, 250, 220, 400);
     }
+    ctx.restore();
+  }
+
+  /**
+   * Escarcha en la lente de la CAM 05: crece cuanto más cerca está la
+   * temperatura de incumplir el requisito, y con la alarma invade la
+   * pantalla. Solo visual (el panel se ve encima).
+   */
+  _drawLensFrost(ctx, cryo, frozen) {
+    if (!cryo || !frozen) return;
+    let k;
+    if (frozen.state === 'escaped') k = 0.55;
+    else if (frozen.warningProgress > 0) k = 0.5 + 0.5 * frozen.warningProgress;
+    else if (!cryo.ok) k = 0.5;
+    else k = Math.max(0, (4 - cryo.margin) / 4) * 0.45;
+    if (k <= 0.02) return;
+    ctx.save();
+    // Velo blanco desde los bordes
+    const g = ctx.createRadialGradient(800, 450, 300 + 260 * (1 - k), 800, 450, 980);
+    g.addColorStop(0, 'rgba(220,240,255,0)');
+    g.addColorStop(1, `rgba(220,240,255,${0.55 * k})`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
+    // Cristales de hielo que crecen hacia dentro
+    ctx.strokeStyle = `rgba(240,250,255,${0.25 + 0.45 * k})`;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (const c of this.lensFrost) {
+      const len = c.len * k;
+      if (len < 4) continue;
+      const ex = c.x + Math.cos(c.a) * len;
+      const ey = c.y + Math.sin(c.a) * len;
+      ctx.moveTo(c.x, c.y);
+      ctx.lineTo(ex, ey);
+      // Ramitas a los lados
+      for (let b = 1; b <= 3; b++) {
+        const t = b / 4;
+        const bx = c.x + Math.cos(c.a) * len * t;
+        const by = c.y + Math.sin(c.a) * len * t;
+        const bl = len * 0.25 * (1 - t);
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx + Math.cos(c.a + 0.7) * bl, by + Math.sin(c.a + 0.7) * bl);
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx + Math.cos(c.a - 0.7) * bl, by + Math.sin(c.a - 0.7) * bl);
+      }
+    }
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -719,11 +918,86 @@ export class CameraView {
         ctx.fill();
       }
     }
-    // Parpadeo de la iluminación de la sala
-    if (Math.random() < d.flicker) {
+    if (this.nightLevel >= 2) this._decorateWorse(ctx, room);
+    // Parpadeo de la iluminación de la sala (desde la noche 2, más a menudo)
+    if (Math.random() < d.flicker * (this.nightLevel >= 2 ? 2.2 : 1)) {
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.fillRect(0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
     }
+  }
+
+  /**
+   * Noche 2 en adelante: paneles del techo caídos, uno colgando, una
+   * silla volcada, más escombros y marcas de arrastre (sin sangre).
+   */
+  _decorateWorse(ctx, room) {
+    const d = this.worse[room];
+    if (!d) return;
+    ctx.save();
+    // Marcas de arrastre en el suelo
+    ctx.strokeStyle = 'rgba(8,8,8,0.35)';
+    ctx.lineWidth = 4;
+    for (const m of d.marks) {
+      for (let k = 0; k < 3; k++) {
+        ctx.beginPath();
+        ctx.moveTo(m.x + k * 9, m.y);
+        ctx.quadraticCurveTo(m.x + m.dx * 0.5 + k * 9, m.y + 30, m.x + m.dx + k * 9, m.y + 60);
+        ctx.stroke();
+      }
+    }
+    // Paneles del techo tirados en el suelo
+    for (const p of d.panels) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = '#2c3136';
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, 5);
+      ctx.restore();
+    }
+    // Silla volcada (antes estaba en su sitio)
+    const c = d.chair;
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.scale(c.flip ? -1 : 1, 1);
+    ctx.rotate(1.35);
+    ctx.fillStyle = '#23282e';
+    ctx.fillRect(-30, -6, 60, 12);           // asiento
+    ctx.fillRect(-30, -60, 10, 56);          // respaldo
+    ctx.fillRect(18, 4, 7, 34);              // patas
+    ctx.fillRect(-26, 4, 7, 34);
+    ctx.restore();
+    // Más escombros
+    for (const o of d.debris) {
+      ctx.fillStyle = o.color;
+      ctx.save();
+      ctx.translate(o.x, o.y);
+      ctx.rotate(o.rot);
+      ctx.fillRect(-o.s, -o.s * 0.35, o.s * 2, o.s * 0.7);
+      ctx.restore();
+    }
+    // Un panel del techo colgando de una esquina, balanceándose
+    const h = d.hang;
+    const sw = Math.sin(this.time * h.speed + h.phase) * 0.06;
+    ctx.save();
+    ctx.translate(h.x, 0);
+    ctx.rotate(0.9 + sw);
+    ctx.fillStyle = '#2a2f35';
+    ctx.fillRect(0, -8, h.len, 16 + h.w * 0.12);
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, -8, h.len, 16 + h.w * 0.12);
+    ctx.restore();
+    // Cable pelado junto al hueco, con chispas
+    if (Math.random() < 0.04) {
+      ctx.fillStyle = 'rgba(210,235,255,0.95)';
+      for (let k = 0; k < 4; k++) ctx.fillRect(h.x + 40 + Math.random() * 30, 10 + Math.random() * 40, 3, 3);
+    }
+    ctx.restore();
   }
 
   /** Pestaña inferior para subir/bajar el monitor (también en la oficina). */
@@ -758,6 +1032,10 @@ export class CameraView {
 
     // Estática: base constante + ráfaga fuerte al cambiar de cámara
     effects.static(ctx, 0.14 + Math.min(1, switchStatic * 3) * 0.85);
+    effects.grain(ctx, 0.18);
+    // Fallo de imagen: al cambiar de cámara o cuando algo se mueve en
+    // ella (switchStatic), y de vez en cuando uno pequeño
+    glitchSlices(ctx, Math.min(1, switchStatic * 2.2) || (Math.random() < 0.012 ? 0.3 : 0));
     effects.vignette(ctx, 0.8);
   }
 
@@ -783,6 +1061,16 @@ export class CameraView {
       ctx.font = '20px "Courier New", monospace';
       ctx.fillText('REC', 70, 226);
     }
+    // Hora de la grabación (la de la noche, con segundos)
+    const sph = CONFIG.SECONDS_PER_HOUR;
+    const e = this.clockElapsed;
+    const h = Math.floor(e / sph);
+    const mm = Math.floor((e % sph) / sph * 60);
+    const ss = Math.floor(((e % sph) / sph * 3600) % 60);
+    const two = (n) => String(n).padStart(2, '0');
+    ctx.fillStyle = 'rgba(232,238,245,0.85)';
+    ctx.font = '20px "Courier New", monospace';
+    ctx.fillText(`${two(h === 0 ? 12 : h)}:${two(mm)}:${two(ss)} AM`, 120, 226);
     ctx.restore();
   }
 
@@ -998,6 +1286,49 @@ function makeDecor(rng) {
     })),
     flicker: rng.range(0.01, 0.05),
   };
+}
+
+/** Color del reactor según su temperatura (0..1): azul → naranja → rojo. */
+function heatRGB(heat) {
+  const k = Math.max(0, Math.min(1, (heat - 0.3) / 0.65));
+  const s = k * k * (3 - 2 * k);
+  const cold = [120, 220, 255];
+  const hot = [255, 70, 40];
+  return cold.map((c, i) => Math.round(c + (hot[i] - c) * s)).join(',');
+}
+export { heatRGB };
+
+/** Destrozos extra de una sala (noche 2 en adelante). */
+function makeWorse(rng) {
+  const W = CONFIG.WIDTH;
+  return {
+    panels: Array.from({ length: rng.int(2, 3) }, () => ({
+      x: rng.range(150, W - 150), y: rng.range(740, 870), w: rng.range(90, 160), h: rng.range(22, 36), rot: rng.range(-0.4, 0.4),
+    })),
+    hang: { x: rng.range(220, W - 400), w: rng.range(120, 180), len: rng.range(110, 180), phase: rng.range(0, 6), speed: rng.range(0.6, 1.2) },
+    chair: { x: rng.range(200, W - 200), y: rng.range(770, 850), flip: rng.next() < 0.5 },
+    debris: Array.from({ length: 14 }, () => ({
+      x: rng.range(60, W - 60), y: rng.range(700, 890), s: rng.range(4, 14), rot: rng.range(0, Math.PI),
+      color: ['#2a2622', '#3a3530', '#1d1f22', '#4a4038', '#2f353b'][rng.int(0, 4)],
+    })),
+    marks: Array.from({ length: rng.int(1, 2) }, () => ({ x: rng.range(200, W - 300), y: rng.range(720, 800), dx: rng.range(-120, 120) })),
+  };
+}
+
+/** Cristales de escarcha de la lente: salen de los bordes hacia dentro. */
+function makeLensFrost(rng) {
+  const W = CONFIG.WIDTH;
+  const H = CONFIG.HEIGHT;
+  const list = [];
+  for (let i = 0; i < 70; i++) {
+    const side = rng.int(0, 3);
+    const x = side === 0 ? 0 : side === 1 ? W : rng.range(0, W);
+    const y = side === 2 ? 0 : side === 3 ? H : rng.range(0, H);
+    // Hacia el centro, con algo de desviación
+    const a = Math.atan2(H / 2 - y, W / 2 - x) + rng.range(-0.7, 0.7);
+    list.push({ x, y, a, len: rng.range(80, 340) });
+  }
+  return list;
 }
 
 /**
@@ -1323,17 +1654,36 @@ const ROOM_DRAWERS = {
       ctx.lineTo(1600, y - 100);
       ctx.stroke();
     }
-    // Núcleo que late
-    const pulse = 0.6 + 0.4 * Math.sin(t * 2.2);
+    // Núcleo que late: azul si está frío, rojo si está al límite (y late
+    // más deprisa cuanto más caliente)
+    const heat = this.reactorHeat;
+    const col = heatRGB(heat);
+    const pulse = 0.6 + 0.4 * Math.sin(t * (2.2 + 3 * heat));
     const glow = ctx.createRadialGradient(800, 430, 20, 800, 430, 380);
-    glow.addColorStop(0, `rgba(120,220,255,${0.55 * pulse})`);
-    glow.addColorStop(1, 'rgba(120,220,255,0)');
+    glow.addColorStop(0, `rgba(${col},${0.55 * pulse})`);
+    glow.addColorStop(1, `rgba(${col},0)`);
     ctx.fillStyle = glow;
     ctx.fillRect(400, 100, 800, 700);
     ctx.fillStyle = '#0d1a24';
     ctx.fillRect(700, 210, 200, 430);
-    ctx.fillStyle = `rgba(150,235,255,${0.5 + 0.4 * pulse})`;
+    ctx.fillStyle = `rgba(${col},${0.5 + 0.4 * pulse})`;
     ctx.fillRect(740, 230, 120, 390);
+    // Centro más blanco
+    ctx.fillStyle = `rgba(255,255,255,${0.12 + 0.12 * pulse})`;
+    ctx.fillRect(780, 240, 40, 370);
+    // Vapor que sale por arriba del núcleo y por las juntas de las tuberías
+    for (const [vx, vy, sz] of [[800, 205, 70], [470, 255, 40], [1130, 315, 40]]) {
+      for (let i = 0; i < 3; i++) {
+        const p = (t * 0.35 + i / 3 + vx * 0.0007) % 1;
+        const py = vy - p * 120;
+        const r = sz * (0.4 + p);
+        const sg = ctx.createRadialGradient(vx, py, 2, vx, py, r);
+        sg.addColorStop(0, `rgba(210,220,230,${0.2 * (1 - p)})`);
+        sg.addColorStop(1, 'rgba(210,220,230,0)');
+        ctx.fillStyle = sg;
+        ctx.fillRect(vx - r, py - r, r * 2, r * 2);
+      }
+    }
     ctx.strokeStyle = '#3c4a58';
     ctx.lineWidth = 8;
     for (let y = 240; y < 640; y += 60) {
@@ -1365,12 +1715,43 @@ const ROOM_DRAWERS = {
       ctx.fillStyle = i === 1 ? '#7dffb0' : '#2a3a46';
       ctx.fillRect(x - 30, 650, 60, 10);
     });
-    // Neblina en el suelo
+    // Tubos criogénicos del techo a cada cápsula, con escarcha
+    [520, 800, 1080].forEach((x) => {
+      for (const dx of [-36, 36]) {
+        ctx.fillStyle = '#2c3946';
+        ctx.fillRect(x + dx - 7, 0, 14, 268);
+        ctx.fillStyle = 'rgba(220,240,255,0.25)';
+        ctx.fillRect(x + dx - 7, 0, 4, 268);
+        ctx.fillStyle = '#3a4a58';
+        for (let y = 40; y < 260; y += 70) ctx.fillRect(x + dx - 10, y, 20, 8);
+      }
+      // Vaho que sale de la junta de la cápsula y sube
+      for (let i = 0; i < 3; i++) {
+        const p = (t * 0.25 + i / 3 + x * 0.001) % 1;
+        const py = 270 - p * 150;
+        const r = 18 + p * 50;
+        const vg = ctx.createRadialGradient(x, py, 2, x, py, r);
+        vg.addColorStop(0, `rgba(210,235,255,${0.22 * (1 - p)})`);
+        vg.addColorStop(1, 'rgba(210,235,255,0)');
+        ctx.fillStyle = vg;
+        ctx.fillRect(x - r, py - r, r * 2, r * 2);
+      }
+    });
+    // Neblina en el suelo, que se mueve despacio
     const fog = ctx.createLinearGradient(0, 640, 0, 900);
     fog.addColorStop(0, 'rgba(190,225,255,0)');
     fog.addColorStop(1, 'rgba(190,225,255,0.22)');
     ctx.fillStyle = fog;
     ctx.fillRect(0, 640, CONFIG.WIDTH, 260);
+    for (let i = 0; i < 6; i++) {
+      const fx = ((t * 18 + i * 300) % 1900) - 150;
+      const fy = 760 + Math.sin(t * 0.5 + i) * 30;
+      const fgr = ctx.createRadialGradient(fx, fy, 10, fx, fy, 220);
+      fgr.addColorStop(0, 'rgba(200,230,255,0.12)');
+      fgr.addColorStop(1, 'rgba(200,230,255,0)');
+      ctx.fillStyle = fgr;
+      ctx.fillRect(fx - 220, fy - 220, 440, 440);
+    }
   },
 
   mess(ctx, t) {

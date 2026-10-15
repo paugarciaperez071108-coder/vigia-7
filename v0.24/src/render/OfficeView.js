@@ -13,6 +13,14 @@
 import { Random } from '../core/Random.js';
 import { CONFIG } from '../config.js';
 import { drawCreature } from './CreatureArt.js';
+import { Dust, lightPool } from './Atmosphere.js';
+
+// Vista que se mueve un poco con el ratón (como en FNaF). Se amplía
+// un poco para que no se vean los bordes; hitTest lo compensa, así que
+// los botones responden igual que antes.
+const PAN_X = 16;
+const PAN_Y = 7;
+const PAN_SCALE = 1.025;
 
 const KIND_SCALE = { specimen: 0.95, largo: 1.02, insecto: 0.5, frozen: 0.9 };
 // Desplazamiento horizontal para que la cabeza quede dentro del marco
@@ -56,11 +64,30 @@ export class OfficeView {
       { x: 1120, len: 300, bend: -50, phase: 2, spark: true },
       { x: 1010, len: 90, bend: 20, phase: 4 },
     ];
+    // Ventanal: tres capas de estrellas a distinta profundidad
+    const rs = new Random(71);
+    this.starLayers = [
+      { depth: 0.25, drift: 0.0015, size: [0.4, 1.1], alpha: 0.55, n: 200 },
+      { depth: 0.55, drift: 0.003, size: [0.8, 1.7], alpha: 0.8, n: 80 },
+      { depth: 1, drift: 0.006, size: [1.6, 2.6], alpha: 1, n: 18 },
+    ].map((l) => ({
+      ...l,
+      stars: Array.from({ length: l.n }, () => ({
+        x: rs.next(), y: rs.next(), r: rs.range(l.size[0], l.size[1]), tw: rs.range(0, 6),
+        tint: rs.next() < 0.15 ? '255,220,190' : rs.next() < 0.3 ? '190,210,255' : '235,240,255',
+      })),
+    }));
+    this.dust = new Dust(91, 110);
+    this.pan = { x: 0, y: 0, s: 1 };
     this.time = 0;
   }
 
   /** Devuelve la acción del botón bajo (x, y) o null. */
   hitTest(x, y) {
+    // Deshace el movimiento de la vista (los botones se dibujan desplazados)
+    const p = this.pan;
+    x = (x - 800 - p.x) / p.s + 800;
+    y = (y - 450 - p.y) / p.s + 450;
     for (const side of ['left', 'right']) {
       if (inside(BUTTONS[side].door, x, y)) return { type: 'door', side };
       if (inside(BUTTONS[side].light, x, y)) return { type: 'light', side };
@@ -71,6 +98,7 @@ export class OfficeView {
 
   update(dt) {
     this.time += dt;
+    this.dust.update(dt);
   }
 
   /**
@@ -84,9 +112,31 @@ export class OfficeView {
    * @param state.cameras      CameraSystem (estado de la ventilación en la pantalla)
    * @param state.gasLeak      fuga de gas activa
    * @param state.easterEgg    secreto del ventanal (solo se ve en el apagón)
+   * @param state.introProgress 0..1: inicio de la noche 2 (15 s para echar a
+   *                           El Insecto). Su sombra avanza tras la rejilla derecha.
+   * @param state.mouse        posición del ratón: la vista se desplaza un poco
+   *                           (sin él, la vista queda quieta)
    */
   draw(ctx, office, state) {
+    const m = state.mouse;
+    const tx = m ? -((m.x - 800) / 800) * PAN_X : 0;
+    const ty = m ? -((m.y - 450) / 450) * PAN_Y : 0;
+    const p = this.pan;
+    p.s = m ? PAN_SCALE : 1;
+    p.x += (tx - p.x) * 0.12;
+    p.y += (ty - p.y) * 0.12;
+    if (!m) p.x = p.y = 0;
+    ctx.save();
+    ctx.translate(800 + p.x, 450 + p.y);
+    ctx.scale(p.s, p.s);
+    ctx.translate(-800, -450);
+    this._drawScene(ctx, office, state);
+    ctx.restore();
+  }
+
+  _drawScene(ctx, office, state) {
     this._drawWalls(ctx);
+    this._drawCeilingLight(ctx, state);
     this._drawShipDetails(ctx, state);
     this._drawDirt(ctx);
     this._drawWindow(ctx);
@@ -97,6 +147,15 @@ export class OfficeView {
     }
     this._drawConsole(ctx, state);
     this._drawCables(ctx);
+    if ((state.night ?? 1) >= 2) this._drawWorse(ctx);
+    if (!state.blackout) {
+      // Polvo en el aire: se ve donde hay luz (ventanal, pantalla, focos)
+      const lights = [{ x: 800, y: 260, r: 430 }, { x: 800, y: 640, r: 330 }];
+      for (const side of ['left', 'right']) {
+        if (office.lights[side]) lights.push({ x: DOORWAY[side].x + 150, y: 330, r: 330 });
+      }
+      this.dust.draw(ctx, { alpha: 0.5, lights, px: this.pan.x * 0.8, py: this.pan.y * 0.8 });
+    }
 
     if (state.blackout) {
       this._drawBlackout(ctx);
@@ -180,6 +239,7 @@ export class OfficeView {
     for (const x of [90, 1290]) {
       ctx.fillStyle = '#07090b';
       ctx.fillRect(x, 795, 220, 64);
+      if (x === 1290 && state.introProgress > 0) this._drawVentShadow(ctx, x, state.introProgress);
       ctx.strokeStyle = '#2e3640';
       ctx.lineWidth = 4;
       ctx.strokeRect(x, 795, 220, 64);
@@ -225,6 +285,73 @@ export class OfficeView {
     }
   }
 
+  /**
+   * Inicio de la noche 2: al fondo de la rejilla derecha hay algo de luz
+   * y la sombra de El Insecto la va tapando, cada vez más cerca (k 0..1).
+   */
+  _drawVentShadow(ctx, x, k) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, 795, 220, 64);
+    ctx.clip();
+    const g = ctx.createRadialGradient(x + 110, 827, 5, x + 110, 827, 130);
+    g.addColorStop(0, 'rgba(120,135,110,0.45)');
+    g.addColorStop(1, 'rgba(120,135,110,0.05)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x, 795, 220, 64);
+    // La sombra entra desde la derecha y crece (está más cerca)
+    const cx = x + 230 - 140 * k;
+    const s = 0.6 + 0.9 * k;
+    ctx.fillStyle = 'rgba(0,0,0,0.92)';
+    ctx.beginPath();
+    ctx.ellipse(cx, 832, 46 * s, 16 * s, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Patas que se mueven
+    ctx.strokeStyle = 'rgba(0,0,0,0.92)';
+    ctx.lineWidth = 3 * s;
+    for (let i = 0; i < 6; i++) {
+      const lx = cx - 36 * s + i * 14 * s;
+      const step = Math.sin(this.time * 14 + i * 1.7) * 6 * s;
+      ctx.beginPath();
+      ctx.moveTo(lx, 832);
+      ctx.lineTo(lx + step, 806 - 4 * s);
+      ctx.lineTo(lx + step * 1.4, 860);
+      ctx.stroke();
+    }
+    // Al final, un brillo de ojos
+    if (k > 0.65 && Math.sin(this.time * 3) > -0.4) {
+      ctx.fillStyle = 'rgba(220,240,180,0.85)';
+      ctx.fillRect(cx - 18 * s, 826, 3, 2);
+      ctx.fillRect(cx - 10 * s, 825, 3, 2);
+    }
+    ctx.restore();
+  }
+
+  /**
+   * Noche 2 en adelante: un panel del techo colgando de una esquina y
+   * escombros por el suelo de la oficina.
+   */
+  _drawWorse(ctx) {
+    ctx.save();
+    const sw = Math.sin(this.time * 0.9) * 0.05;
+    ctx.translate(250, 76);
+    ctx.rotate(1.05 + sw);
+    ctx.fillStyle = '#20262d';
+    ctx.fillRect(0, -10, 170, 26);
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, -10, 170, 26);
+    ctx.restore();
+    ctx.fillStyle = '#1f2328';
+    for (const [x, y, w, h, a] of [[420, 868, 60, 14, 0.3], [1180, 872, 46, 12, -0.4], [1260, 880, 30, 9, 0.9], [360, 884, 26, 8, -0.2]]) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(a);
+      ctx.fillRect(-w / 2, -h / 2, w, h);
+      ctx.restore();
+    }
+  }
+
   /** Cartel atornillado con los comandos de la consola. */
   _drawCommandSign(ctx, night) {
     const r = COMMAND_SIGN;
@@ -266,6 +393,62 @@ export class OfficeView {
     ctx.restore();
   }
 
+  /**
+   * Teclado sobre la mesa. lit = iluminado de verde por la pantalla
+   * (en el apagón es lo único que se ve de la mesa).
+   */
+  _drawKeyboard(ctx, lit) {
+    const top = 772;
+    const bottom = 826;
+    ctx.save();
+    ctx.fillStyle = lit ? 'rgba(20,70,40,0.9)' : '#14181e';
+    ctx.beginPath();
+    ctx.moveTo(686, top);
+    ctx.lineTo(914, top);
+    ctx.lineTo(930, bottom);
+    ctx.lineTo(670, bottom);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = lit ? 'rgba(90,255,150,0.35)' : '#262d36';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Teclas en 4 filas (más anchas abajo por la perspectiva)
+    for (let r = 0; r < 4; r++) {
+      const y = top + 6 + r * 12;
+      const x1 = 692 - r * 4;
+      const x2 = 908 + r * 4;
+      const n = 14;
+      const kw = (x2 - x1) / n;
+      for (let k = 0; k < n; k++) {
+        const near = 1 - Math.abs(k - n / 2) / n;
+        ctx.fillStyle = lit ? `rgba(80,255,150,${0.12 + 0.22 * near * (1 - r * 0.15)})` : '#232a33';
+        ctx.fillRect(x1 + k * kw + 1.5, y, kw - 3, 9);
+      }
+    }
+    ctx.restore();
+  }
+
+  /** Foco del techo: cono de luz tenue (se apaga con el apagón). */
+  _drawCeilingLight(ctx, state) {
+    ctx.fillStyle = '#1a2027';
+    ctx.fillRect(700, 78, 200, 12);
+    if (state.blackout) return;
+    const on = 0.85 + 0.15 * Math.sin(this.time * 31) * Math.sin(this.time * 7);
+    ctx.fillStyle = `rgba(225,235,245,${0.7 * on})`;
+    ctx.fillRect(712, 88, 176, 4);
+    const g = ctx.createLinearGradient(0, 90, 0, 760);
+    g.addColorStop(0, `rgba(210,225,240,${0.07 * on})`);
+    g.addColorStop(1, 'rgba(210,225,240,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(712, 92);
+    ctx.lineTo(888, 92);
+    ctx.lineTo(1150, 760);
+    ctx.lineTo(450, 760);
+    ctx.closePath();
+    ctx.fill();
+  }
+
   /** Apagón: todo negro salvo el ventanal y la pantalla de la consola. */
   _drawBlackout(ctx) {
     const w = WINDOW;
@@ -279,10 +462,33 @@ export class OfficeView {
     ctx.fill('evenodd');
     // Resplandor verde de la pantalla sobre la mesa
     const g = ctx.createRadialGradient(m.x + m.w / 2, m.y + m.h / 2, 40, m.x + m.w / 2, m.y + m.h, 320);
-    g.addColorStop(0, 'rgba(60,255,140,0.10)');
+    g.addColorStop(0, 'rgba(60,255,140,0.16)');
     g.addColorStop(1, 'rgba(60,255,140,0)');
     ctx.fillStyle = g;
     ctx.fillRect(m.x - 300, m.y - 100, m.w + 600, 500);
+    // El teclado y el borde de la mesa, iluminados de verde
+    this._drawKeyboard(ctx, true);
+    ctx.strokeStyle = 'rgba(80,255,150,0.18)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(560, 700);
+    ctx.lineTo(1040, 700);
+    ctx.stroke();
+    // Luz azulada del espacio que entra por el ventanal y cae al suelo
+    const b = ctx.createLinearGradient(0, w.y + w.h, 0, 900);
+    b.addColorStop(0, 'rgba(90,130,230,0.13)');
+    b.addColorStop(1, 'rgba(90,130,230,0)');
+    ctx.fillStyle = b;
+    ctx.beginPath();
+    ctx.moveTo(w.x + 30, w.y + w.h - 10);
+    ctx.lineTo(w.x + w.w - 30, w.y + w.h - 10);
+    ctx.lineTo(1330, 900);
+    ctx.lineTo(270, 900);
+    ctx.closePath();
+    ctx.fill();
+    // Motas de polvo junto a la pantalla y al ventanal
+    this.dust.draw(ctx, { alpha: 0.45, color: '120,255,170', lights: [{ x: 800, y: 650, r: 230 }] });
+    this.dust.draw(ctx, { alpha: 0.35, color: '150,180,255', lights: [{ x: 800, y: 300, r: 300 }] });
     ctx.restore();
   }
 
@@ -325,20 +531,40 @@ export class OfficeView {
     ctx.fillStyle = '#01020a';
     ctx.fillRect(w.x, w.y, w.w, w.h);
 
-    // Estrellas con un leve parpadeo y deriva (la estación gira).
-    const drift = (this.time * 0.004) % 1;
-    for (const s of this.stars) {
-      const sx = w.x + (((s.x + drift) % 1) * w.w);
-      const sy = w.y + s.y * w.h;
-      ctx.globalAlpha = 0.5 + 0.5 * Math.sin(this.time * 1.5 + s.tw);
-      ctx.fillStyle = '#dfe8ff';
-      ctx.fillRect(sx, sy, s.r, s.r);
+    // Nebulosa muy tenue al fondo
+    const neb = ctx.createRadialGradient(w.x + w.w * 0.25, w.y + w.h * 0.3, 10, w.x + w.w * 0.25, w.y + w.h * 0.3, 260);
+    neb.addColorStop(0, 'rgba(90,60,140,0.22)');
+    neb.addColorStop(0.5, 'rgba(40,50,120,0.10)');
+    neb.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = neb;
+    ctx.fillRect(w.x, w.y, w.w, w.h);
+
+    // Estrellas en tres capas: las lejanas se mueven menos (paralaje con
+    // la vista y con el giro lento de la estación).
+    for (const l of this.starLayers) {
+      const ox = -this.pan.x * (1.6 - l.depth) * 1.5;
+      const oy = -this.pan.y * (1.6 - l.depth) * 1.5;
+      const drift = (this.time * l.drift) % 1;
+      for (const s of l.stars) {
+        const sx = w.x + ((((s.x + drift) % 1) * (w.w + 60) + ox + w.w + 60) % (w.w + 60)) - 30;
+        const sy = w.y + s.y * w.h + oy;
+        ctx.globalAlpha = l.alpha * (0.55 + 0.45 * Math.sin(this.time * 1.5 + s.tw));
+        ctx.fillStyle = `rgb(${s.tint})`;
+        ctx.fillRect(sx, sy, s.r, s.r);
+      }
     }
     ctx.globalAlpha = 1;
+    // De vez en cuando, una luz lejana cruza despacio (un satélite)
+    const sat = (this.time * 0.02) % 1.6;
+    if (sat < 1) {
+      ctx.fillStyle = `rgba(255,230,200,${0.5 + 0.5 * Math.sin(this.time * 6)})`;
+      ctx.fillRect(w.x + sat * w.w, w.y + w.h * 0.18 + sat * 40, 2, 2);
+    }
 
-    // Curvatura de un planeta en la parte inferior.
-    const cx = w.x + w.w * 0.65;
-    const cy = w.y + w.h + 520;
+    // Curvatura de un planeta en la parte inferior (capa cercana: se
+    // mueve un poco más con la vista y gira muy despacio).
+    const cx = w.x + w.w * 0.65 - this.pan.x * 0.6 + Math.sin(this.time * 0.01) * 12;
+    const cy = w.y + w.h + 520 - this.pan.y * 0.6;
     const pg = ctx.createRadialGradient(cx - 120, cy - 520, 40, cx, cy, 600);
     pg.addColorStop(0, '#3b6fb6');
     pg.addColorStop(0.6, '#163059');
@@ -350,6 +576,26 @@ export class OfficeView {
     ctx.strokeStyle = 'rgba(120,180,255,0.35)';
     ctx.lineWidth = 6;
     ctx.stroke();
+    // Bandas de nubes que se mueven despacio sobre el planeta
+    ctx.save();
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(200,225,255,0.08)';
+    ctx.lineWidth = 14;
+    for (let k = 0; k < 4; k++) {
+      ctx.beginPath();
+      ctx.arc(cx + Math.sin(this.time * 0.02 + k) * 30, cy, 560 - k * 34, Math.PI * 1.15, Math.PI * 1.85);
+      ctx.stroke();
+    }
+    ctx.restore();
+    // Reflejo de la sala en el cristal
+    const refl = ctx.createLinearGradient(w.x, w.y, w.x + w.w, w.y + w.h);
+    refl.addColorStop(0, 'rgba(255,255,255,0)');
+    refl.addColorStop(0.45, 'rgba(200,220,255,0.035)');
+    refl.addColorStop(0.5, 'rgba(200,220,255,0.07)');
+    refl.addColorStop(0.55, 'rgba(200,220,255,0.035)');
+    refl.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = refl;
+    ctx.fillRect(w.x, w.y, w.w, w.h);
     ctx.restore();
 
     // Marco del ventanal
@@ -521,6 +767,9 @@ export class OfficeView {
     ctx.lineWidth = 4;
     ctx.stroke();
 
+    // Luz del ventanal sobre la mesa
+    if (powered) lightPool(ctx, 800, 712, 520, '90,130,220', 0.07, 0.25);
+
     // Carcasa de la computadora pequeña
     const m = MONITOR;
     ctx.fillStyle = '#0e1116';
@@ -528,6 +777,9 @@ export class OfficeView {
     ctx.roundRect(m.x - 14, m.y - 14, m.w + 28, m.h + 28, 12);
     ctx.fill();
     this._drawMonitorScreen(ctx, state);
+    // La pantalla verde ilumina la carcasa y la mesa
+    lightPool(ctx, 800, 650, 260, '60,255,140', powered ? 0.06 : 0.1);
+    this._drawKeyboard(ctx, false);
 
     // Luces piloto de la consola
     const leds = [[520, 760], [560, 760], [1040, 760], [1080, 760]];

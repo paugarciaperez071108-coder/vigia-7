@@ -25,6 +25,7 @@ import { CONFIG } from '../config.js';
 import { ROOMS, neighbors } from '../world/StationMap.js';
 import { drawCreature } from './CreatureArt.js';
 import { N2END } from '../night/night2ending.js';
+import { heatRGB } from './CameraView.js';
 
 const W = CONFIG.WIDTH;
 const H = CONFIG.HEIGHT;
@@ -189,7 +190,7 @@ export class FirstPersonView {
   /** La sala que se ve al fondo de una salida (la oficina, con su dibujo). */
   _drawFar(ctx, room) {
     if (room === 'office' && this.officeDrawer) this.officeDrawer(ctx);
-    else this.cam.drawInterior(ctx, room);
+    else this.cam.drawInterior(ctx, room, true);
   }
 
   /** Salida en la pared del fondo: marco de compuerta, tramo de pasillo y la sala. */
@@ -230,6 +231,18 @@ export class FirstPersonView {
     quad([[r.x, r.y + r.h], [r.x + r.w, r.y + r.h], [ex + ew, ey + eh], [ex, ey + eh]], '#14181c');
     quad([[r.x, r.y], [ex, ey], [ex, ey + eh], [r.x, r.y + r.h]], '#1d2329');
     quad([[r.x + r.w, r.y], [ex + ew, ey], [ex + ew, ey + eh], [r.x + r.w, r.y + r.h]], '#171c21');
+    // Capas de profundidad: costillas del pasillo cada vez más oscuras y niebla
+    for (const f of [0.28, 0.52, 0.74]) {
+      const x0 = r.x + (ex - r.x) * f;
+      const y0 = r.y + (ey - r.y) * f;
+      const x1 = r.x + r.w + (ex + ew - r.x - r.w) * f;
+      const y1 = r.y + r.h + (ey + eh - r.y - r.h) * f;
+      ctx.strokeStyle = `rgba(70,80,90,${0.7 - f * 0.5})`;
+      ctx.lineWidth = 10 * (1 - f) + 2;
+      ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      ctx.fillStyle = 'rgba(20,24,28,0.12)';
+      ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    }
     ctx.strokeStyle = 'rgba(110,120,130,0.45)';
     ctx.lineWidth = 1.5;
     for (let i = 1; i < 6; i++) {
@@ -523,6 +536,131 @@ export class FirstPersonView {
   }
 
   /**
+   * Núcleo del reactor (emite luz: se dibuja ENCIMA de la oscuridad).
+   * heat 0..1: rojo y latiendo deprisa al límite, azul cuando se enfría.
+   * No muestra a los enemigos: esos solo se ven con la linterna.
+   */
+  drawCoreGlow(ctx, heat) {
+    const col = heatRGB(heat);
+    const pulse = 0.6 + 0.4 * Math.sin(this.time * (2.2 + 3 * heat));
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const g = ctx.createRadialGradient(800, 430, 20, 800, 430, 300);
+    g.addColorStop(0, `rgba(${col},${0.3 * pulse})`);
+    g.addColorStop(1, `rgba(${col},0)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(500, 130, 600, 600);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = `rgba(${col},${0.35 + 0.35 * pulse})`;
+    ctx.fillRect(740, 230, 120, 390);
+    ctx.fillStyle = `rgba(255,255,255,${0.1 + 0.12 * pulse})`;
+    ctx.fillRect(780, 240, 40, 370);
+    // Rejillas del núcleo (a contraluz)
+    ctx.fillStyle = 'rgba(10,14,18,0.85)';
+    for (let y = 236; y < 640; y += 60) ctx.fillRect(732, y, 136, 8);
+    ctx.restore();
+  }
+
+  /** Piloto rojo de la grabadora: todavía parpadea (se ve a oscuras). */
+  drawRecorderLed(ctx) {
+    const r = RECORDER;
+    if ((this.time % 1.3) > 0.18) return;
+    const a = -0.22;
+    const lx = r.x + r.w / 2 + Math.cos(a) * 40 - Math.sin(a) * -18;
+    const ly = r.y + r.h / 2 + Math.sin(a) * 40 + Math.cos(a) * -18;
+    ctx.save();
+    const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 22);
+    g.addColorStop(0, 'rgba(255,40,30,0.55)');
+    g.addColorStop(1, 'rgba(255,40,30,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(lx - 22, ly - 22, 44, 44);
+    ctx.fillStyle = '#ff5a48';
+    ctx.beginPath();
+    ctx.arc(lx, ly, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /**
+   * Huida (vapor): tuberías de las paredes que sueltan chorros de vapor.
+   * Se dibuja ANTES de la oscuridad (solo se ve con la linterna o la alarma).
+   */
+  drawEscapeSteam(ctx) {
+    ctx.save();
+    for (const [x, y, dir, ph] of [[150, 260, 1, 0], [1450, 330, -1, 1.7], [260, 620, 1, 3.1], [1350, 560, -1, 4.4]]) {
+      // Chorro intermitente
+      const on = Math.sin(this.time * 1.3 + ph) > 0.1;
+      if (!on) continue;
+      for (let i = 0; i < 5; i++) {
+        const p = (this.time * 1.8 + i / 5 + ph) % 1;
+        const px = x + dir * p * 260;
+        const py = y - p * 40 + Math.sin(p * 9 + ph) * 8;
+        const rr = 14 + p * 70;
+        const g = ctx.createRadialGradient(px, py, 2, px, py, rr);
+        g.addColorStop(0, `rgba(220,225,230,${0.32 * (1 - p)})`);
+        g.addColorStop(1, 'rgba(220,225,230,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(px - rr, py - rr, rr * 2, rr * 2);
+      }
+    }
+    ctx.restore();
+  }
+
+  /**
+   * Huida (luces): balizas rojas giratorias en el techo, chispas y luces
+   * de emergencia que parpadean. Emiten luz: se dibujan ENCIMA de la
+   * oscuridad, pero no muestran a los enemigos (esos solo con la linterna).
+   */
+  drawEscapeLights(ctx, red) {
+    ctx.save();
+    // Balizas: un haz que gira barriendo la sala
+    for (const [bx, ph] of [[300, 0], [1300, Math.PI]]) {
+      const a = this.time * 3.2 + ph;
+      const dir = Math.cos(a);
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      const len = 900;
+      const ex = bx + dir * len;
+      const g = ctx.createLinearGradient(bx, 60, ex, 600);
+      g.addColorStop(0, `rgba(255,40,25,${0.22 * (0.4 + 0.6 * Math.abs(Math.sin(a)))})`);
+      g.addColorStop(1, 'rgba(255,40,25,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.moveTo(bx, 60);
+      ctx.lineTo(ex - 120, 650);
+      ctx.lineTo(ex + 120, 650);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = `rgb(${150 + 105 * Math.abs(Math.sin(a))},30,25)`;
+      ctx.beginPath();
+      ctx.arc(bx, 60, 14, Math.PI, 0);
+      ctx.fill();
+      ctx.fillStyle = '#1b1f24';
+      ctx.fillRect(bx - 18, 60, 36, 8);
+    }
+    // Luces de emergencia del suelo, parpadeando a destiempo
+    for (let i = 0; i < 8; i++) {
+      const on = Math.sin(this.time * 7 + i * 1.9) > 0.2;
+      if (!on) continue;
+      const lx = 120 + i * 195;
+      ctx.fillStyle = `rgba(255,80,50,${0.5 + 0.3 * red})`;
+      ctx.fillRect(lx, 884, 24, 5);
+    }
+    // Chispas que caen de un cable roto del techo
+    const sx = 980;
+    for (let i = 0; i < 9; i++) {
+      const p = (this.time * 1.4 + i * 0.113) % 1;
+      if (Math.sin(this.time * 2.1) < 0.3 && p > 0.15) continue;
+      const px = sx + Math.sin(i * 7.1) * 50 * p;
+      const py = 40 + p * p * 520;
+      ctx.fillStyle = `rgba(255,${200 - 120 * p},80,${1 - p})`;
+      ctx.fillRect(px, py, 3, 3 + 6 * p);
+    }
+    ctx.restore();
+  }
+
+  /**
    * Comunicaciones (CAM 10): más detalle que el resto — paneles de radio,
    * pantallas rotas, auriculares tirados, papeles y una terminal apagada
    * (el PUNTO DE LORE, LORE_TERMINAL).
@@ -688,7 +826,8 @@ export class FirstPersonView {
   // ---------------------------------------------------------------
 
   /** camX: 0 = pasillo izquierdo, 1600 = central, 3200 = derecho. */
-  drawCorridors(ctx, camX) {
+  drawCorridors(ctx, camX, heat = 0.2) {
+    this.heat = heat;
     CORRIDORS.forEach((id, i) => {
       const ox = i * W - camX;
       if (ox <= -W || ox >= W) return;
@@ -710,10 +849,12 @@ export class FirstPersonView {
     g.addColorStop(1, '#0d141b');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
-    // Brillo azulado del núcleo (está detrás del jugador)
+    // Brillo del núcleo (está detrás del jugador): rojo mientras está al
+    // límite y azul a medida que se enfría; late más deprisa si está caliente
+    const col = heatRGB(this.heat ?? 0.2);
     const glow = ctx.createRadialGradient(W / 2, H + 200, 100, W / 2, H + 200, 1100);
-    glow.addColorStop(0, `rgba(90,190,255,${0.32 + 0.05 * Math.sin(this.time * 1.7 + i)})`);
-    glow.addColorStop(1, 'rgba(90,190,255,0)');
+    glow.addColorStop(0, `rgba(${col},${0.32 + 0.06 * Math.sin(this.time * (1.7 + 3 * (this.heat ?? 0)) + i)})`);
+    glow.addColorStop(1, `rgba(${col},0)`);
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
     // Tubos, paneles y franjas de peligro
@@ -748,7 +889,7 @@ export class FirstPersonView {
     ctx.save();
     ctx.translate(P2_ROOM.x, P2_ROOM.y);
     ctx.scale(P2_ROOM.s, P2_ROOM.s);
-    this.cam.drawInterior(ctx, P2_ROOMS[id]);
+    this.cam.drawInterior(ctx, P2_ROOMS[id], true);
     ctx.restore();
     // Paredes y suelo del pasillo hasta la sala
     const rx0 = P2_ROOM.x;
@@ -785,6 +926,18 @@ export class FirstPersonView {
       const y0 = o.y + (ry0 - o.y) * f;
       const y1 = o.y + o.h + (ry1 - o.y - o.h) * f;
       ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      // Capa de niebla: cuanto más al fondo, más tapada
+      ctx.fillStyle = 'rgba(14,18,22,0.14)';
+      ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    }
+    // Neblina que se mueve despacio por el suelo del pasillo
+    for (let k = 0; k < 3; k++) {
+      const fx = o.x + ((this.time * 20 + k * 330) % (o.w + 300)) - 150;
+      const fg = ctx.createRadialGradient(fx, o.y + o.h - 60, 10, fx, o.y + o.h - 60, 200);
+      fg.addColorStop(0, 'rgba(150,165,180,0.08)');
+      fg.addColorStop(1, 'rgba(150,165,180,0)');
+      ctx.fillStyle = fg;
+      ctx.fillRect(fx - 200, o.y + o.h - 260, 400, 400);
     }
     ctx.restore();
     // Marco del hueco y el cartel

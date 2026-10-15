@@ -32,11 +32,33 @@ function limb(ctx, pts, width, color) {
   ctx.stroke();
 }
 
+// Ojos que brillan con la linterna, como los de un gato (final de la
+// noche 2). Se activa solo mientras se dibuja un enemigo bajo el haz.
+let eyeShine = false;
+export function setEyeShine(on) {
+  eyeShine = on;
+}
+
 function eye(ctx, x, y, r, glow = false) {
   ctx.fillStyle = '#050505';
   ctx.beginPath();
   ctx.ellipse(x, y, r, r * 1.25, 0, 0, Math.PI * 2);
   ctx.fill();
+  if (eyeShine) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(220,255,150,1)';
+    ctx.shadowBlur = r * 4;
+    ctx.fillStyle = 'rgba(225,255,170,0.95)';
+    ctx.beginPath();
+    ctx.ellipse(x, y, r * 0.75, r * 0.95, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(x - r * 0.2, y - r * 0.3, r * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+    return;
+  }
   if (glow) {
     ctx.fillStyle = '#e8f6ff';
     ctx.beginPath();

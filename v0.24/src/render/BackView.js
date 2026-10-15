@@ -61,11 +61,29 @@ export class BackView {
     this._corridor(ctx, open, red, glimpse, inCorridor);
     this._hatch(ctx, open, sealed);
     this._frame(ctx, sealed, red);
+    if (open > 0) this._spill(ctx, open, red);
     this._drawDust(ctx);
     if (red > 0) {
       ctx.fillStyle = `rgba(255,30,20,${0.1 * red})`;
       ctx.fillRect(0, 0, W, H);
     }
+  }
+
+  /** Luz roja del pasillo que se derrama por el suelo al subir la compuerta. */
+  _spill(ctx, open, red) {
+    const r = BACK_HATCH;
+    const a = Math.min(1, open) * (0.18 + 0.12 * red);
+    const g = ctx.createLinearGradient(0, r.y + r.h, 0, H);
+    g.addColorStop(0, `rgba(255,45,30,${a})`);
+    g.addColorStop(1, 'rgba(255,45,30,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(r.x, r.y + r.h);
+    ctx.lineTo(r.x + r.w, r.y + r.h);
+    ctx.lineTo(r.x + r.w + 260, H);
+    ctx.lineTo(r.x - 260, H);
+    ctx.closePath();
+    ctx.fill();
   }
 
   // --- Pared trasera de la oficina ---

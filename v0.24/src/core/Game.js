@@ -914,6 +914,8 @@ export class Game {
       cameras: this.cameras,
       gasLeak: this.gas.active,
       easterEgg: this.easterEgg,
+      mouse: this.mouse,
+      introProgress: this.intro ? Math.min(1, this.intro.time / NIGHT2.INTRO.TIME_LIMIT) : 0,
     });
   }
 
@@ -934,6 +936,8 @@ export class Game {
       largo: this.ai.largo,
       gas: this.gas,
       lureCooldown: this.lureCooldown,
+      night: this.nightNumber,
+      clockElapsed: this.clock.elapsed,
     });
   }
 

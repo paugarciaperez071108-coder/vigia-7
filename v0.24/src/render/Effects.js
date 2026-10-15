@@ -44,6 +44,15 @@ export class Effects {
     ctx.restore();
   }
 
+  /** Grano fino de película (se mezcla con la imagen, no la tapa). */
+  grain(ctx, alpha) {
+    if (alpha <= 0) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'overlay';
+    this.static(ctx, alpha);
+    ctx.restore();
+  }
+
   /** Oscurece los bordes de la pantalla. */
   vignette(ctx, strength = 0.75) {
     const g = ctx.createRadialGradient(

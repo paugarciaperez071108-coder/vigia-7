@@ -9,6 +9,7 @@
 
 import { CONFIG } from '../config.js';
 import { drawFace } from '../render/CreatureArt.js';
+import { glitchSlices } from '../render/Atmosphere.js';
 
 export function drawJumpscare(ctx, kind, time, effects) {
   const W = CONFIG.WIDTH;
@@ -23,13 +24,31 @@ export function drawJumpscare(ctx, kind, time, effects) {
   const sx = (Math.random() - 0.5) * shake;
   const sy = (Math.random() - 0.5) * shake;
 
-  drawFace(ctx, kind, W / 2 + sx, H / 2 + 60 + sy, size, time);
+  // Varios "fotogramas": cada 0,07 s cambia un poco la inclinación y el
+  // tamaño, como una animación entrecortada
+  const frame = Math.floor(time / 0.07);
+  const tilt = ((frame * 37) % 9 - 4) * 0.012;
+  const bump = 1 + ((frame * 53) % 7) * 0.012;
+  ctx.save();
+  ctx.translate(W / 2 + sx, H / 2 + 60 + sy);
+  ctx.rotate(tilt);
+  // Imagen fantasma desplazada detrás (efecto de vibración)
+  ctx.globalAlpha = 0.25;
+  drawFace(ctx, kind, -sx * 0.6, sy * 0.4, size * bump * 1.04, time);
+  ctx.globalAlpha = 1;
+  drawFace(ctx, kind, 0, 0, size * bump, time);
+  ctx.restore();
 
-  // Destellos rojos intermitentes
+  // Destello rojo al principio y destellos intermitentes después
+  if (time < 0.12) {
+    ctx.fillStyle = `rgba(220,0,0,${0.6 * (1 - time / 0.12)})`;
+    ctx.fillRect(0, 0, W, H);
+  }
   if (Math.floor(time * 14) % 2 === 0) {
     ctx.fillStyle = 'rgba(160,0,0,0.25)';
     ctx.fillRect(0, 0, W, H);
   }
+  glitchSlices(ctx, 0.5 + 0.5 * Math.random());
   effects.static(ctx, 0.25);
   effects.vignette(ctx, 0.9);
 }

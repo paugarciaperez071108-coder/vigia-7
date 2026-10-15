@@ -14,6 +14,10 @@
 
 import { CONFIG } from '../config.js';
 import { N2END } from '../night/night2ending.js';
+import { Dust } from './Atmosphere.js';
+
+// Desde dónde sale el haz (la mano, abajo en el centro)
+const HAND = { x: CONFIG.WIDTH / 2 + 120, y: CONFIG.HEIGHT + 40 };
 
 const rand = ([a, b]) => a + Math.random() * (b - a);
 
@@ -27,6 +31,7 @@ export class Flashlight {
     this.revealCanvas.width = CONFIG.WIDTH;
     this.revealCanvas.height = CONFIG.HEIGHT;
     this.rev = this.revealCanvas.getContext('2d');
+    this.dust = new Dust(77, 160);
     this.reset();
   }
 
@@ -67,6 +72,7 @@ export class Flashlight {
   }
 
   update(dt) {
+    this.dust.update(dt);
     this.burst = Math.max(0, this.burst - dt);
     this.flicker = Math.max(0, this.flicker - dt);
     if (!this.on) return;
@@ -113,17 +119,52 @@ export class Flashlight {
     }
     ctx.drawImage(this.canvas, 0, 0);
     if (this.on && this.flicker <= 0 && !this.blinkOff) {
+      // Cuanto más arriba (más lejos) apuntas, más débil llega la luz
+      const far = 1 - 0.4 * (1 - Math.min(1, Math.max(0, my / CONFIG.HEIGHT)));
       // Tono cálido de la bombilla dentro del haz
       const R = this.radius;
       ctx.save();
       ctx.globalCompositeOperation = 'soft-light';
       const g = ctx.createRadialGradient(mx, my, 0, mx, my, R);
-      g.addColorStop(0, `rgba(255,235,190,${0.55 * this.intensity})`);
+      g.addColorStop(0, `rgba(255,235,190,${0.55 * this.intensity * far})`);
       g.addColorStop(1, 'rgba(255,235,190,0)');
       ctx.fillStyle = g;
       ctx.fillRect(mx - R, my - R, R * 2, R * 2);
       ctx.restore();
+      this._drawBeam(ctx, mx, my, R, far);
     }
+    ctx.restore();
+  }
+
+  /**
+   * Cono de luz en el aire, desde la mano hasta el círculo, con polvo
+   * flotando dentro (solo visual).
+   */
+  _drawBeam(ctx, mx, my, R, far) {
+    const dx = mx - HAND.x;
+    const dy = my - HAND.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len;
+    const ny = dx / len;
+    const w0 = 26;
+    const w1 = R * 0.85;
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    const g = ctx.createLinearGradient(HAND.x, HAND.y, mx, my);
+    g.addColorStop(0, `rgba(255,236,200,${0.16 * this.intensity})`);
+    g.addColorStop(1, `rgba(255,236,200,${0.035 * this.intensity * far})`);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(HAND.x + nx * w0, HAND.y + ny * w0);
+    ctx.lineTo(mx + nx * w1, my + ny * w1);
+    ctx.lineTo(mx - nx * w1, my - ny * w1);
+    ctx.lineTo(HAND.x - nx * w0, HAND.y - ny * w0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.clip();
+    // Polvo dentro del cono (más visible cerca del círculo)
+    const lights = [0.35, 0.6, 0.85, 1].map((f) => ({ x: HAND.x + dx * f, y: HAND.y + dy * f, r: 40 + R * 0.8 * f }));
+    this.dust.draw(ctx, { alpha: 0.75 * this.intensity, color: '255,240,215', lights });
     ctx.restore();
   }
 
