@@ -30,6 +30,16 @@
 // finalSequence: true = a las 6 AM no se gana: empieza el final de la
 //               noche 2 (linterna, ruta al reactor y enfriamiento; ver
 //               night2ending.js). Solo la noche 2.
+// largoMode:    'oido' = El Largo se guía por el sonido y llega por las
+//               compuertas y el pasillo central (noche 3+, LargoOido.js;
+//               valores en night3.js). Sin él, el de la noche 2.
+// corridorStart: true = la noche empieza con El Largo al fondo del pasillo
+//               central (inicio de la noche 3, NIGHT3.INTRO).
+// event3am:     true = a las 3 AM El Largo rompe las cámaras de los
+//               corredores, salen los triángulos ⚠ en el minimapa, todos
+//               son más agresivos y suena la cinta 3.5 (NIGHT3.EVENT_3AM).
+// lockersEnding: true = a las 6 AM las cámaras siguen rotas y hay que
+//               esconderse en una taquilla (final de la noche 3, NIGHT3.ENDING).
 // endingDuct:   true = al llegar a las 6 AM se oye algo metálico que se
 //               acerca por el conducto y se va la luz antes de acabar
 //               (anticipa la mecánica del ducto de la noche 2).
@@ -70,12 +80,18 @@ export const NIGHTS = [
   {
     night: 3,
     ambient: [12, 26],
-    ai: { specimen: 7, insecto: 8, largo: 8 },
-    hourly: { 3: { insecto: 1 }, 4: { specimen: 1, largo: 1 } },
+    // El Largo «por el oído» (su nivel de IA marca lo rápido que deambula
+    // lejos de la oficina; sus tiempos de reacción, en night3.js).
+    ai: { specimen: 6, insecto: 6, largo: 8 },
+    hourly: { 4: { specimen: 1, largo: 1 } },
     coolCharges: 3,
-    cryo: { changeEveryHours: 1, driftInterval: 5.5, marginMin: 3, marginMax: 5, grace: 14 },
-    blackouts: 3,
+    cryo: { changeEveryHours: 1.5, driftInterval: 6, marginMin: 3, marginMax: 5, grace: 16 },
+    blackouts: 2,
     vents: true,
+    largoMode: 'oido',
+    corridorStart: true,
+    event3am: true,
+    lockersEnding: true,
   },
   {
     night: 4,
@@ -86,6 +102,7 @@ export const NIGHTS = [
     cryo: { changeEveryHours: 1, driftInterval: 5, marginMin: 3, marginMax: 4, grace: 12 },
     blackouts: 3,
     vents: true,
+    largoMode: 'oido',
   },
   {
     night: 5,
@@ -96,6 +113,7 @@ export const NIGHTS = [
     cryo: { changeEveryHours: 0.75, driftInterval: 4.5, marginMin: 3, marginMax: 4, grace: 10 },
     blackouts: 4,
     vents: true,
+    largoMode: 'oido',
   },
 ];
 

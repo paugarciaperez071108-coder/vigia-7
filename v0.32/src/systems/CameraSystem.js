@@ -42,6 +42,12 @@ export class CameraSystem {
     this.mapMode = 'main';
     this.lastMain = 'hangar';
     this.lastVent = 'v1';
+    // Noche 3, evento de las 3 AM (Night3Events.js): cámaras rotas (sin
+    // imagen ni audio hasta el final de la noche), las que se están
+    // rompiendo ahora mismo y los triángulos ⚠ del minimapa
+    this.broken = new Set();
+    this.breaking = {};
+    this.warnings = false;
   }
 
   /** Cambia entre el mapa de salas y el de ventilación. */

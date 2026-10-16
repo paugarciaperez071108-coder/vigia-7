@@ -66,7 +66,7 @@ export class Insect extends Enemy {
     const from = this.room;
     this.room = to;
     if (VENTS[to]?.officeAccess) {
-      this.enterIn = CFG.ENTER_TIME;
+      this.enterIn = CFG.ENTER_TIME * (this.enterMult ?? 1);
       world.events.emit('insectAtOffice', { room: to });
     }
     world.events.emit('insectMove', { from, to, dist: VENT_DIST[to] });

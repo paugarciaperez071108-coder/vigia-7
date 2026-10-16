@@ -216,3 +216,74 @@ export const ROOM_VENT = {
   greenhouse: 'v3',
   lab: 'v5', cryo: 'v5',
 };
+
+// =============================================================
+// Pasillo central (noche 3 en adelante): sale del Comedor y llega a la
+// compuerta de la pared de ATRÁS de la oficina, en tres tramos
+// (central1 = lejos, junto al Comedor; central3 = pegado a la oficina).
+// No tiene cámara: solo se ve desde la oficina, girándose y con la
+// linterna. Lo recorre El Largo «por el oído» (LargoOido.js).
+// =============================================================
+
+export const CENTRAL = ['central1', 'central2', 'central3'];
+export const isCentral = (id) => CENTRAL.includes(id);
+
+/** Grafo de El Largo «por el oído»: el plano + el pasillo central + la oficina. */
+export const LARGO_LINKS = [
+  ...LINKS,
+  ['mess', 'central1'],
+  ['central1', 'central2'],
+  ['central2', 'central3'],
+  ['central3', 'office'],
+  ['left_door', 'office'],
+  ['right_door', 'office'],
+];
+
+export function largoNeighbors(id) {
+  const out = [];
+  for (const [a, b] of LARGO_LINKS) {
+    if (a === id) out.push(b);
+    else if (b === id) out.push(a);
+  }
+  return out;
+}
+
+/**
+ * Salas que le faltan a El Largo para llegar a la oficina. Las compuertas
+ * cuentan como la oficina (0): un corredor está a 1, igual que el último
+ * tramo del pasillo central.
+ */
+export const LARGO_DIST = (() => {
+  const dist = { office: 0, left_door: 0, right_door: 0 };
+  const queue = ['left_door', 'right_door', 'office'];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const n of largoNeighbors(cur)) {
+      if (!(n in dist)) {
+        dist[n] = dist[cur] + 1;
+        queue.push(n);
+      }
+    }
+  }
+  return dist;
+})();
+
+/** Camino más corto de `from` a `to` para El Largo (sin pasar por la oficina ni las compuertas). */
+export function largoPath(from, to) {
+  const blocked = new Set(['office', 'left_door', 'right_door']);
+  const prev = { [from]: null };
+  const queue = [from];
+  while (queue.length) {
+    const cur = queue.shift();
+    if (cur === to) break;
+    for (const n of largoNeighbors(cur)) {
+      if (n in prev || (blocked.has(n) && n !== to)) continue;
+      prev[n] = cur;
+      queue.push(n);
+    }
+  }
+  if (!(to in prev)) return null;
+  const path = [];
+  for (let c = to; c !== from; c = prev[c]) path.unshift(c);
+  return path;   // sin la sala de salida; [] si ya está allí
+}
