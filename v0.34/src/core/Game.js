@@ -59,7 +59,7 @@ import { OfficeView } from '../render/OfficeView.js';
 import { CameraView, MONITOR_TAB } from '../render/CameraView.js';
 import { Sprites } from '../render/Sprites.js';
 import { ROOMS, VENTS } from '../world/StationMap.js';
-import { drawHUD, drawTapeOverlay, TAPE_SKIP, TAPE_SUBS, TAPE_PLAY } from '../ui/HUD.js';
+import { drawHUD, drawTapeOverlay, drawSkipButton, TAPE_SKIP, TAPE_SUBS, TAPE_PLAY, SKIP_BUTTON } from '../ui/HUD.js';
 import { drawJumpscare } from '../ui/Jumpscare.js';
 import { Terminal } from '../ui/Terminal.js';
 import { EasterEgg } from '../ui/EasterEgg.js';
@@ -353,7 +353,11 @@ export class Game {
         this._menuAction(this.menu.hitTest(x, y, this.save));
         break;
       case 'night':
-        if (this.n3.cineRunning) break;   // cinemática de las 3 AM
+        if (this.n3.cineRunning) {
+          // Cinemática de las 3 AM: solo el botón SALTAR
+          if (inside(SKIP_BUTTON, x, y)) this.n3.skipCine();
+          break;
+        }
         if (this._tapeAvailable() && inside(TAPE_PLAY, x, y)) {
           this.tape.playNow();
           break;
@@ -513,7 +517,7 @@ export class Game {
    * FINAL DE LA NOCHE 3 (6 AM): las cámaras siguen rotas y hay que
    * esconderse en una taquilla. Se guarda el punto de control 'n3final'.
    */
-  _startLockers({ save = this.saveEnabled !== false } = {}) {
+  _startLockers({ save = this.saveEnabled !== false, arrival = false } = {}) {
     this.nightNumber = 3;
     this.saveEnabled = save;
     this.save = { ...(this.save ?? SaveData.fresh()), night: 3, checkpoint: 'n3final' };
@@ -527,8 +531,10 @@ export class Game {
     this.office.reset();
     this.terminal.reset();
     this.audio.stopAll();
-    if (!this.lockers) this.lockers = new Night3Ending(this);
-    else this.lockers.start();
+    // La cinemática de llegada solo se ve viniendo de la noche: el punto de
+    // control se guarda antes, así que Continuar va directo a esconderse
+    if (!this.lockers) this.lockers = new Night3Ending(this, { arrival });
+    else this.lockers.start({ arrival });
     this.attacker = null;
     this.deathCause = null;
     this._setState('lockers');
@@ -634,7 +640,11 @@ export class Game {
       this._toMenu();
       return;
     }
-    if (this.state === 'night' && this.n3.cineRunning) return;   // cinemática de las 3 AM
+    if (this.state === 'night' && this.n3.cineRunning) {
+      // Cinemática de las 3 AM: Enter la salta
+      if (code === 'Enter' || code === 'NumpadEnter') this.n3.skipCine();
+      return;
+    }
     if (this.state === 'night') {
       // Mientras se escribe en la consola, el teclado es solo para ella.
       if (this.terminal.focused) {
@@ -881,7 +891,8 @@ export class Game {
         if (this.state !== 'night') return; // el reactor ha explotado
         if (this.clock.finished && getNight(this.nightNumber).lockersEnding) {
           // Noche 3: a las 6 AM hay que esconderse en una taquilla
-          this._startLockers({ save: this.saveEnabled !== false && !this.debugNight });
+          // (antes, la cinemática de llegada de los enemigos en el plano)
+          this._startLockers({ save: this.saveEnabled !== false && !this.debugNight, arrival: true });
           break;
         }
         if (this.clock.finished && getNight(this.nightNumber).finalSequence) {
@@ -1014,6 +1025,7 @@ export class Game {
     }
     this._drawNightOverlay(ctx);
     this.note.draw(ctx);
+    if (this.n3.cineRunning) drawSkipButton(ctx);
   }
 
   /** Una pared de la oficina ('front', 'left' o 'right'). */

@@ -22,6 +22,7 @@ import { Random } from '../core/Random.js';
 import { drawCreature, drawFace } from './CreatureArt.js';
 import { drawDuct, makeVentDecor, ductPoint, drawVentMap, drawDuctEntrance } from './VentView.js';
 import { NIGHT2 } from '../night/night2.js';
+import { NIGHT3 } from '../night/night3.js';
 import { Dust, glitchSlices } from './Atmosphere.js';
 import { CamPoses, progressOf, NEARNESS } from './CamPoses.js';
 
@@ -310,6 +311,10 @@ export class CameraView {
     if (cameras.broken?.has(room)) {
       // Rota por El Largo (evento de las 3 AM): sin imagen hasta el final de la noche
       this._drawBroken(ctx, room, effects);
+      // Los controles de la CAM 04 (enfriar) y la CAM 05 (temperatura) no
+      // dependen de la imagen: siguen visibles y usables encima de la estática
+      if (room === 'cryo') this._drawCryoPanel(ctx, scene.cryo, scene.frozen);
+      if (room === 'reactor') this._drawCoolPanel(ctx, scene.reactor);
       if (cameras.hasLure) this._drawLurePanel(ctx, room, scene.lureCooldown, scene, true);
       this._drawMinimap(ctx, cameras.active, cameras, scene);
       if (cameras.hasVents) this._drawToggle(ctx, 'main');
@@ -436,7 +441,7 @@ export class CameraView {
       if (NIGHT2.GAS.VENTS.includes(id)) this._drawGasPanel(ctx, scene.gas);
     }
     drawVentMap(ctx, id, cameras.ventsUnlocked);
-    if (cameras.warnings && scene.insect?.state === 'vent') {
+    if (cameras.warnings && warningsVisible(cameras) && scene.insect?.state === 'vent') {
       // El Insecto en el plano de los conductos (triángulo ⚠)
       this._drawWarnings(ctx, [scene.insect], (v) => VENTS[v] && { x: VENTS[v].mapRect.x + VENTS[v].mapRect.w - 13, y: VENTS[v].mapRect.y + 13 });
     }
@@ -1299,7 +1304,10 @@ export class CameraView {
         ctx.stroke();
       }
     }
-    if (cameras?.warnings && scene?.roamers) this._drawWarnings(ctx, scene.roamers);
+    if (cameras?.warnings) {
+      if (scene?.roamers && warningsVisible(cameras)) this._drawWarnings(ctx, scene.roamers);
+      drawWarningLegend(ctx);
+    }
     ctx.restore();
   }
 
@@ -1317,30 +1325,55 @@ export class CameraView {
       if (id?.startsWith('central')) return this.corridorPoint ?? { x: o.x - 10, y: o.y + o.h / 2 };
       return null;
     });
-    const blink = 0.65 + 0.35 * Math.sin(this.time * 6);
+    const alpha = 0.8 + 0.2 * Math.sin(this.time * 6);
     const count = {};
     for (const e of roamers) {
       if (isVent(e.room) && !whereFn) continue;    // El Insecto tiene su propio plano
       const p = where(e.room);
       if (!p) continue;
       const k = (count[e.room] = (count[e.room] ?? 0) + 1) - 1;
-      const x = p.x - k * 22;
-      ctx.fillStyle = `rgba(255,190,40,${blink})`;
-      ctx.strokeStyle = '#1a0d00';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, p.y - 11);
-      ctx.lineTo(x + 11, p.y + 9);
-      ctx.lineTo(x - 11, p.y + 9);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      ctx.fillStyle = '#1a0d00';
-      ctx.font = 'bold 14px "Courier New", monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('!', x, p.y + 1);
+      drawWarnTriangle(ctx, p.x - k * 22, p.y, warnColor(e.id), alpha);
     }
+  }
+
+  /**
+   * Cinemática de llegada (6 AM de la noche 3): el plano en grande, todas
+   * las cámaras tachadas y los triángulos de los enemigos (markers:
+   * [{ id, at, pulse }]) donde estén ahora. Ver Night3Ending.js.
+   */
+  drawArrivalMap(ctx, markers, effects, time) {
+    const W = CONFIG.WIDTH;
+    const H = CONFIG.HEIGHT;
+    ctx.fillStyle = '#030404';
+    ctx.fillRect(0, 0, W, H);
+    effects.static(ctx, 0.18);
+    const S = 1.55;
+    const broken = { broken: new Set(ROOM_IDS), warnings: true };
+    ctx.save();
+    ctx.translate(W / 2 - 1307 * S, H / 2 + 20 - 662 * S);
+    ctx.scale(S, S);
+    this._drawMinimap(ctx, null, broken, { night: 3 });
+    for (const m of markers) {
+      const p = this._arrivalPoint(m.at);
+      if (!p) continue;
+      const size = 1 + 0.6 * (m.pulse ?? 0);
+      drawWarnTriangle(ctx, p.x + (m.dx ?? 0), p.y, warnColor(m.id), 1, size);
+    }
+    ctx.restore();
+    if (Math.random() < 0.05) glitchSlices(ctx, 0.4);
+  }
+
+  /** Punto del plano para la cinemática de llegada (salas, pasillo central, conducto, oficina). */
+  _arrivalPoint(at) {
+    const o = OFFICE_RECT;
+    if (ROOMS[at]) return center(ROOMS[at].mapRect);
+    if (at === 'central') return this.corridorPoint ?? { x: o.x - 30, y: o.y + o.h + 20 };
+    // El conducto que rodea la oficina (El Insecto), por el borde derecho del plano
+    if (at === 'duct1') return { x: 1556, y: 478 };
+    if (at === 'duct2') return { x: 1556, y: 540 };
+    if (at === 'duct3') return { x: 1556, y: 592 };
+    if (at === 'office') return { x: o.x + o.w / 2, y: o.y + o.h / 2 + 22 };
+    return null;
   }
 
   _drawTab(ctx, label) {
@@ -2213,4 +2246,72 @@ export function drawCorridor(ctx, t, label, phase) {
   ctx.fillStyle = '#c9a21f';
   ctx.fillRect(vx - 55, vy + 64, 110, 16);
   sign(ctx, label, vx, 150, '#bfd2e0');
+}
+
+// -------------------------------------------------------------
+// Triángulos de aviso (desde las 3 AM de la noche 3): color por enemigo,
+// visibles NIGHT3.WARNINGS.SHOW s y ocultos HIDE s, todos a la vez.
+// -------------------------------------------------------------
+
+/** Color del triángulo de un enemigo ('largo', 'specimen', 'frozen', 'insecto'). */
+export function warnColor(id) {
+  return NIGHT3.WARNINGS.COLORS[id] ?? '#ffffff';
+}
+
+/** ¿Están en su fase visible los triángulos del plano? (cameras.warnT cuenta desde que se activaron) */
+export function warningsVisible(cameras) {
+  const { SHOW, HIDE } = NIGHT3.WARNINGS;
+  return ((cameras.warnT ?? 0) % (SHOW + HIDE)) < SHOW;
+}
+
+/** Un triángulo de aviso ⚠ centrado en (x, y). */
+export function drawWarnTriangle(ctx, x, y, color, alpha = 1, size = 1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(size, size);
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.strokeStyle = '#120a10';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, -11);
+  ctx.lineTo(11, 9);
+  ctx.lineTo(-11, 9);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#120a10';
+  ctx.font = 'bold 14px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('!', 0, 1);
+  ctx.restore();
+}
+
+/** Leyenda pequeña abajo del plano: color = enemigo. */
+function drawWarningLegend(ctx) {
+  const { COLORS, LEGEND } = NIGHT3.WARNINGS;
+  ctx.save();
+  ctx.font = '11px "Courier New", monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  let x = 1060;
+  const y = 864;
+  for (const [id, name] of Object.entries(LEGEND)) {
+    ctx.save();
+    ctx.translate(x + 6, y);
+    ctx.scale(0.5, 0.5);
+    ctx.fillStyle = COLORS[id];
+    ctx.beginPath();
+    ctx.moveTo(0, -11);
+    ctx.lineTo(11, 9);
+    ctx.lineTo(-11, 9);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = 'rgba(200,215,205,0.75)';
+    ctx.fillText(name, x + 15, y + 1);
+    x += 18 + ctx.measureText(name).width + 14;
+  }
+  ctx.restore();
 }

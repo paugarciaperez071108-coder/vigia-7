@@ -752,6 +752,26 @@ export class AudioEngine {
     osc.stop(t + 2.5);
   }
 
+  /** Pitido corto de aviso (cinemática de llegada de la noche 3). */
+  beep(freq = 880, volume = 0.12, dur = 0.12) {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    const lp = this.ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 2600;
+    const g = this._out(0);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(volume, t + 0.008);
+    g.gain.setValueAtTime(volume, t + dur * 0.7);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    osc.connect(lp).connect(g);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  }
+
   /** Fin de turno a las 6 AM: pequeño arpegio de campanas. */
   chime() {
     if (!this.ctx) return;

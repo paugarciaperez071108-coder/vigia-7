@@ -205,3 +205,24 @@ function drawSubtitle(ctx, text) {
   lines.forEach((l, i) => ctx.fillText(l, b.cx, b.bottom - h + 8 + i * lh));
   ctx.restore();
 }
+
+// Botón SALTAR de las cinemáticas de la noche 3 (cámaras rotas y llegada)
+export const SKIP_BUTTON = { x: 700, y: 18, w: 200, h: 40 };
+
+export function drawSkipButton(ctx) {
+  const r = SKIP_BUTTON;
+  ctx.save();
+  ctx.fillStyle = 'rgba(10,12,14,0.8)';
+  ctx.strokeStyle = 'rgba(232,238,245,0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(r.x, r.y, r.w, r.h, 8);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#e8eef5';
+  ctx.font = 'bold 18px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SALTAR (Enter) ▶▶', r.x + r.w / 2, r.y + r.h / 2 + 1);
+  ctx.restore();
+}

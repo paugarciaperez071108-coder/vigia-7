@@ -67,6 +67,7 @@ export class Night3Events {
     this.cameras.broken = new Set();
     this.cameras.breaking = {};
     this.cameras.warnings = false;
+    this.cameras.warnT = 0;    // reloj del parpadeo de los triángulos (NIGHT3.WARNINGS)
   }
 
   get largo() {
@@ -86,6 +87,7 @@ export class Night3Events {
   /** Cada fotograma (también durante la cinemática). lit: ¿alumbra la linterna el pasillo? */
   update(dt, lit = false) {
     if (!this.active) return;
+    if (this.cameras.warnings) this.cameras.warnT += dt;
     const largo = this.largo;
     if (largo?.mode === 'oido') largo.lit = lit && largo.inCorridor;
     // Se le oye en el pasillo central, detrás de la oficina
@@ -171,8 +173,18 @@ export class Night3Events {
     if (k >= 1) this._nextCam();
   }
 
+  /** Botón SALTAR: las cámaras quedan rotas igual y suena la cinta 3.5. */
+  skipCine() {
+    if (!this.cine) return;
+    this.cameras.breaking = {};
+    for (const room of E.BREAK) this.cameras.broken.add(room);
+    this.events.emit('camBroken', { room: E.BREAK[E.BREAK.length - 1], quiet: true });
+    this._endCine();
+  }
+
   _endCine() {
     this.cine = null;
+    this.cameras.warnT = 0;   // los triángulos empiezan en su fase visible
     // Los conductos también se quedan sin señal (no se ven romperse)
     for (const v of VENT_IDS) this.cameras.broken.add(v);
     this.cameras.warnings = true;

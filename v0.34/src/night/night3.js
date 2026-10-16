@@ -93,6 +93,45 @@ export const NIGHT3 = {
     REACTION_MULT: 0.8,      // menos tiempo de reacción (fases de El Largo, compuertas, conductos) (×)
   },
 
+  // --- Triángulos de aviso del plano (desde las 3 AM) ---
+  // No se ven siempre: aparecen SHOW s y se ocultan HIDE s, en bucle, todos
+  // a la vez. Mientras están ocultos los enemigos siguen moviéndose; al
+  // volver a aparecer marcan dónde están en ese momento. Cada enemigo
+  // tiene su color (leyenda pequeña abajo del plano).
+  WARNINGS: {
+    SHOW: 2,                 // s visibles
+    HIDE: 2.5,               // s ocultos
+    COLORS: {
+      largo: '#ff4fd8',      // El Largo: magenta
+      specimen: '#ff9a2e',   // El Espécimen: naranja
+      frozen: '#5fd4ff',     // El Congelado: azul hielo
+      insecto: '#ffe23d',    // El Insecto («el rastrero»): amarillo
+    },
+    LEGEND: { largo: 'Largo', specimen: 'Especimen', frozen: 'Congelado', insecto: 'Insecto' },
+  },
+
+  // --- Cinemática de llegada (6 AM, justo antes de esconderse) ---
+  // En el plano de las cámaras, en grande: los triángulos de cada enemigo
+  // aparecen en salas lejanas y avanzan sala a sala hasta la oficina, con un
+  // pitido en cada paso, cada vez más rápido. Al acabar empieza la fase de
+  // esconderse sin pausa. Rutas: salas del plano; 'central' = pasillo
+  // central, 'duct' = el conducto que rodea la oficina (El Insecto),
+  // 'office' = llega a la oficina.
+  ARRIVAL: {
+    ROUTES: {
+      largo: ['reactor', 'mess', 'central', 'office'],
+      specimen: ['hangar', 'comms', 'eastHall', 'office'],
+      frozen: ['cryo', 'lab', 'reactor', 'mess', 'greenhouse', 'westHall', 'office'],
+      insecto: ['duct1', 'duct2', 'duct3', 'office'],
+    },
+    ORDER: ['largo', 'specimen', 'frozen', 'insecto'],   // en qué orden aparecen
+    STEP_FIRST: 0.85,        // s entre los primeros pitidos
+    STEP_LAST: 0.22,         // s entre los últimos (cada vez más rápido)
+    END_HOLD: 0.7,           // s con todos en la oficina antes de esconderse
+    BEEP_FROM: 620,          // Hz del primer pitido (sube hasta BEEP_TO)
+    BEEP_TO: 1250,
+  },
+
   // --- Final de la noche 3: esconderse en las taquillas ---
   // A las 6 AM las cámaras siguen rotas y se va la luz. El Largo entra en
   // la oficina por el pasillo central: hay que girarse a la pared de
@@ -105,7 +144,11 @@ export const NIGHT3 = {
     // Momentos (s desde que entras) en los que pasa por delante de la
     // taquilla: [empieza, acaba]. Hay que aguantar la respiración en ellos.
     PASSES: [[7, 11.5], [17, 22]],
-    WARN_BEFORE: 1.6,        // s antes de cada pasada en que se oye que se acerca
+    // Antes de cada pasada aparece un triángulo de aviso (color de El Largo)
+    // en el lado por el que va a entrar, aunque los triángulos del plano
+    // estén ocultos; WARN_TRIANGLE s después aparece El Largo. Las pasadas
+    // alternan el lado: izquierda, derecha, izquierda...
+    WARN_TRIANGLE: 1.5,
     BREATH_MAX: 8,           // s que se puede aguantar la respiración
     BREATH_RECOVER: 1.5,     // s de aire recuperados por cada s respirando
   },
