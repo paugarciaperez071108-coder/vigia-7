@@ -1,0 +1,1698 @@
+{
+ "specimen": {
+  "lab": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     905,
+     650,
+     29
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1072,
+     754,
+     44
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     736,
+     693,
+     35
+    ]
+   }
+  },
+  "reactor": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     902,
+     737,
+     42
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     286,
+     884,
+     63
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "mess": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     642,
+     680,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1009,
+     795,
+     50
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     726,
+     40
+    ]
+   }
+  },
+  "greenhouse": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     963,
+     675,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     541,
+     808,
+     52
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "westHall": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     458,
+     650,
+     29
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1156,
+     788,
+     49
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     703,
+     37
+    ]
+   }
+  },
+  "medbay": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     893,
+     670,
+     32
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     500,
+     830,
+     55
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "hangar": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     306,
+     748,
+     43
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1011,
+     770,
+     46
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     684,
+     34
+    ]
+   }
+  },
+  "comms": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     800,
+     667,
+     31
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1156,
+     788,
+     49
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "eastHall": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1142,
+     650,
+     29
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     489,
+     788,
+     49
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     703,
+     37
+    ]
+   }
+  }
+ },
+ "frozen": {
+  "cryo": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": null
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "medbay": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "reactor": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "mess": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "greenhouse": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "westHall": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "hangar": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "comms": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  },
+  "eastHall": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     526,
+     658,
+     33
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     660,
+     803,
+     56
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": null
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": [
+     800,
+     754,
+     48
+    ]
+   }
+  }
+ },
+ "largo": {
+  "hangar": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "medbay": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "comms": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "reactor": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "mess": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "greenhouse": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "lab": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "cryo": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     1093,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     175,
+     726,
+     54
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     571,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     1084,
+     788,
+     66
+    ]
+   },
+   "media3": {
+    "dist": "media3",
+    "p": 2,
+    "sombra": [
+     250,
+     830,
+     74
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     862,
+     1619,
+     228
+    ]
+   },
+   "rejilla_ojos": {
+    "dist": "rejilla_ojos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_dedos": {
+    "dist": "rejilla_dedos",
+    "p": 2,
+    "sombra": null
+   },
+   "rejilla_silueta": {
+    "dist": "rejilla_silueta",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "westHall": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     507,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1035,
+     808,
+     70
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     1029,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     196,
+     788,
+     66
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     867,
+     1717,
+     247
+    ]
+   }
+  },
+  "eastHall": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     507,
+     653,
+     40
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     1035,
+     808,
+     70
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     620,
+     1970,
+     297
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   },
+   "lejos2": {
+    "dist": "lejos2",
+    "p": 2,
+    "sombra": [
+     1029,
+     667,
+     42
+    ]
+   },
+   "media2": {
+    "dist": "media2",
+    "p": 2,
+    "sombra": [
+     196,
+     788,
+     66
+    ]
+   },
+   "cerca2": {
+    "dist": "cerca2",
+    "p": 2,
+    "sombra": [
+     867,
+     1717,
+     247
+    ]
+   }
+  },
+  "pasillo": {
+   "p0": {
+    "dist": "p0",
+    "p": 1,
+    "sombra": [
+     808,
+     485,
+     15
+    ]
+   },
+   "p1": {
+    "dist": "p1",
+    "p": 1,
+    "sombra": [
+     787,
+     494,
+     19
+    ]
+   },
+   "p2": {
+    "dist": "p2",
+    "p": 1,
+    "sombra": [
+     812,
+     507,
+     25
+    ]
+   },
+   "p3": {
+    "dist": "p3",
+    "p": 1,
+    "sombra": [
+     762,
+     530,
+     35
+    ]
+   },
+   "p4": {
+    "dist": "p4",
+    "p": 1,
+    "sombra": [
+     821,
+     568,
+     52
+    ]
+   },
+   "p5": {
+    "dist": "p5",
+    "p": 1,
+    "sombra": [
+     800,
+     639,
+     83
+    ]
+   }
+  }
+ },
+ "insecto": {
+  "v1": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "v2": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "v3": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "v4": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "v5": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "v6": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  },
+  "v7": {
+   "lejos": {
+    "dist": "lejos",
+    "p": 3,
+    "sombra": [
+     815,
+     542,
+     84
+    ]
+   },
+   "media": {
+    "dist": "media",
+    "p": 3,
+    "sombra": [
+     774,
+     605,
+     141
+    ]
+   },
+   "cerca": {
+    "dist": "cerca",
+    "p": 2,
+    "sombra": [
+     714,
+     882,
+     392
+    ]
+   },
+   "rara": {
+    "dist": "rara",
+    "p": 1,
+    "sombra": null
+   }
+  }
+ }
+}
