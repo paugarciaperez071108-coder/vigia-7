@@ -189,7 +189,7 @@ export const NIGHT4 = {
 
   // --- Ruta B (Slaimi), FINAL: EL APAGÓN (v0.41; src/ending/Night4Dark.js) ---
   // 4:50: aviso (las luces parpadean, interferencias en la consola y un
-  // zumbido lejano: el enemigo nuevo, sin dejarse ver). 5:00: apagón total
+  // zumbido lejano: El Errante, sin dejarse ver). 5:00: apagón total
   // (lo provoca él). La única luz es la de Slaimi y vienen a por él: hay que
   // cogerlo (clic), girarse a la pared de atrás y meterlo en la TAQUILLA
   // (clic). Luego, a oscuras con la linterna, de 5:00 a 6:00 entran por las
@@ -197,15 +197,17 @@ export const NIGHT4 = {
   // llega a la taquilla sin que lo alumbres, se lleva a Slaimi (escena corta
   // y se repite desde las 5:00). Slaimi se asusta de vez en cuando: gime y su
   // luz se escapa por las rendijas y los atrae; clic en la taquilla lo calma.
-  // 6:00: escena (máx. ~36 s): las cámaras se encienden solas con la batería
-  // de emergencia, se retiran todos, en la CAM 10 aparece el enemigo nuevo,
-  // alucinaciones en la oficina... y a la taquilla con Slaimi a dormir. Si
-  // tardas demasiado: susto y se repite desde las 6:00.
+  // Solo UN enemigo atacando a la vez (v0.43). 6:00 (v0.43): las cámaras de
+  // verdad se abren solas con la batería de emergencia (se cambian como en una
+  // noche normal); la imagen se traba mientras se retiran todos; en la CAM 10
+  // espera El Errante; alucinaciones en la oficina... y a la taquilla con
+  // Slaimi a dormir. Si le miras STARE_LIMIT s seguidos (o tardas DAWN_LIMIT
+  // s): FINAL DEL DESMAYO (cuenta como noche superada).
   DARK: {
     WARN_AT: 4 + 50 / 60,    // hora del aviso (4:50)
     START: 5,                // hora del apagón total
     WARN_FLICKER: [0.5, 2.0],// s entre parpadeos de las luces durante el aviso
-    WARN_HUM: 0.06,          // volumen del zumbido lejano del enemigo nuevo durante el aviso
+    WARN_HUM: 0.06,          // volumen del zumbido lejano de El Errante durante el aviso
     // --- 5:00: apagón, la luz de Slaimi y esconderlo ---
     HIDE_LIMIT: 30,          // s para meter a Slaimi en la taquilla (si no, se lo llevan)
     THREAT_EVERY: [1.0, 2.4],// s entre pasos / arañazos / respiraciones que vienen a por él
@@ -214,7 +216,10 @@ export const NIGHT4 = {
     DEFEND_TIME: 60,         // s reales de las 5:00 a las 6:00 (= una hora de juego)
     ENEMIES: ['specimen', 'largo'],   // los que tienen posturas para la mecánica de la luz
     ENTRY_EVERY: [[11, 16], [5, 8]],  // s entre entradas (a las 5:00 → a las 6:00)
-    MAX_INSIDE: [1, 3],      // enemigos a la vez (5:00 → 6:00)
+    // (v0.43) Solo UN enemigo atacando a la vez (también el que va directo a la
+    // taquilla): el siguiente no empieza a entrar hasta ENTRY_GAP s después de
+    // que se vaya el anterior.
+    ENTRY_GAP: 2,
     FIRST_ENTRY: [4, 6],     // s hasta el primero
     FIND: [7, 4.5],          // s para alumbrarle la cara antes de que llegue a la taquilla (5:00 → 6:00)
     POSE_WINDOW: [2.0, 1.6], // s para volver a enfocar la cara si cambia de POSTURA (5:00 → 6:00)
@@ -231,17 +236,55 @@ export const NIGHT4 = {
     SLIT_GLOW: { normal: 0.35, scared: 1.0, calm: 0.12 },  // brillo de las rendijas
     SLIT_DARK: 0.5,          // s que se apaga la luz de las rendijas cuando uno pasa cerca
     TAKEN_TIME: 4.5,         // s de la escena «se llevan a Slaimi» antes de repetir desde las 5:00
-    // --- 6:00: la escena final (sin texto de «6:00 AM») ---
-    RETREAT_TIME: 6,         // s viendo cómo se retiran todos por los corredores (CAM 07 y CAM 08)
-    MIRA_CAM: 'comms',       // cámara en la que aparece el enemigo nuevo (CAM 10, Comunicaciones)
-    MIRA_JUMP: 2.4,          // s entre saltos de la imagen (en cada uno, más cerca)
-    MIRA_GLITCH: 0.45,       // s que dura cada distorsión
-    DAWN_WORSEN: 22,         // s desde los que las alucinaciones empeoran
-    DAWN_LIMIT: 36,          // s hasta el susto si no te metes en la taquilla con Slaimi
+    // --- 6:00: la escena final (sin texto de «6:00 AM"), v0.43 ---
+    // Las cámaras REALES se abren solas (minimapa, teclas 0-9, como una noche
+    // normal) con la batería de emergencia. En ellas, los enemigos se retiran
+    // y El Errante espera en la CAM 10.
+    FIRST_CAM: 'westHall',   // cámara con la que se abren
+    LOWER_AFTER: 4,          // s antes de poder bajar el monitor
+    RETREAT_TIME: 16,        // s que dura la retirada (en las cámaras de su camino)
+    ERRANTE_CAM: 'comms',       // cámara de El Errante (CAM 10, Comunicaciones)
+    ERRANTE_JUMP: 2.4,          // s entre saltos de la imagen (en cada uno, más cerca; 4 imágenes)
+    ERRANTE_GLITCH: 0.45,       // s que dura cada distorsión
+    STARE_LIMIT: 8,          // s SEGUIDOS mirando a El Errante → salta encima → final del desmayo
+    GUIDE_AFTER: 10,         // s sin encontrar su cámara → se oye su zumbido…
+    GUIDE_RAMP: 14,          // …cada vez más fuerte durante estos s
+    GUIDE_EVERY: [2.2, 3.2], // s entre zumbidos de guía
+    GUIDE_VOLUME: [0.06, 0.7], // volumen del zumbido de guía (al empezar → al final de la rampa)
+    // Imagen que se TRABA (la señal no da abasto: algo interfiere, El Errante).
+    // k = cercanía de la cámara a la CAM 10 (1 = la misma, 0 = la más lejana del plano)
+    STUTTER: {
+      FPS: [9, 2.5],         // imágenes por segundo de la imagen (lejos → cerca)
+      FREEZE_EVERY: [2.6, 0.8], // s entre congelaciones (lejos → cerca)
+      FREEZE_TIME: [0.18, 0.7], // s que dura una congelación (lejos → cerca)
+      DROP: [0.1, 0.45],     // probabilidad de perder una imagen (salta más) (lejos → cerca)
+      STAGE: 0.12,           // + cercanía extra por cada imagen de El Errante más cerca (en la CAM 10)
+    },
+    DAWN_WORSEN: 26,         // s desde los que las alucinaciones (monitor bajado) empeoran
+    DAWN_LIMIT: 45,          // s hasta el final del desmayo si no te metes en la taquilla con Slaimi
     SLEEP_TIME: 6,           // s dentro de la taquilla (Slaimi parpadea tranquilo, te duermes)
-    JUMP_TIME: 1.7,          // s del susto antes de repetir desde las 6:00
+    JUMP_TIME: 1.7,          // s del susto (la cara de El Errante)
     OVERLAY: [0.1, 0.32],    // opacidad de la imagen de la cámara encima de la oficina (al principio → al empeorar)
+    // --- Final alternativo: EL DESMAYO (v0.43) ---
+    // Tras el susto: negro, cuerpo que cae, pitido de oído; parpadeos lentos
+    // desde el suelo; Slaimi se acerca brillando y te arrastra a la taquilla;
+    // fundido a negro y «FINAL: DESMAYO». Cuenta como noche completada.
+    FAINT: {
+      BLACK: 2.6,            // s a oscuras tras el susto (cae, pitido)
+      BLINKS: [[3.0, 4.2, 0.28], [5.6, 7.4, 0.5], [8.6, 12.6, 0.7]], // [abre, cierra, cuánto abre] (s desde el susto)
+      DRAG_AT: 10.2,         // s: Slaimi lo envuelve y lo arrastra hacia la taquilla
+      FADE_AT: 12.6,         // s: fundido a negro
+      TEXT_AT: 13.6,         // s: «FINAL: DESMAYO»
+      END_AT: 18,            // s: al menú (noche 5 desbloqueada)
+      RING_TIME: 7,          // s que dura el pitido de oído
+      RING_HZ: 4200,         // tono del pitido
+    },
   },
+
+  // Finales especiales que se guardan (flags de la partida) y se ven en el menú
+  ENDINGS: [
+    { flag: 'finalDesmayo', name: 'Desmayo' },
+  ],
 
   // --- Puntos de control ('n4a', 'n4b', 'n4turno', 'n4reboot', 'n4tres', 'n4cinco', 'n4seis'): ver Game.js ---
 };

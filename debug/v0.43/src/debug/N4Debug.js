@@ -129,7 +129,22 @@ export function install(g) {
       dbg.route = 'B';
       night(NIGHT4.DARK.WARN_AT);
     },
-    mira: () => { dbg.mira = !dbg.mira; },
+    errante: () => { dbg.errante = !dbg.errante; },
+    desmayo: () => {
+      act.b6();
+      g.n4dark._startFaint('debug');
+    },
+    // Intenta meter dos enemigos a la vez a oscuras: el segundo debe quedar bloqueado
+    dos: () => {
+      if (g.state !== 'n4dark' || g.n4dark.phase !== 'defend') act.b5esc();
+      const d = g.n4dark;
+      d.gapLeft = 0;
+      const a = d._spawn('left');
+      const b = d._spawn('right');
+      const vivos = d.enemies.filter((e) => e.state !== 'gone').length;
+      dbg.dosMsg = `forzar dos: 1º ${a ? 'entra' : 'bloqueado'} · 2º ${b ? 'ENTRA (FALLO)' : 'bloqueado'} · dentro ${vivos}`;
+      console.info('Vigía-7 debug:', dbg.dosMsg);
+    },
     vel: (v) => { g.speed = v; },
     inv: () => { dbg.invincible = !dbg.invincible; },
     enemigo: (id) => { if (dbg.off.has(id)) dbg.off.delete(id); else dbg.off.add(id); },
@@ -185,8 +200,8 @@ export function install(g) {
       <h3>Saltar a la hora</h3>${btn('Inicio', 'inicio')}${btn('3 AM', 'h3')}${btn('4 AM', 'h4')}${btn('Inicio del sueño', 'sueno')}${btn('6 AM', 'h6')}
       <h3>Momentos</h3>${btn('Salir de la taquilla', 'taquilla')}${btn('Panel del fusible', 'panel')}${btn('Reparar una cámara', 'camara')}
         ${btn('El Largo y Slaimi', 'slaimi')}${btn('Volver al armario', 'armario')}${btn('Caída al suelo', 'caida')}
-      <h3>Ruta B · final (v0.41)</h3>${btn('4:50 aviso', 'b450')}${btn('5:00 apagón', 'b5')}${btn('5:00 ya escondido', 'b5esc')}${btn('6:00 escena', 'b6')}
-        ${btn('Ver al enemigo nuevo en la cámara', 'mira', dbg.mira)}
+      <h3>Ruta B · final (v0.43)</h3>${btn('4:50 aviso', 'b450')}${btn('5:00 apagón', 'b5')}${btn('5:00 ya escondido', 'b5esc')}${btn('6:00 escena', 'b6')}
+        ${btn('Ver a El Errante en la cámara', 'errante', dbg.errante)}${btn('Final del desmayo', 'desmayo')}${btn('Forzar dos enemigos (5:00)', 'dos')}
       <h3>Velocidad</h3>${[1, 2, 5].map((v) => btn('x' + v, 'vel:' + v, g.speed === v)).join('')}
       <h3>Enemigos</h3>${btn('Invencible', 'inv', dbg.invincible)}${ENEMIES.map(([id, n]) => btn(n + (dbg.off.has(id) ? ' OFF' : ' ON'), 'enemigo:' + id, !dbg.off.has(id))).join('')}
       <h3>Slaimi y cámaras</h3>${btn('Dar Slaimi', 'darSlaimi')}${btn('Quitar Slaimi', 'quitarSlaimi')}${btn('Cámaras reparadas', 'reparadas')}
@@ -268,8 +283,10 @@ export function install(g) {
     if (g.state === 'n4dark') {
       const d = g.n4dark;
       lines.push(`final B: fase ${d.phase}  t ${(d.t ?? 0).toFixed(1)} s  enemigos ${d.enemies.map((e) => `${e.enemy}@${e.side}:${e.state}`).join(' ') || '-'}`);
-      if (d.phase === 'defend') lines.push(`slaimi: ${d.scared ? `ASUSTADO ${d.scaredT.toFixed(1)} s` : d.calmT > 0 ? `calmado ${d.calmT.toFixed(1)}` : `susto en ${d.scareIn.toFixed(1)}`}  entrada en ${d.entryIn.toFixed(1)}`);
-      if (d.phase === 'dawn') lines.push(`cam ${d.cam.room}${d.cam.open ? '' : ' (bajada)'}  enemigo nuevo: imagen ${d.mira.stage}${d.mira.gone ? ' (ya no está)' : ''}  visto ${d.miraSeen}`);
+      if (d.phase === 'defend') lines.push(`slaimi: ${d.scared ? `ASUSTADO ${d.scaredT.toFixed(1)} s` : d.calmT > 0 ? `calmado ${d.calmT.toFixed(1)}` : `susto en ${d.scareIn.toFixed(1)}`}  entrada en ${d.entryIn.toFixed(1)}  margen ${d.gapLeft.toFixed(1)}  bloqueados ${d.blocked}`);
+      if (dbg.dosMsg) lines.push(dbg.dosMsg);
+      if (d.phase === 'dawn') lines.push(`cam ${g.cameras.active}${g.cameras.open ? '' : ' (bajada)'}  El Errante: imagen ${d.errante.stage}${d.errante.gone ? ' (ya no está)' : ''}  visto ${d.erranteSeen}  mirando ${d.stareT.toFixed(1)}/${NIGHT4.DARK.STARE_LIMIT} s`);
+      if (d.phase === 'faint') lines.push(`desmayo: ${d.faintT.toFixed(1)} / ${NIGHT4.DARK.FAINT.END_AT} s`);
     }
     if (g.state === 'n4start' && g.n4start.largo) lines.push(`El Largo (panel): ${g.n4start.largo.state} ${g.n4start.largo.t.toFixed(1)} s`);
     return lines.join('\n');

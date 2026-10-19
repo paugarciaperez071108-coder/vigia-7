@@ -292,6 +292,15 @@ export class CameraView {
     this.clockElapsed = scene.clockElapsed ?? 0;
     this.nightLevel = scene.night ?? 1;
     if (scene.reactor) this.reactorHeat = scene.reactor.level / 100;
+    // Noche 4, ruta B, 6:00 (Night4Dark): la escena dibuja la imagen ella misma
+    // (batería de emergencia, la retirada, El Errante); la interfaz, la de siempre
+    if (scene.feed && ROOMS[room]) {
+      scene.feed(ctx, room);
+      this._drawLabels(ctx, room);
+      this._drawMinimap(ctx, room, cameras, scene);
+      this._drawTab(ctx, '▼  BAJAR MONITOR  (Espacio)');
+      return;
+    }
     if (isVent(room)) {
       this._drawVentCam(ctx, cameras, effects, scene);
       return;

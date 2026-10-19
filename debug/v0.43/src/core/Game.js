@@ -35,7 +35,7 @@
 //                 se repite desde las 3 AM (punto de control 'n4tres').
 //   'n4dark'    → FINAL DE LA RUTA B (Slaimi): aviso a las 4:50 (en 'night'),
 //                 apagón a las 5:00, esconder a Slaimi en la taquilla, defensa
-//                 hasta las 6:00 y la escena de las 6:00 con el enemigo nuevo
+//                 hasta las 6:00 y la escena de las 6:00 con El Errante
 //                 (src/ending/Night4Dark.js). Puntos de control 'n4cinco' y 'n4seis'.
 //   'n2done'    → noche 2 superada: negro, el reactor se apaga, "6:00 AM"
 //   'win'       → 6:00 AM, turno superado
@@ -90,7 +90,7 @@ import { Night3Ending } from '../ending/Night3Ending.js';
 import { Night4Start } from '../ending/Night4Start.js';
 import { Night4Repair } from '../ending/Night4Repair.js';
 import { Night4Sleep } from '../ending/Night4Sleep.js';
-import { Night4Dark, drawMira } from '../ending/Night4Dark.js';
+import { Night4Dark, drawErrante } from '../ending/Night4Dark.js';
 import { Hallucinations } from '../systems/Hallucinations.js';
 import { Voices4am } from '../systems/Voices4am.js';
 import { Slaimi } from '../systems/Slaimi.js';
@@ -857,17 +857,24 @@ export class Game {
     this._setState('n4dark');
   }
 
-  /** Se han llevado a Slaimi (repite desde las 5:00) o el susto de las 6:00 (desde las 6:00). */
+  /** Se han llevado a Slaimi: se repite desde las 5:00. */
   _n4DarkRetry(at) {
     this.audio.stopAll();
     this.audio.setMasterLevel(1, 0.1);
     this._startN4Dark({ at, save: this.saveEnabled !== false });
   }
 
-  /** Dormido en la taquilla con Slaimi: fin de la noche 4 (ruta B), sin pantalla de victoria. */
-  _n4DarkEnd({ seen = false } = {}) {
+  /**
+   * Fin de la noche 4 (ruta B), sin pantalla de victoria: dormido en la
+   * taquilla con Slaimi, o el FINAL DEL DESMAYO (faint: se guarda finalDesmayo
+   * para usarlo en noches futuras; también desbloquea la noche 5).
+   */
+  _n4DarkEnd({ seen = false, faint = false } = {}) {
     this.voices.stop();
+    this.cameras.forceClose();
+    this.cameras.reset();
     const flags = { ...(this.save.flags ?? {}), n4camaras: true, slaimiAliado: true, nuevoEnemigo: true, vioNuevoEnemigo: !!seen };
+    if (faint) flags.finalDesmayo = true;
     delete flags.slaimiMuerto;
     this.save = { ...this.save, flags, night: 5, checkpoint: null };
     if (this.saveEnabled !== false) SaveData.save(this.save);
@@ -1537,9 +1544,9 @@ export class Game {
       slaimiDead: !!this.save?.flags?.slaimiMuerto && this.nightNumber >= 5,
       hallu: this.hallu.active ? this.hallu : null,
     });
-    // (modo debug de la noche 4) el enemigo nuevo en la cámara que se mire
-    if (this.n4dbg?.mira && this.cameras.fullyOpen && this.cameras.mapMode === 'main') {
-      drawMira(ctx, 820, 760, 420, { alpha: 0.85, dark: 0.35 });
+    // (modo debug de la noche 4) El Errante en la cámara que se mire
+    if (this.n4dbg?.errante && this.cameras.fullyOpen && this.cameras.mapMode === 'main') {
+      drawErrante(ctx, 820, 760, 420, { alpha: 0.85, dark: 0.35 });
     }
   }
 
