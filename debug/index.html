@@ -18,7 +18,7 @@
   </style>
 
   <script>
-    if (!/[?&]n4debug=1/.test(location.search)) location.replace('?n4debug=1');
+    if (!/[?&]n4debug=1/.test(location.search)) location.replace(location.pathname + '?n4debug=1');
     window.addEventListener('load', function () {
       var b = document.createElement('button');
       b.textContent = 'DEBUG';
