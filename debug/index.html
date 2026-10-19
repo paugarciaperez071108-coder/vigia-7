@@ -18,7 +18,8 @@
   </style>
 
   <script>
-    if (!/[?&]n4debug=1/.test(location.search)) location.replace(location.pathname + '?n4debug=1');
+    // (sin recargar: el juego lee ?n4debug=1 al arrancar, después de este script)
+    if (!/[?&]n4debug=1/.test(location.search)) history.replaceState(null, '', location.pathname + '?n4debug=1');
     window.addEventListener('load', function () {
       var b = document.createElement('button');
       b.textContent = 'DEBUG';
