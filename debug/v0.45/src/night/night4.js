@@ -242,7 +242,8 @@ export const NIGHT4 = {
     // y El Errante espera en la CAM 10.
     FIRST_CAM: 'westHall',   // cámara con la que se abren
     LOWER_AFTER: 4,          // s antes de poder bajar el monitor
-    RETREAT_TIME: 16,        // s que dura la retirada (en las cámaras de su camino)
+    // (la retirada: animaciones de caminar de tools/3d/andar/, assets/n4/retirada; v0.45)
+    RETREAT_BRIGHT: 1.8,     // brillo de los enemigos que se retiran respecto a la imagen de la cámara
     ERRANTE_CAM: 'comms',       // cámara de El Errante (CAM 10, Comunicaciones)
     ERRANTE_JUMP: 2.4,          // s entre saltos de la imagen (en cada uno, más cerca; 4 imágenes)
     ERRANTE_GLITCH: 0.45,       // s que dura cada distorsión
@@ -268,14 +269,13 @@ export const NIGHT4 = {
     // --- Final alternativo: EL DESMAYO (v0.43) ---
     // Tras el susto: negro, cuerpo que cae, pitido de oído; parpadeos lentos
     // desde el suelo; Slaimi se acerca brillando y te arrastra a la taquilla;
-    // fundido a negro y «FINAL: DESMAYO». Cuenta como noche completada.
+    // fundido a negro, sin texto (v0.44). Cuenta como noche completada.
     FAINT: {
       BLACK: 2.6,            // s a oscuras tras el susto (cae, pitido)
       BLINKS: [[3.0, 4.2, 0.28], [5.6, 7.4, 0.5], [8.6, 12.6, 0.7]], // [abre, cierra, cuánto abre] (s desde el susto)
       DRAG_AT: 10.2,         // s: Slaimi lo envuelve y lo arrastra hacia la taquilla
       FADE_AT: 12.6,         // s: fundido a negro
-      TEXT_AT: 13.6,         // s: «FINAL: DESMAYO»
-      END_AT: 18,            // s: al menú (noche 5 desbloqueada)
+      END_AT: 14.5,          // s: al menú (noche 5 desbloqueada)
       RING_TIME: 7,          // s que dura el pitido de oído
       RING_HZ: 4200,         // tono del pitido
     },

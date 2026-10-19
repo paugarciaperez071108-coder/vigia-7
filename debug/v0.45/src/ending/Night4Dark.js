@@ -25,7 +25,7 @@
 //   'dawn'   6:00 (sin texto de «6:00 AM», v0.43): dejan de atacar. Las
 //            cámaras DE VERDAD se abren solas con la batería de emergencia
 //            (minimapa y teclas, como una noche normal). En ellas, la escena:
-//            los enemigos se retiran por su camino (RETREAT) y El Errante
+//            los enemigos se retiran CAMINANDO (RETREAT, v0.45) y El Errante
 //            espera en la CAM 10. La imagen se TRABA (pocas imágenes por
 //            segundo, saltos, congelaciones que vuelven con todo en otro
 //            sitio): la señal no da abasto, algo interfiere. Cuanto más cerca
@@ -40,7 +40,7 @@
 //            negro, cuerpo que cae, pitido de oído, parpadeos lentos desde el
 //            suelo, Slaimi se acerca brillando y te arrastra a la taquilla.
 //            No era real: no te mata, te rompe la mente. Cuenta como noche
-//            superada (flag finalDesmayo).
+//            superada (flag finalDesmayo). Sin texto en pantalla (v0.44).
 // =============================================================
 
 import { CONFIG } from '../config.js';
@@ -48,11 +48,12 @@ import { NIGHT4 } from '../night/night4.js';
 import { N2END } from '../night/night2ending.js';
 import { ROOMS, LINKS } from '../world/StationMap.js';
 import { OFFICE_SPOTS, POSES, faceOf, drawEnemy } from '../render/FirstPersonView.js';
-import { drawCreature, setEyeShine } from '../render/CreatureArt.js';
+import { setEyeShine } from '../render/CreatureArt.js';
 import { glitchSlices } from '../render/Atmosphere.js';
 import { Flashlight } from '../render/Flashlight.js';
 import { OfficeTurn } from '../systems/OfficeTurn.js';
 import { drawSlaimi } from '../systems/Slaimi.js';
+import { LurkSounds } from '../systems/LurkSounds.js';
 
 const D = NIGHT4.DARK;
 const W = CONFIG.WIDTH;
@@ -103,17 +104,20 @@ const DIST = (() => {
   return d;
 })();
 const MAX_DIST = Math.max(1, ...Object.values(DIST));
-// La retirada de las 6:00, cámara a cámara (en el tiempo de la imagen trabada):
-// [tipo, postura, desde [x, pies, alto], hasta [x, pies, alto], empieza (s), dura (s)]
-// Corredores: se alejan hacia el fondo; salas: las cruzan.
-const RETREAT = {
-  westHall: [['largo', 'stand', [620, 880, 430], [790, 520, 70], 0, 8], ['specimen', 'hall', [980, 900, 340], [820, 525, 60], 0.8, 8.5]],
-  eastHall: [['specimen', 'lean', [900, 890, 340], [800, 520, 60], 0.4, 8], ['frozen', 'crawl', [600, 900, 200], [790, 530, 40], 1.4, 9]],
-  greenhouse: [['largo', 'stand', [1500, 820, 380], [120, 800, 380], 7.5, 6], ['specimen', 'hall', [1620, 830, 320], [220, 810, 320], 8.8, 6]],
-  hangar: [['specimen', 'lean', [1520, 830, 330], [140, 815, 330], 8.5, 6], ['frozen', 'crawl', [1600, 850, 180], [260, 840, 180], 9.6, 6.5]],
-  mess: [['largo', 'stand', [1480, 830, 400], [150, 810, 400], 12, 4.5], ['specimen', 'hall', [1600, 840, 330], [260, 820, 330], 12.8, 4]],
-  medbay: [['frozen', 'crawl', [1500, 860, 190], [200, 850, 190], 12.5, 4], ['specimen', 'lean', [1620, 840, 330], [300, 820, 330], 13, 3.8]],
-};
+// La retirada de las 6:00 (v0.45): cada enemigo CAMINA (esqueleto en
+// Blender, tools/3d/andar/) por su camino real de la nave, renderizado desde
+// la cámara de cada sala por la que pasa. assets/n4/retirada/indice.json:
+// por enemigo y sala, la hoja de fotogramas, dónde va en la imagen y en qué
+// instante (s desde las 6:00) empieza.
+const RETREAT = [];
+fetch('assets/n4/retirada/indice.json').then((r) => r.json()).then((lista) => {
+  for (const c of lista) {
+    const img = new Image();
+    img.onload = () => { c.img = img; };
+    img.src = `assets/n4/retirada/${c.archivo}`;
+    RETREAT.push(c);
+  }
+}).catch(() => console.warn('Night4Dark: no hay animaciones de la retirada (assets/n4/retirada/indice.json)'));
 
 // --- Imágenes de El Errante (tools/3d/enemigos/el_que_mira.py; en archivos sigue «mira») ---
 const IMG = {};
@@ -150,6 +154,7 @@ export class Night4Dark {
     this.g = game;
     this.look = new OfficeTurn();
     this.flash = new Flashlight();
+    this.lurk = new LurkSounds((k, o) => this._play(k, o));   // se les oye a oscuras (v0.45)
     this.mask = document.createElement('canvas');
     this.mask.width = W;
     this.mask.height = H;
@@ -263,6 +268,7 @@ export class Night4Dark {
     this.entryIn = rand(D.FIRST_ENTRY);
     this.gapLeft = 0;
     this.blocked = 0;
+    this.lurk.reset();
     this.scareIn = rand(D.SCARE_FIRST);
     this.scared = false;
     this.scaredT = 0;
@@ -323,6 +329,8 @@ export class Night4Dark {
       if (this.phase !== 'defend') return;
     }
     this.enemies = this.enemies.filter((e) => e.state !== 'gone');
+    // Sin luz no se les ve: se les oye (respiración o pasos suaves, por su lado)
+    this.lurk.update(dt, this.enemies.map((e) => ({ ref: e, kind: e.enemy, side: e.side, lit: e.state === 'lit' })));
     if (this.t >= D.DEFEND_TIME) this._startDawn();
   }
 
@@ -1223,13 +1231,16 @@ export class Night4Dark {
     // Tenue y desvaída, con algún tirón de la imagen
     const dim = 0.5 + 0.1 * Math.sin(this.time * 13) + (Math.random() < 0.06 ? -0.2 : 0);
     // (los renders de la CAM 10 ya salen con la luz de emergencia: se compensan)
-    ctx.filter = `grayscale(0.55) brightness(${(dim * (img ? 1.8 : 1)).toFixed(2)}) contrast(1.25)`;
+    const filtro = `grayscale(0.55) brightness(${(dim * (img ? 1.8 : 1)).toFixed(2)}) contrast(1.25)`;
+    ctx.filter = filtro;
     if (img) ctx.drawImage(img, 0, 0, W, H);
     else this.g.sprites.draw(ctx, `cam_${room}`, 0, 0, W, H);
     ctx.restore();
     if (img && room === D.ERRANTE_CAM) this.lastCamImg = img;
     // La retirada (en las cámaras de su camino)
-    this._drawRetreat(ctx, room, ts);
+    // (los enemigos, con la luz de la sala y algo más claros que el fondo:
+    // si no, con la batería de emergencia casi no se distinguen)
+    this._drawRetreat(ctx, room, ts, `grayscale(0.5) brightness(${(dim * D.RETREAT_BRIGHT).toFixed(2)}) contrast(1.3)`);
     // (modo debug) El Errante en cualquier cámara
     if (this.g.n4dbg?.errante && room !== D.ERRANTE_CAM) drawErrante(ctx, 820, 760, 420, { alpha: 0.85, dark: 0.35 });
     // Distorsión: estática, estiramiento y color corrupto
@@ -1267,22 +1278,22 @@ export class Night4Dark {
     ctx.restore();
   }
 
-  /** Los enemigos se retiran por su camino (en el instante `ts` de la imagen trabada). */
-  _drawRetreat(ctx, room, ts) {
-    const clips = RETREAT[room];
-    if (!clips) return;
+  /**
+   * Los enemigos caminando por su camino (en el instante `ts` de la imagen
+   * trabada: debajo de los saltos, el paso es fluido). Con el mismo filtro
+   * que la imagen de la cámara (batería de emergencia).
+   */
+  _drawRetreat(ctx, room, ts, filtro) {
+    const aqui = RETREAT.filter((c) => c.sala === room && c.img);
+    if (!aqui.length) return;
+    // Los de más lejos (pies más arriba en la imagen), primero
+    aqui.sort((a, b) => (a.y + a.h) - (b.y + b.h));
     ctx.save();
-    ctx.filter = 'brightness(0.45) grayscale(0.6)';
-    for (const [kind, pose, from, to, start, dur] of clips) {
-      const u = (ts - start) / dur;
-      if (u < 0 || u > 1) continue;
-      const e = u * (2 - u);
-      const x = lerp(from[0], to[0], e);
-      const y = lerp(from[1], to[1], e);
-      const h = lerp(from[2], to[2], e);
-      const a = Math.min(1, u / 0.08) * (1 - Math.max(0, (u - 0.85) / 0.15));
-      if (a <= 0) continue;
-      drawCreature(ctx, kind, x, y, h, ts, { pose, alpha: a });
+    ctx.filter = filtro;
+    for (const c of aqui) {
+      const f = Math.floor(ts * c.fps) - c.f0;
+      if (f < 0 || f >= c.n) continue;
+      ctx.drawImage(c.img, (f % c.cols) * c.fw, Math.floor(f / c.cols) * c.fh, c.fw, c.fh, c.x, c.y, c.w, c.h);
     }
     ctx.restore();
   }
@@ -1482,24 +1493,10 @@ export class Night4Dark {
       this.g.effects.vignette(ctx, 1.4);
     }
     this._drawLids(ctx, 1 - eyes.open);
-    // Fundido a negro y el nombre del final
+    // Fundido a negro (sin texto: no se anuncia como «final», v0.44)
     if (t >= F.FADE_AT) {
       ctx.fillStyle = `rgba(0,0,0,${Math.min(1, (t - F.FADE_AT) / 0.9)})`;
       ctx.fillRect(0, 0, W, H);
-    }
-    if (t >= F.TEXT_AT) {
-      const u = (t - F.TEXT_AT) / (F.END_AT - F.TEXT_AT);
-      const a = Math.min(1, u * 4) * Math.min(1, (1 - u) * 4);
-      ctx.save();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = `rgba(232,238,245,${0.9 * a})`;
-      ctx.font = 'bold 54px "Courier New", monospace';
-      ctx.fillText('FINAL: DESMAYO', W / 2, H / 2 - 10);
-      ctx.fillStyle = `rgba(${VIOLET},${0.7 * a})`;
-      ctx.font = '20px "Courier New", monospace';
-      ctx.fillText('NOCHE 4 SUPERADA', W / 2, H / 2 + 48);
-      ctx.restore();
     }
   }
 }

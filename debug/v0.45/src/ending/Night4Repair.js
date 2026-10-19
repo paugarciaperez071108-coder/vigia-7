@@ -45,6 +45,7 @@ import { CONFIG } from '../config.js';
 import { NIGHT4 } from '../night/night4.js';
 import { N2END } from '../night/night2ending.js';
 import { Flashlight } from '../render/Flashlight.js';
+import { LurkSounds } from '../systems/LurkSounds.js';
 import { setEyeShine } from '../render/CreatureArt.js';
 import { FirstPersonView, OFFICE_EXITS, ROOM_SPOTS, POSES, faceOf, drawEnemy, exitLayout } from '../render/FirstPersonView.js';
 import { roomExits } from './Night2Ending.js';
@@ -99,6 +100,7 @@ export class Night4Repair {
   constructor(game) {
     this.g = game;
     this.flash = new Flashlight();
+    this.lurk = new LurkSounds((k, o) => this._play(k, o));   // se le oye a oscuras (v0.45)
     this.view = new FirstPersonView(game.cameraView);
     this.look = new OfficeTurn();
     this.backView = new BackView();
@@ -449,6 +451,9 @@ export class Night4Repair {
     if (this.peek) this._updatePeek(dt);
     if (this.done) return;
     if (this.enemy && this.enemy.state !== 'gone' && this._updateLight(this.enemy, dt) === 'retirado') this.enemy = null;
+    // El que ha entrado en la sala, sin luz, se oye por su lado (los asomados, no: v0.39)
+    const e = this.enemy && this.enemy.state !== 'gone' ? this.enemy : null;
+    this.lurk.update(dt, e ? [{ ref: e, kind: e.enemy, side: e.spots[e.spot][0] / W * 1.6 - 0.8, lit: e.state === 'lit' }] : []);
   }
 
   /** Tornillos (y la tapa). Devuelve true mientras se está trabajando. */

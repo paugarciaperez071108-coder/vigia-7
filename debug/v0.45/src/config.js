@@ -7,7 +7,7 @@
 // =============================================================
 
 export const CONFIG = {
-  VERSION: 'v0.43',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v0.45',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // Resolución lógica: todo se dibuja en 1600×900 y luego se escala
   // a la ventana manteniendo la proporción (con bandas negras).
@@ -186,6 +186,19 @@ export const CONFIG = {
   LOOK_BACK: {
     FROM_NIGHT: 3,          // desde esta noche hay linterna mirando al pasillo central
     KEY: 'KeyV',            // tecla: ir al pasillo central / volver al frente (pasando por un lado)
+  },
+
+  // --- Enemigos a oscuras que se oyen (src/systems/LurkSounds.js, v0.45) ---
+  // Mientras un enemigo está y no se le alumbra: respiración o pasos suaves
+  // por su lado (fases con linterna de la noche 4; la 2.5 no).
+  LURK: {
+    EVERY: [2.5, 4.5],      // s entre sonidos
+    FIRST: [0.8, 2.0],      // s hasta el primero (tras aparecer)
+    VOLUME: 0.2,            // volumen (bajito)
+    SIDE_PAN: 0.85,         // cuánto a la izquierda / derecha
+    MUFFLE: 0.35,           // apagado de los de los lados
+    BACK_VOLUME: 0.8,       // los de atrás (o al fondo): × este volumen…
+    BACK_MUFFLE: 0.6,       // …y más apagados (en el centro)
   },
 
   // --- Susto ---

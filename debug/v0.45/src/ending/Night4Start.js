@@ -28,6 +28,7 @@
 import { CONFIG } from '../config.js';
 import { NIGHT4 } from '../night/night4.js';
 import { Flashlight } from '../render/Flashlight.js';
+import { LurkSounds } from '../systems/LurkSounds.js';
 import { FirstPersonView, OFFICE_EXITS } from '../render/FirstPersonView.js';
 import { BackView, BACK_HATCH } from '../render/BackView.js';
 import { OfficeTurn } from '../systems/OfficeTurn.js';
@@ -62,6 +63,7 @@ export class Night4Start {
   constructor(game) {
     this.g = game;
     this.flash = new Flashlight();
+    this.lurk = new LurkSounds((k, o) => this._play(k, o));   // se le oye a oscuras (v0.45)
     this.view = new FirstPersonView(game.cameraView);
     this.look = new OfficeTurn();
     this.backView = new BackView();
@@ -178,6 +180,8 @@ export class Night4Start {
       }
     } else if (RB.DECAY > 0) this.reboot = Math.max(0, this.reboot - RB.DECAY * dt);
     const L = this.largo;
+    // Asomado al fondo del pasillo y sin luz: se le oye respirar (en el centro)
+    this.lurk.update(dt, L?.state === 'peek' ? [{ ref: L, kind: 'largo', side: 'center', lit: this._largoLit() }] : []);
     if (!L) return;
     L.t += dt;
     if (L.state === 'coming') {
