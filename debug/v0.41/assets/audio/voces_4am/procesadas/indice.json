@@ -1,0 +1,209 @@
+{
+ "alarma": {
+  "texto": "Que alguien apague esa alarma.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/alarma__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/alarma__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/alarma__rota.ogg"
+  ]
+ },
+ "altisimo": {
+  "texto": "Lo he visto... es altísimo.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/altisimo__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/altisimo__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/altisimo__rota.ogg"
+  ]
+ },
+ "apaga_la_luz": {
+  "texto": "Apaga la luz. Apágala... apágala ya.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/apaga_la_luz__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/apaga_la_luz__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/apaga_la_luz__rota.ogg"
+  ]
+ },
+ "cierrala": {
+  "texto": "¡Ciérrala! ¡Ciérrala ya!",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/cierrala__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/cierrala__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/cierrala__rota.ogg"
+  ]
+ },
+ "compuerta": {
+  "texto": "¡La compuerta no abre! ¡No abre!",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/compuerta__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/compuerta__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/compuerta__rota.ogg"
+  ]
+ },
+ "en_los_conductos": {
+  "texto": "Está en los conductos...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/en_los_conductos__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/en_los_conductos__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/en_los_conductos__rota.ogg"
+  ]
+ },
+ "frio": {
+  "texto": "Hace tanto frío aquí...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/frio__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/frio__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/frio__rota.ogg"
+  ]
+ },
+ "hay_alguien": {
+  "texto": "¿Hay alguien ahí?",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/hay_alguien__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/hay_alguien__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/hay_alguien__rota.ogg"
+  ]
+ },
+ "lanzadera": {
+  "texto": "La lanzadera no tiene combustible...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/lanzadera__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/lanzadera__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/lanzadera__rota.ogg"
+  ]
+ },
+ "mama": {
+  "texto": "Mamá...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/mama__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/mama__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/mama__rota.ogg"
+  ]
+ },
+ "marta": {
+  "texto": "¡Marta! ¡Marta! ¡¡Marta!!",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/marta__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/marta__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/marta__rota.ogg"
+  ]
+ },
+ "me_oyes": {
+  "texto": "¿Me oyes? Contesta... por favor, contesta.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/me_oyes__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/me_oyes__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/me_oyes__rota.ogg"
+  ]
+ },
+ "no_abras_celda": {
+  "texto": "No abras la celda... no la abras...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/no_abras_celda__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/no_abras_celda__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/no_abras_celda__rota.ogg"
+  ]
+ },
+ "no_mires_arriba": {
+  "texto": "No mires arriba.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/no_mires_arriba__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/no_mires_arriba__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/no_mires_arriba__rota.ogg"
+  ]
+ },
+ "no_respires": {
+  "texto": "No respires. No respires...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/no_respires__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/no_respires__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/no_respires__rota.ogg"
+  ]
+ },
+ "nos_miran": {
+  "texto": "Nos están mirando.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/nos_miran__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/nos_miran__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/nos_miran__rota.ogg"
+  ]
+ },
+ "por_favor": {
+  "texto": "Por favor, por favor, por favor...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/por_favor__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/por_favor__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/por_favor__rota.ogg"
+  ]
+ },
+ "risa_1": {
+  "texto": "Je... je, je... ja.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/risa_1__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/risa_1__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/risa_1__rota.ogg"
+  ]
+ },
+ "risa_2": {
+  "texto": "Ja, ja... ja... ja—",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/risa_2__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/risa_2__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/risa_2__rota.ogg"
+  ]
+ },
+ "sellado": {
+  "texto": "¿Por qué han sellado el pasillo?",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/sellado__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/sellado__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/sellado__rota.ogg"
+  ]
+ },
+ "shh": {
+  "texto": "Shh... está escuchando.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/shh__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/shh__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/shh__rota.ogg"
+  ]
+ },
+ "solo_seis": {
+  "texto": "Solo quedamos seis.",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/solo_seis__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/solo_seis__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/solo_seis__rota.ogg"
+  ]
+ },
+ "ya_viene": {
+  "texto": "Ya viene... ya viene...",
+  "grabada": false,
+  "archivos": [
+   "assets/audio/voces_4am/procesadas/ya_viene__conducto.ogg",
+   "assets/audio/voces_4am/procesadas/ya_viene__lejos.ogg",
+   "assets/audio/voces_4am/procesadas/ya_viene__rota.ogg"
+  ]
+ }
+}

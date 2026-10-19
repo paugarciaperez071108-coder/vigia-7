@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base href="v0.41/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vigía-7 v0.41 (debug)</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    canvas { display: block; width: 100vw; height: 100vh; user-select: none; }
+    .message {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; color: #e8eef5; font: 18px/1.6 "Courier New", monospace; text-align: center;
+      background: #000;
+    }
+    .message[hidden] { display: none; }
+    .message code { background: #1d232b; padding: 0.15em 0.4em; }
+  </style>
+
+  <script>
+    if (!/[?&]n4debug=1/.test(location.search)) location.replace('?n4debug=1');
+    window.addEventListener('load', function () {
+      var b = document.createElement('button');
+      b.textContent = 'DEBUG';
+      b.title = 'Menú de debug de la noche 4 (Ctrl+Shift+F4)';
+      b.style.cssText = 'position:fixed;right:10px;top:10px;z-index:100;font:bold 12px "Courier New",monospace;' +
+        'background:#132;color:#7dffb0;border:1px solid #3a6;border-radius:4px;padding:4px 8px;cursor:pointer;opacity:.75';
+      b.addEventListener('mousedown', function (e) { e.stopPropagation(); });
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'F4', key: 'F4', ctrlKey: true, shiftKey: true, bubbles: true }));
+      });
+      document.body.appendChild(b);
+    });
+  </script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="msg" class="message" hidden></div>
+
+  <!-- Los módulos ES6 no funcionan con doble clic (file://). Este
+       script normal sí se ejecuta y explica cómo arrancar el juego. -->
+  <script>
+    if (location.protocol === 'file:') {
+      var m = document.getElementById('msg');
+      m.innerHTML = '<div><b>Vigía-7 necesita un servidor local.</b><br><br>' +
+        'En una terminal, dentro de la carpeta del juego:<br>' +
+        '<code>python servidor.py</code> (o doble clic en <code>jugar.bat</code>)<br><br>' +
+        'Después abre <code>http://localhost:8001</code></div>';
+      m.hidden = false;
+    }
+  </script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

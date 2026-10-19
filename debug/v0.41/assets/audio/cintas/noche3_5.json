@@ -1,0 +1,55 @@
+{
+ "duration": 14.01,
+ "subtitles": [
+  {
+   "start": 0.7,
+   "end": 3.08,
+   "text": "Mierda, se han cargado las cámaras."
+  },
+  {
+   "start": 3.03,
+   "end": 6.71,
+   "text": "Suerte que con la actualización del sistema sabemos por dónde vienen gracias a los triángulos."
+  },
+  {
+   "start": 6.86,
+   "end": 9.0,
+   "text": "Esto parece que les ha enfurecido."
+  },
+  {
+   "start": 8.95,
+   "end": 10.38,
+   "text": "Debo ser más rápido que ellos."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 0.0,
+   "efecto": "cristales"
+  },
+  {
+   "t": 6.86,
+   "efecto": "pitido"
+  },
+  {
+   "t": 10.53,
+   "efecto": "rugido"
+  },
+  {
+   "t": 11.03,
+   "efecto": "golpes_rapidos"
+  },
+  {
+   "t": 10.53,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 12.93,
+   "efecto": "corte_cinta"
+  }
+ ]
+}

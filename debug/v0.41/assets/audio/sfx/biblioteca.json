@@ -1,0 +1,243 @@
+{
+ "caidas/lata": [
+  "assets/audio/sfx/caidas/lata_1.ogg",
+  "assets/audio/sfx/caidas/lata_2.ogg",
+  "assets/audio/sfx/caidas/lata_3.ogg",
+  "assets/audio/sfx/caidas/lata_4.ogg",
+  "assets/audio/sfx/caidas/lata_5.ogg"
+ ],
+ "caidas/herramienta": [
+  "assets/audio/sfx/caidas/herramienta_1.ogg",
+  "assets/audio/sfx/caidas/herramienta_2.ogg",
+  "assets/audio/sfx/caidas/herramienta_3.ogg",
+  "assets/audio/sfx/caidas/herramienta_4.ogg",
+  "assets/audio/sfx/caidas/herramienta_5.ogg"
+ ],
+ "caidas/bandeja": [
+  "assets/audio/sfx/caidas/bandeja_1.ogg",
+  "assets/audio/sfx/caidas/bandeja_2.ogg",
+  "assets/audio/sfx/caidas/bandeja_3.ogg",
+  "assets/audio/sfx/caidas/bandeja_4.ogg",
+  "assets/audio/sfx/caidas/bandeja_5.ogg"
+ ],
+ "caidas/silla": [
+  "assets/audio/sfx/caidas/silla_1.ogg",
+  "assets/audio/sfx/caidas/silla_2.ogg",
+  "assets/audio/sfx/caidas/silla_3.ogg",
+  "assets/audio/sfx/caidas/silla_4.ogg",
+  "assets/audio/sfx/caidas/silla_5.ogg"
+ ],
+ "caidas/caja": [
+  "assets/audio/sfx/caidas/caja_1.ogg",
+  "assets/audio/sfx/caidas/caja_2.ogg",
+  "assets/audio/sfx/caidas/caja_3.ogg",
+  "assets/audio/sfx/caidas/caja_4.ogg",
+  "assets/audio/sfx/caidas/caja_5.ogg"
+ ],
+ "tropiezos/tropiezo": [
+  "assets/audio/sfx/tropiezos/tropiezo_1.ogg",
+  "assets/audio/sfx/tropiezos/tropiezo_2.ogg",
+  "assets/audio/sfx/tropiezos/tropiezo_3.ogg",
+  "assets/audio/sfx/tropiezos/tropiezo_4.ogg",
+  "assets/audio/sfx/tropiezos/tropiezo_5.ogg"
+ ],
+ "tropiezos/caja_herramientas": [
+  "assets/audio/sfx/tropiezos/caja_herramientas_1.ogg",
+  "assets/audio/sfx/tropiezos/caja_herramientas_2.ogg",
+  "assets/audio/sfx/tropiezos/caja_herramientas_3.ogg",
+  "assets/audio/sfx/tropiezos/caja_herramientas_4.ogg",
+  "assets/audio/sfx/tropiezos/caja_herramientas_5.ogg"
+ ],
+ "metal/golpe_pared": [
+  "assets/audio/sfx/metal/golpe_pared_1.ogg",
+  "assets/audio/sfx/metal/golpe_pared_2.ogg",
+  "assets/audio/sfx/metal/golpe_pared_3.ogg",
+  "assets/audio/sfx/metal/golpe_pared_4.ogg",
+  "assets/audio/sfx/metal/golpe_pared_5.ogg"
+ ],
+ "metal/tuberia": [
+  "assets/audio/sfx/metal/tuberia_1.ogg",
+  "assets/audio/sfx/metal/tuberia_2.ogg",
+  "assets/audio/sfx/metal/tuberia_3.ogg",
+  "assets/audio/sfx/metal/tuberia_4.ogg",
+  "assets/audio/sfx/metal/tuberia_5.ogg"
+ ],
+ "metal/panel": [
+  "assets/audio/sfx/metal/panel_1.ogg",
+  "assets/audio/sfx/metal/panel_2.ogg",
+  "assets/audio/sfx/metal/panel_3.ogg",
+  "assets/audio/sfx/metal/panel_4.ogg",
+  "assets/audio/sfx/metal/panel_5.ogg"
+ ],
+ "metal/cristal": [
+  "assets/audio/sfx/metal/cristal_1.ogg",
+  "assets/audio/sfx/metal/cristal_2.ogg",
+  "assets/audio/sfx/metal/cristal_3.ogg",
+  "assets/audio/sfx/metal/cristal_4.ogg",
+  "assets/audio/sfx/metal/cristal_5.ogg"
+ ],
+ "puertas/cierre": [
+  "assets/audio/sfx/puertas/cierre_1.ogg",
+  "assets/audio/sfx/puertas/cierre_2.ogg",
+  "assets/audio/sfx/puertas/cierre_3.ogg",
+  "assets/audio/sfx/puertas/cierre_4.ogg",
+  "assets/audio/sfx/puertas/cierre_5.ogg"
+ ],
+ "puertas/apertura": [
+  "assets/audio/sfx/puertas/apertura_1.ogg",
+  "assets/audio/sfx/puertas/apertura_2.ogg",
+  "assets/audio/sfx/puertas/apertura_3.ogg",
+  "assets/audio/sfx/puertas/apertura_4.ogg",
+  "assets/audio/sfx/puertas/apertura_5.ogg"
+ ],
+ "puertas/golpe": [
+  "assets/audio/sfx/puertas/golpe_1.ogg",
+  "assets/audio/sfx/puertas/golpe_2.ogg",
+  "assets/audio/sfx/puertas/golpe_3.ogg",
+  "assets/audio/sfx/puertas/golpe_4.ogg",
+  "assets/audio/sfx/puertas/golpe_5.ogg"
+ ],
+ "pasos/metal": [
+  "assets/audio/sfx/pasos/metal_1.ogg",
+  "assets/audio/sfx/pasos/metal_2.ogg",
+  "assets/audio/sfx/pasos/metal_3.ogg",
+  "assets/audio/sfx/pasos/metal_4.ogg",
+  "assets/audio/sfx/pasos/metal_5.ogg"
+ ],
+ "pasos/rejilla": [
+  "assets/audio/sfx/pasos/rejilla_1.ogg",
+  "assets/audio/sfx/pasos/rejilla_2.ogg",
+  "assets/audio/sfx/pasos/rejilla_3.ogg",
+  "assets/audio/sfx/pasos/rejilla_4.ogg",
+  "assets/audio/sfx/pasos/rejilla_5.ogg"
+ ],
+ "criaturas/grunido": [
+  "assets/audio/sfx/criaturas/grunido_1.ogg",
+  "assets/audio/sfx/criaturas/grunido_2.ogg",
+  "assets/audio/sfx/criaturas/grunido_3.ogg",
+  "assets/audio/sfx/criaturas/grunido_4.ogg",
+  "assets/audio/sfx/criaturas/grunido_5.ogg"
+ ],
+ "criaturas/respiracion": [
+  "assets/audio/sfx/criaturas/respiracion_1.ogg",
+  "assets/audio/sfx/criaturas/respiracion_2.ogg",
+  "assets/audio/sfx/criaturas/respiracion_3.ogg",
+  "assets/audio/sfx/criaturas/respiracion_4.ogg",
+  "assets/audio/sfx/criaturas/respiracion_5.ogg"
+ ],
+ "criaturas/aranazos": [
+  "assets/audio/sfx/criaturas/aranazos_1.ogg",
+  "assets/audio/sfx/criaturas/aranazos_2.ogg",
+  "assets/audio/sfx/criaturas/aranazos_3.ogg",
+  "assets/audio/sfx/criaturas/aranazos_4.ogg",
+  "assets/audio/sfx/criaturas/aranazos_5.ogg"
+ ],
+ "criaturas/chillido": [
+  "assets/audio/sfx/criaturas/chillido_1.ogg",
+  "assets/audio/sfx/criaturas/chillido_2.ogg",
+  "assets/audio/sfx/criaturas/chillido_3.ogg",
+  "assets/audio/sfx/criaturas/chillido_4.ogg",
+  "assets/audio/sfx/criaturas/chillido_5.ogg"
+ ],
+ "ambiente/crujido": [
+  "assets/audio/sfx/ambiente/crujido_1.ogg",
+  "assets/audio/sfx/ambiente/crujido_2.ogg",
+  "assets/audio/sfx/ambiente/crujido_3.ogg",
+  "assets/audio/sfx/ambiente/crujido_4.ogg",
+  "assets/audio/sfx/ambiente/crujido_5.ogg"
+ ],
+ "ambiente/goteo": [
+  "assets/audio/sfx/ambiente/goteo_1.ogg",
+  "assets/audio/sfx/ambiente/goteo_2.ogg",
+  "assets/audio/sfx/ambiente/goteo_3.ogg",
+  "assets/audio/sfx/ambiente/goteo_4.ogg",
+  "assets/audio/sfx/ambiente/goteo_5.ogg"
+ ],
+ "ambiente/chispazo": [
+  "assets/audio/sfx/ambiente/chispazo_1.ogg",
+  "assets/audio/sfx/ambiente/chispazo_2.ogg",
+  "assets/audio/sfx/ambiente/chispazo_3.ogg",
+  "assets/audio/sfx/ambiente/chispazo_4.ogg",
+  "assets/audio/sfx/ambiente/chispazo_5.ogg"
+ ],
+ "ambiente/ventilacion": [
+  "assets/audio/sfx/ambiente/ventilacion_1.ogg",
+  "assets/audio/sfx/ambiente/ventilacion_2.ogg",
+  "assets/audio/sfx/ambiente/ventilacion_3.ogg",
+  "assets/audio/sfx/ambiente/ventilacion_4.ogg",
+  "assets/audio/sfx/ambiente/ventilacion_5.ogg"
+ ],
+ "largo/pasos": [
+  "assets/audio/sfx/largo/pasos_1.ogg",
+  "assets/audio/sfx/largo/pasos_2.ogg",
+  "assets/audio/sfx/largo/pasos_3.ogg",
+  "assets/audio/sfx/largo/pasos_4.ogg",
+  "assets/audio/sfx/largo/pasos_5.ogg"
+ ],
+ "largo/golpe": [
+  "assets/audio/sfx/largo/golpe_1.ogg",
+  "assets/audio/sfx/largo/golpe_2.ogg",
+  "assets/audio/sfx/largo/golpe_3.ogg",
+  "assets/audio/sfx/largo/golpe_4.ogg",
+  "assets/audio/sfx/largo/golpe_5.ogg"
+ ],
+ "largo/respiracion": [
+  "assets/audio/sfx/largo/respiracion_1.ogg",
+  "assets/audio/sfx/largo/respiracion_2.ogg",
+  "assets/audio/sfx/largo/respiracion_3.ogg",
+  "assets/audio/sfx/largo/respiracion_4.ogg",
+  "assets/audio/sfx/largo/respiracion_5.ogg"
+ ],
+ "largo/grunido": [
+  "assets/audio/sfx/largo/grunido_1.ogg",
+  "assets/audio/sfx/largo/grunido_2.ogg",
+  "assets/audio/sfx/largo/grunido_3.ogg",
+  "assets/audio/sfx/largo/grunido_4.ogg",
+  "assets/audio/sfx/largo/grunido_5.ogg"
+ ],
+ "mira/zumbido": [
+  "assets/audio/sfx/mira/zumbido_1.ogg",
+  "assets/audio/sfx/mira/zumbido_2.ogg",
+  "assets/audio/sfx/mira/zumbido_3.ogg",
+  "assets/audio/sfx/mira/zumbido_4.ogg",
+  "assets/audio/sfx/mira/zumbido_5.ogg"
+ ],
+ "mira/pitido": [
+  "assets/audio/sfx/mira/pitido_1.ogg",
+  "assets/audio/sfx/mira/pitido_2.ogg",
+  "assets/audio/sfx/mira/pitido_3.ogg",
+  "assets/audio/sfx/mira/pitido_4.ogg",
+  "assets/audio/sfx/mira/pitido_5.ogg"
+ ],
+ "mira/susto": [
+  "assets/audio/sfx/mira/susto_1.ogg",
+  "assets/audio/sfx/mira/susto_2.ogg",
+  "assets/audio/sfx/mira/susto_3.ogg",
+  "assets/audio/sfx/mira/susto_4.ogg",
+  "assets/audio/sfx/mira/susto_5.ogg"
+ ],
+ "slaimi/gemido": [
+  "assets/audio/sfx/slaimi/gemido_1.ogg",
+  "assets/audio/sfx/slaimi/gemido_2.ogg",
+  "assets/audio/sfx/slaimi/gemido_3.ogg",
+  "assets/audio/sfx/slaimi/gemido_4.ogg",
+  "assets/audio/sfx/slaimi/gemido_5.ogg"
+ ],
+ "slaimi/calma": [
+  "assets/audio/sfx/slaimi/calma_1.ogg",
+  "assets/audio/sfx/slaimi/calma_2.ogg",
+  "assets/audio/sfx/slaimi/calma_3.ogg",
+  "assets/audio/sfx/slaimi/calma_4.ogg",
+  "assets/audio/sfx/slaimi/calma_5.ogg"
+ ],
+ "ambiente/interferencia": [
+  "assets/audio/sfx/ambiente/interferencia_1.ogg",
+  "assets/audio/sfx/ambiente/interferencia_2.ogg",
+  "assets/audio/sfx/ambiente/interferencia_3.ogg",
+  "assets/audio/sfx/ambiente/interferencia_4.ogg",
+  "assets/audio/sfx/ambiente/interferencia_5.ogg"
+ ],
+ "protagonista/cansado": [
+  "assets/audio/protagonista/cansado.ogg"
+ ]
+}
