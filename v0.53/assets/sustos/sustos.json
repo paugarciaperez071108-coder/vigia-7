@@ -1,0 +1,32 @@
+{
+ "largo": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "specimen": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "frozen": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "errante": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "insecto": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "dislocado": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ }
+}
