@@ -1,0 +1,26 @@
+{
+ "golpe": 9,
+ "variantes": {
+  "a": {
+   "archivo": "punetazo_a.webp",
+   "n": 14,
+   "cols": 7,
+   "w": 800,
+   "h": 450
+  },
+  "b": {
+   "archivo": "punetazo_b.webp",
+   "n": 14,
+   "cols": 7,
+   "w": 800,
+   "h": 450
+  },
+  "c": {
+   "archivo": "punetazo_c.webp",
+   "n": 14,
+   "cols": 7,
+   "w": 800,
+   "h": 450
+  }
+ }
+}
