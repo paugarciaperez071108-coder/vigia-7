@@ -319,6 +319,12 @@ export class Night3Ending {
     const office = (face) => (c) => g.officeView.draw(c, g.office, {
       face, blackout: true, noPower: true, locked: true, night: 3, terminal: g.terminal, reactor: g.reactor,
       doorEnemies: { left: [], right: [] }, cameras: g.cameras, mouse: this.mouse,
+      // v0.63 (pedido por el usuario): la orden, grande en la terminal, sin cuenta atrás
+      orden: [
+        { text: '¡ESCÓNDETE!', kind: Math.floor(this.t * 3) % 2 ? 'err' : 'warn', big: 2.4 },
+        { text: 'TAQUILLA:', kind: 'warn', big: true },
+        { text: 'PARED DE ATRÁS', kind: 'warn', big: true },
+      ],
     });
     g.lookBack.draw(ctx, {
       front: office('front'), left: office('left'), right: office('right'),
@@ -330,24 +336,18 @@ export class Night3Ending {
     ctx.fillRect(0, 0, W, H);
     g.effects.vignette(ctx);
     g.lookBack.drawStrips(ctx);
-    // Aviso
-    // v0.58: la orden, corta y grande, con la cuenta atrás
-    const left = Math.max(0, Math.ceil(E.HIDE_TIME - this.t));
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.shadowColor = '#000';
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = Math.floor(this.t * 4) % 2 ? '#ff3b2e' : '#ffffff';
-    ctx.font = 'bold 64px "Courier New", monospace';
-    ctx.fillText('¡ESCÓNDETE!', W / 2, 30);
-    ctx.fillStyle = '#ffd0c8';
-    ctx.font = 'bold 34px "Courier New", monospace';
-    ctx.fillText(g.lookBack.facingBack ? 'Taquilla: clic o E' : 'Taquilla → pared de atrás', W / 2, 104);
-    ctx.font = 'bold 72px "Courier New", monospace';
-    ctx.fillStyle = left <= 3 ? '#ff3b2e' : '#ffd84a';
-    ctx.fillText(String(left), W / 2, 152);
-    ctx.restore();
+    // (v0.63: la orden va en la terminal; aquí solo, de espaldas, cómo entrar)
+    if (g.lookBack.facingBack) {
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#ffd0c8';
+      ctx.font = 'bold 30px "Courier New", monospace';
+      ctx.fillText('Taquilla: clic o E', W / 2, 40);
+      ctx.restore();
+    }
   }
 
   _drawBack(ctx) {

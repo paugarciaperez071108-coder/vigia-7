@@ -80,7 +80,8 @@ export class Frozen extends Enemy {
   _run(world) {
     const from = this.room;
     this.room = this.route[this.routeIndex++];
-    this.stepTimer = CONFIG.CRYO.RUN_STEP_TIME;
+    // v0.64: el último pasillo lo cruza a la carrera (CameraView: drawCarrera)
+    this.stepTimer = ['westHall', 'eastHall'].includes(this.room) ? CONFIG.CRYO.HALL_RUN_TIME : CONFIG.CRYO.RUN_STEP_TIME;
     world.events.emit('enemyMove', { enemy: this, from, to: this.room });
     world.cameras.glitchIfWatching([from, this.room], CONFIG.CAMERA_MOVE_GLITCH);
     const side = this.atDoor;

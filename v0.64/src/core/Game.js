@@ -108,6 +108,8 @@ import { BackView, BACK_HATCH } from '../render/BackView.js';
 import { Flashlight } from '../render/Flashlight.js';
 import { Night3Events } from '../systems/Night3Events.js';
 import { NIGHT3 } from '../night/night3.js';
+import { glitchSlices as cortesGlitch } from '../render/Atmosphere.js';
+import { sustoPuertaListo, sustoPuertaDuracion, sustoPuertaGrito, drawSustoPuerta } from '../render/SustoPuerta.js';
 
 const KEYMAP = {
   KeyQ: { type: 'door', side: 'left' },
@@ -533,9 +535,23 @@ export class Game {
     this.tape.stop();
     this.attacker = enemy.id;
     this.deathCause = enemy.mode === 'oido' ? 'largo_oido' : enemy.id;
+    // v0.64 (pedido por el usuario): El Congelado en una compuerta abierta.
+    // La vista se gira sola hacia ella y se te echa encima desde su pasillo
+    // (src/render/SustoPuerta.js); el grito, cuando llega a la puerta.
+    const side = enemy.id === 'frozen' ? enemy.atDoor : null;
+    if (side && sustoPuertaListo(side)) {
+      enemy.room = null;           // (que no se pinte también quieto en la compuerta)
+      const gira = this.lookBack.goTo(side);
+      // (lo que tarda en girarse: 0, 1 o 2 giros de 90°)
+      const giros = gira ? this.lookBack.queue.length + 1 : 0;
+      this.frozenDoor = { side, grito: false, giro: giros * CONFIG.OFFICE_TURN.TURN_TIME + 0.15 };
+      this._setState('frozenDoor');
+      return;
+    }
     this.audio.scream();
     this._setState('jumpscare');
   }
+
 
   /** La fuga de gas no se ha sellado a tiempo. */
   _gasDeath() {
@@ -1576,6 +1592,17 @@ export class Game {
       case 'jumpscare':
         if (this.stateTime >= CONFIG.JUMPSCARE_TIME) this._setState('lose');
         break;
+      case 'frozenDoor': {
+        this.lookBack.update(dt);
+        const fd = this.frozenDoor;
+        const t = this.stateTime - fd.giro;
+        if (!fd.grito && t >= sustoPuertaGrito(fd.side)) {
+          fd.grito = true;
+          this.audio.scream();
+        }
+        if (t >= sustoPuertaDuracion(fd.side) + 0.45) this._setState('lose');
+        break;
+      }
       case 'explosion':
       case 'gasDeath':
         if (this.stateTime >= 2.5) this._setState('lose');
@@ -1598,6 +1625,29 @@ export class Game {
       case 'night':
         this._drawNight(ctx);
         break;
+      case 'frozenDoor': {
+        // La pared de la compuerta (sin el movimiento del ratón: los
+        // fotogramas van a pantalla completa, en su sitio) y él encima
+        const raton = this.mouse;
+        this.mouse = null;
+        this.lookBack.draw(ctx, {
+          front: (c) => this._drawOfficeFront(c, 'front'),
+          left: (c) => this._drawOfficeFront(c, 'left'),
+          right: (c) => this._drawOfficeFront(c, 'right'),
+          back: (c) => this._drawBack(c),
+        });
+        this.mouse = raton;
+        const fd = this.frozenDoor;
+        const t = this.stateTime - fd.giro;
+        if (this.lookBack.isFacing(fd.side) && t >= 0) {
+          drawSustoPuerta(ctx, fd.side, t);
+          if (fd.grito) {
+            cortesGlitch(ctx, 0.5);
+            this.effects.static(ctx, 0.25);
+          }
+        }
+        break;
+      }
       case 'jumpscare':
         if (this.attacker === 'errante' && !hasJumpscare('errante')) {
           if (this.stateTime >= CONFIG.JUMPSCARE.CUT) {
@@ -1717,12 +1767,19 @@ export class Game {
       return;
     }
     if (this.cameras.ventsUnlocked) {
-      // Actualizado a tiempo: El Insecto se va por los conductos
-      it.won = true;
-      it.k0 = Math.min(1, it.t / E.TIME);
-      this.audio.lib?.play('criaturas/chillido', { volume: 0.4, pan: 0.65, muffle: 0.4 });
-      this.events.emit('insectRepelled');
-      this.alerta('SISTEMA ACTUALIZADO: el Insecto se retira', 'warn');
+      // v0.63 (pedido por el usuario): actualizar ya no lo echa. Con las
+      // cámaras de ventilación en línea, El Insecto sigue en el conducto
+      // derecho (V6) y hay que ahuyentarlo como en el resto de la noche:
+      // insecticida en su conducto antes de que entre. Le queda lo que
+      // faltaba de la cuenta (como mínimo, lo normal: INSECTO.ENTER_TIME).
+      this.n2intro = null;
+      const ins = this.ai.insecto;
+      ins.state = 'vent';
+      ins.room = 'v1';
+      ins.moveTo('v6', this.world);
+      ins.enterIn = Math.max(NIGHT2.INSECTO.ENTER_TIME, E.TIME - it.t);
+      ins.noiseIn = 0.3;
+      this.alerta('VENTILACION EN LINEA: EL INSECTO ESTA EN V6', 'danger');
       return;
     }
     it.t += dt;

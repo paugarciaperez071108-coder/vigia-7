@@ -1,0 +1,32 @@
+[
+ {
+  "enemigo": "frozen",
+  "sala": "left",
+  "archivo": "frozen_left.webp",
+  "f0": 0,
+  "n": 32,
+  "fps": 12,
+  "x": 0,
+  "y": 0,
+  "w": 1600,
+  "h": 900,
+  "fw": 800,
+  "fh": 450,
+  "cols": 5
+ },
+ {
+  "enemigo": "frozen",
+  "sala": "right",
+  "archivo": "frozen_right.webp",
+  "f0": 0,
+  "n": 32,
+  "fps": 12,
+  "x": 0,
+  "y": 0,
+  "w": 1600,
+  "h": 900,
+  "fw": 800,
+  "fh": 450,
+  "cols": 5
+ }
+]

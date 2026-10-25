@@ -180,6 +180,10 @@ export function drawTerminal(c, w, h, fx, term, opts = {}) {
     const text = typeof l === 'string' ? l : l.text;
     const kind = typeof l === 'string' ? 'info' : l.kind;
     const big = typeof l === 'object' && l.big;
+    if (big) {
+      filas.push({ text, kind, big });   // (corta y grande: no se parte)
+      continue;
+    }
     for (const t of partir(c, text, w - x * 2)) filas.push({ text: t, kind, big });
   }
   // (opts.fijas: las primeras líneas de estado no se van aunque haya muchas)
@@ -192,11 +196,12 @@ export function drawTerminal(c, w, h, fx, term, opts = {}) {
     c.fillStyle = kind === 'err' ? fx.err : kind === 'cmd' ? fx.dim : kind === 'warn' ? fx.warn
       : kind === 'danger' ? fx.danger : fx.color;
     if (l.big) {
-      // (una línea destacada: más grande y en negrita)
-      c.font = `bold ${Math.round(fs * 1.45)}px "Courier New", monospace`;
-      c.fillText(l.text, x, y + lh * 0.15);
+      // (una línea destacada: más grande y en negrita; big numérico = escala)
+      const k = l.big === true ? 1.45 : l.big;
+      c.font = `bold ${Math.round(fs * k)}px "Courier New", monospace`;
+      c.fillText(l.text, x, y + lh * 0.15 * k / 1.45);
       c.font = `${fs}px "Courier New", monospace`;
-      y += lh * 1.6;
+      y += lh * (k + 0.15);
     } else {
       c.fillText(l.text, x, y);
       y += lh;

@@ -957,7 +957,7 @@ export class OfficeView {
    * Contenido de la pantalla verde: terminal del apagón, terminal
    * normal (cuando se está escribiendo) o estado del sistema.
    */
-  _drawMonitorScreen(ctx, { blackout, terminal, reactor, cameras, gasLeak }) {
+  _drawMonitorScreen(ctx, { blackout, terminal, reactor, cameras, gasLeak, orden }) {
     // Monitor CRT de la nave (src/render/CRT.js): el texto, en su cristal
     const rotas = cameras?.broken ? [...cameras.broken].filter((id) => !id.startsWith('v')).length : 0;
     const idle = [];
@@ -980,8 +980,10 @@ export class OfficeView {
       idle.length = 0;
       idle.push({ text: `${cam}${ven} · R ${Math.floor(reactor.level)}%`, kind: rotas || gasLeak ? 'err' : 'info' });
     }
+    // v0.63: una orden que tapa todo lo demás (6:00 de la noche 3: ¡ESCÓNDETE!)
+    if (orden) idle.splice(0, idle.length, ...orden);
     const fijas = idle.length;
-    idle.push(...terminal.log);
+    if (!orden) idle.push(...terminal.log);
     drawCRT(ctx, MONITOR, (c, w, h, fx) => drawTerminal(c, w, h, fx, terminal, {
       title: blackout ? 'VIGIA-7 // ENERGIA AUX' : gasLeak ? '!! FUGA DE GAS' : 'VIGIA-7 // CONTROL',
       idle,

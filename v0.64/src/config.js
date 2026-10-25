@@ -7,7 +7,7 @@
 // =============================================================
 
 export const CONFIG = {
-  VERSION: 'v0.62',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v0.64',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // Resolución lógica: todo se dibuja en 1600×900 y luego se escala
   // a la ventana manteniendo la proporción (con bandas negras).
@@ -95,6 +95,7 @@ export const CONFIG = {
     // compuerta está abierta, te mata al instante; si está cerrada,
     // vuelve a su cápsula.
     RUN_STEP_TIME: 1.8,     // segundos que tarda en cruzar cada sala
+    HALL_RUN_TIME: 4.5,     // v0.64: s que tarda en cruzar el último pasillo, a la carrera (se le ve correr hacia la compuerta)
     RUN_ROUTES: {
       // Sale de Criogenia por el conducto oculto a la Enfermería
       left: ['medbay', 'reactor', 'mess', 'greenhouse', 'westHall', 'left_door'],
