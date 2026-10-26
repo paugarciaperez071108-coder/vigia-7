@@ -2509,17 +2509,17 @@ function carreraDe(F) {
 }
 
 /**
- * El Congelado corriendo por su sala. En los pasillos, a tiempo real (el
- * último fotograma coincide con su llegada a la compuerta); en las demás
- * salas de la ruta (v0.66), la carrera entera repartida en lo que tarda en
- * cruzarla (CRYO.RUN_STEP_TIME).
+ * El Congelado corriendo por su sala: la carrera entera repartida en lo que
+ * tarda en cruzarla (CRYO.RUN_STEP_TIME; en los pasillos HALL_RUN_TIME, y el
+ * último fotograma coincide con su llegada a la compuerta). v0.70: los
+ * pasillos ya no van a tiempo real: rodeando los bancos el camino es más
+ * largo y se perdía la entrada por la compuerta.
  */
 function drawCarrera(ctx, c, F) {
   const quedan = Math.max(0, F.stepTimer);
   const pasillo = F.room === 'westHall' || F.room === 'eastHall';
-  const f = pasillo
-    ? c.n - 1 - Math.floor(quedan * c.fps)
-    : Math.min(c.n - 1, Math.floor((1 - quedan / CONFIG.CRYO.RUN_STEP_TIME) * c.n));
+  const dura = pasillo ? CONFIG.CRYO.HALL_RUN_TIME : CONFIG.CRYO.RUN_STEP_TIME;
+  const f = Math.min(c.n - 1, Math.floor((1 - quedan / dura) * c.n));
   if (f < 0) return 0;
   // hasta dónde ha pisado (el rastro de escarcha se queda: drawRastro)
   F.rastro ??= {};
