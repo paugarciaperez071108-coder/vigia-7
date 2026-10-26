@@ -290,6 +290,9 @@ export class Game {
     this.events.on('hour', (h) => this.ai.onHour(h));
     // v0.58: cuando cambia el rango de la criogenia, aviso con sonido (y el
     // panel parpadea: CryoPanel.cambioReciente)
+    // v0.66b: El Congelado en su compuerta: pisadas por ese lado y, al final, silencio
+    this.events.on('frozenPuerta', ({ side }) => this.audio.frozenCarrera?.(side, CONFIG.CRYO.PUERTA.MARGEN - 0.1));
+    this.events.on('frozenSilencio', () => this.audio.stopAll());
     // v0.58: cada cámara que rompe El Largo queda en el registro
     this.events.on('camBroken', ({ room }) => {
       if (ROOMS[room]) this.alerta(`CAMARA DAÑADA (CAM ${ROOMS[room].cam})`, 'danger');
@@ -538,13 +541,17 @@ export class Game {
     // v0.64 (pedido por el usuario): El Congelado en una compuerta abierta.
     // La vista se gira sola hacia ella y se te echa encima desde su pasillo
     // (src/render/SustoPuerta.js); el grito, cuando llega a la puerta.
-    const side = enemy.id === 'frozen' ? enemy.atDoor : null;
-    if (side && sustoPuertaListo(side)) {
+    // v0.66b: el margen (correr por el pasillo + silencio en la puerta) ya ha
+    // pasado durante la noche (Frozen._enPuerta); aquí, solo si no cerraste,
+    // la vista se gira JUSTO antes del salto
+    const side = enemy.id === 'frozen' ? (enemy.puerta?.side ?? enemy.atDoor) : null;
+    if (side) {
       enemy.room = null;           // (que no se pinte también quieto en la compuerta)
+      enemy.puerta = null;
       const gira = this.lookBack.goTo(side);
       // (lo que tarda en girarse: 0, 1 o 2 giros de 90°)
       const giros = gira ? this.lookBack.queue.length + 1 : 0;
-      this.frozenDoor = { side, grito: false, giro: giros * CONFIG.OFFICE_TURN.TURN_TIME + 0.15, nocheT: this.stateTime };
+      this.frozenDoor = { side, grito: false, giro: giros * CONFIG.OFFICE_TURN.TURN_TIME };
       this._setState('frozenDoor');
       return;
     }
@@ -649,14 +656,6 @@ export class Game {
           }
         }
         break;
-      case 'frozenDoor': {
-        // v0.66: el botón PUERTA de su compuerta (solo cerrar, y antes del salto)
-        const fd = this.frozenDoor;
-        if (!fd || fd.grito || fd.salvado != null || this.lookBack.moving || !this.lookBack.isFacing(fd.side)) break;
-        const action = this.officeView.hitTest(x, y, fd.side);
-        if (action?.type === 'door' && action.side === fd.side && !this.office.doors[fd.side].closed) this._doAction(action);
-        break;
-      }
       case 'n4start':
         this._ensureAudio();
         if (this._tapeMinigameClick(x, y)) break;
@@ -1605,54 +1604,21 @@ export class Game {
         if (this.stateTime >= CONFIG.JUMPSCARE_TIME) this._setState('lose');
         break;
       case 'frozenDoor': {
-        // v0.66: ya no es un susto sin salida. Desde que la vista está en su
-        // compuerta hay CRYO.PUERTA.MARGEN s mientras corre por el pasillo y
-        // SILENCIO s quieto en la puerta: si se cierra a tiempo, choca contra
-        // ella y vuelve a su cápsula. Si no, salta.
+        // v0.66b: la vista se gira hacia su compuerta y, en cuanto está de
+        // frente, salta (una de las 3 variantes)
         this.lookBack.update(dt);
         this.office.update(dt);
         this._updateFrio(dt);
         const fd = this.frozenDoor;
-        const P = CONFIG.CRYO.PUERTA;
         const t = this.stateTime - fd.giro;
-        const salto = P.MARGEN + P.SILENCIO;
-        if (fd.salvado != null) {
-          if (this.stateTime - fd.salvado >= P.VUELTA) {
-            this.frozenDoor = null;
-            const st = this.stateTime;
-            this._setState('night');
-            this.stateTime = fd.nocheT + st;    // (lo que llevaba la noche)
-          }
-          break;
-        }
-        if (this.office.doors[fd.side].closed && t < salto) {
-          fd.salvado = this.stateTime;
-          const F = this.ai.frozen;
-          F.state = 'asleep';
-          F.room = null;
-          this.cryo.makeSafe(CONFIG.CRYO.RETURN_SAFE_MARGIN);
-          this.events.emit('doorBlocked', { enemy: F, side: fd.side });
-          this.events.emit('frozenReturned', { enemy: F });
-          this.attacker = this.deathCause = null;
-          break;
-        }
-        if (!fd.carrera && t >= 0) {
-          fd.carrera = true;
-          this.audio.frozenCarrera?.(fd.side, P.MARGEN - 0.1);
-        }
-        if (!fd.silencio && t >= P.MARGEN) {
-          fd.silencio = true;
-          this.audio.stopAll();          // medio segundo sin nada: contener la respiración
-        }
-        if (!fd.grito && t >= salto) {
+        if (!fd.grito && t >= 0) {
           fd.grito = true;
-          // v0.66: una de las 3 variantes del salto, al azar
           const vs = saltosCongelado();
           fd.var = vs.length ? vs[Math.floor(Math.random() * vs.length)] : null;
           nuevoSalto();
           this.audio.frozenGrito?.() ?? this.audio.scream();
         }
-        if (t >= salto + (fd.var ? duracionSalto(fd.var) : sustoPuertaSalto(fd.side)) + 0.45) {
+        if (t >= (fd.var ? duracionSalto(fd.var) : 0.9) + 0.45) {
           this._setState('lose');
           this.audio.frozenViento?.();      // la pantalla de muerte no se queda en silencio
         }
@@ -1695,16 +1661,15 @@ export class Game {
         this._drawFrio(ctx);
         const fd = this.frozenDoor;
         const t = this.stateTime - fd.giro;
-        if (fd.var && t >= CONFIG.CRYO.PUERTA.MARGEN + CONFIG.CRYO.PUERTA.SILENCIO) {
-          drawSaltoCongelado(ctx, fd.var, t - CONFIG.CRYO.PUERTA.MARGEN - CONFIG.CRYO.PUERTA.SILENCIO, this.effects);
-          break;
-        }
-        if (this.lookBack.isFacing(fd.side) && t >= 0 && fd.salvado == null) {
-          drawSustoPuerta(ctx, fd.side, t, CONFIG.CRYO.PUERTA);
-          if (fd.grito) {
-            cortesGlitch(ctx, 0.5);
-            this.effects.static(ctx, 0.25);
-          }
+        if (t < 0) {
+          // girándose hacia su compuerta (en la puerta no se le ve: pedido del usuario)
+        } else if (fd.var) {
+          // v0.66c: el salto ENCIMA de la oficina (los fotogramas tienen fondo transparente)
+          drawSaltoCongelado(ctx, fd.var, t, this.effects, 7, true);
+        } else {
+          drawSustoPuerta(ctx, fd.side, 99, CONFIG.CRYO.PUERTA);
+          cortesGlitch(ctx, 0.5);
+          this.effects.static(ctx, 0.25);
         }
         break;
       }
@@ -1886,7 +1851,9 @@ export class Game {
       gasLeak: this.gas.active,
       easterEgg: this.easterEgg,
       mouse: this.mouse,
-      overlay: face === 'front' && this.n5.active ? (c) => this.n5.drawFront(c) : null,
+      overlay: (c, f) => {
+        if (f === 'front' && this.n5.active) this.n5.drawFront(c);
+      },
       introProgress: this.n2introProgress,
     });
     this.slaimi.drawInOffice(ctx, face, this.sprites);
@@ -1958,7 +1925,7 @@ export class Game {
   /** Lado de la oficina por el que viene (o null si no corre). */
   get _ladoFrio() {
     const F = this.ai.frozen;
-    if (F?.state !== 'escaped' || !F.route) return this.frozenDoor?.side ?? null;
+    if (F?.state !== 'escaped' || !F.route) return this.state === 'frozenDoor' ? this.frozenDoor?.side ?? null : null;
     return F.route[F.route.length - 1] === 'left_door' ? 'left' : 'right';
   }
 
@@ -1966,7 +1933,7 @@ export class Game {
     const fr = (this.frio ??= { k: 0, puffs: [], breathIn: 2, aviso: false });
     const F = this.ai.frozen;
     let meta = 0;
-    if (this.frozenDoor) meta = 1;
+    if (this.state === 'frozenDoor' || F?.puerta) meta = 1;
     else if (F?.state === 'escaped' && F.route) {
       const paso = ['westHall', 'eastHall'].includes(F.room) ? CONFIG.CRYO.HALL_RUN_TIME : CONFIG.CRYO.RUN_STEP_TIME;
       meta = Math.min(1, (F.routeIndex + Math.max(0, 1 - F.stepTimer / paso)) / (F.route.length - 1));
@@ -1976,10 +1943,13 @@ export class Game {
         this.alerta('TEMPERATURA DE LA OFICINA BAJANDO', 'warn');
       }
     } else fr.aviso = false;
-    fr.k += (meta - fr.k) * Math.min(1, dt * (meta > fr.k ? 0.9 : 0.25));
+    // (v0.66b, pedido del usuario: cuando se va, el frío desaparece en ~1 s)
+    fr.k += (meta - fr.k) * Math.min(1, dt * (meta > fr.k ? 0.9 : 3.0));
+    if (!Number.isFinite(fr.k)) fr.k = 0;
+    if (meta === 0 && fr.k < 0.05) { fr.k = 0; fr.puffs = []; }
     if (this.audio) this.audio.frozenK = meta;      // (pisadas que aceleran: AudioEngine._enemySteps)
     // vaho del protagonista: un soplo cada pocos segundos (más seguido cuanto más frío)
-    if (fr.k > 0.12) {
+    if (fr.k > 0.12 && meta > 0) {
       fr.breathIn -= dt;
       if (fr.breathIn <= 0) {
         fr.breathIn = 3.2 - 1.6 * fr.k;
@@ -1995,7 +1965,7 @@ export class Game {
     if (!fr || (fr.k < 0.01 && !fr.puffs.length)) return;
     const lado = this._ladoFrio;
     const face = this.lookBack.face;
-    if (lado && face === lado && !this.cameras.fullyOpen) {
+    if (lado && face === lado && !this.cameras.fullyOpen && !this.lookBack.moving) {   // (girando no: el marco quedaba en mitad)
       // la escarcha trepa por el marco de su compuerta
       ctx.save();
       ctx.beginPath();
@@ -2006,7 +1976,7 @@ export class Game {
       drawEdgeFrost(ctx, 0.5 * fr.k);
       ctx.restore();
       // la luz de emergencia de esa puerta parpadea mientras corre hacia ella
-      const corre = this.ai.frozen?.room === (lado === 'left' ? 'westHall' : 'eastHall') || this.frozenDoor;
+      const corre = this.ai.frozen?.room === (lado === 'left' ? 'westHall' : 'eastHall') || this.ai.frozen?.puerta || this.state === 'frozenDoor';
       if (corre) {
         const on = Math.random() < 0.55;
         ctx.fillStyle = on ? 'rgba(255,120,40,0.10)' : 'rgba(0,0,0,0.45)';

@@ -57,6 +57,10 @@ export class Frozen extends Enemy {
         break;
 
       case 'escaped':
+        if (this.puerta) {
+          this._enPuerta(dt, world);
+          break;
+        }
         this.stepTimer -= dt;
         if (this.stepTimer <= 0) this._run(world);
         break;
@@ -91,11 +95,34 @@ export class Frozen extends Enemy {
       world.events.emit('doorBlocked', { enemy: this, side });
       this._returnToPod(world);
     } else {
-      world.attack(this);
+      // v0.66b (pedido del usuario): la vista NO se gira sola al llegar. La
+      // noche sigue: corre por el pasillo de su compuerta (CRYO.PUERTA.MARGEN
+      // s) y se queda quieto en ella (SILENCIO s). Si se cierra en ese tiempo,
+      // vuelve a su cápsula; si no, ataca (y entonces sí se gira la vista).
+      this.puerta = { side, t: 0, silencio: false };
+      world.events.emit('frozenPuerta', { enemy: this, side });
     }
   }
 
+  _enPuerta(dt, world) {
+    const P = CONFIG.CRYO.PUERTA;
+    const pu = this.puerta;
+    pu.t += dt;
+    if (world.office.doors[pu.side].closed) {
+      this.puerta = null;
+      world.events.emit('doorBlocked', { enemy: this, side: pu.side });
+      this._returnToPod(world);
+      return;
+    }
+    if (!pu.silencio && pu.t >= P.MARGEN) {
+      pu.silencio = true;
+      world.events.emit('frozenSilencio', { enemy: this, side: pu.side });
+    }
+    if (pu.t >= P.MARGEN + P.SILENCIO) world.attack(this);
+  }
+
   _returnToPod(world) {
+    this.puerta = null;
     this.state = 'asleep';
     this.room = null;
     world.cryo.makeSafe(CONFIG.CRYO.RETURN_SAFE_MARGIN);
