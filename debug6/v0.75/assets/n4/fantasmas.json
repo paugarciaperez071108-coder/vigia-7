@@ -1,0 +1,37 @@
+{
+ "w": 240,
+ "h": 480,
+ "fps": 8,
+ "gente": {
+  "salvat": {
+   "andar": {
+    "fila": 0,
+    "frames": 12
+   },
+   "quieto": {
+    "fila": 1,
+    "frames": 1
+   }
+  },
+  "ortega": {
+   "andar": {
+    "fila": 2,
+    "frames": 12
+   },
+   "quieto": {
+    "fila": 3,
+    "frames": 1
+   }
+  },
+  "navas": {
+   "andar": {
+    "fila": 4,
+    "frames": 12
+   },
+   "quieto": {
+    "fila": 5,
+    "frames": 1
+   }
+  }
+ }
+}

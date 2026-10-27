@@ -1,0 +1,128 @@
+{
+ "rejilla_left_1": {
+  "archivo": "rejilla_left_1.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "rejilla_left_3": {
+  "archivo": "rejilla_left_3.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "rejilla_left_5": {
+  "archivo": "rejilla_left_5.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "rejilla_left_rota": {
+  "archivo": "rejilla_left_rota.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "peek_left_dedos": {
+  "archivo": "peek_left_dedos.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "peek_left_cabeza": {
+  "archivo": "peek_left_cabeza.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "peek_left_atras": {
+  "archivo": "peek_left_atras.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "rejilla_right_1": {
+  "archivo": "rejilla_right_1.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "rejilla_right_3": {
+  "archivo": "rejilla_right_3.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "rejilla_right_5": {
+  "archivo": "rejilla_right_5.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "rejilla_right_rota": {
+  "archivo": "rejilla_right_rota.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "peek_right_dedos": {
+  "archivo": "peek_right_dedos.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "peek_right_cabeza": {
+  "archivo": "peek_right_cabeza.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "peek_right_atras": {
+  "archivo": "peek_right_atras.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "rejilla_left_2": {
+  "archivo": "rejilla_left_2.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "rejilla_left_4": {
+  "archivo": "rejilla_left_4.webp",
+  "x": 36,
+  "y": 330,
+  "w": 384,
+  "h": 570
+ },
+ "rejilla_right_2": {
+  "archivo": "rejilla_right_2.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "rejilla_right_4": {
+  "archivo": "rejilla_right_4.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ }
+}
