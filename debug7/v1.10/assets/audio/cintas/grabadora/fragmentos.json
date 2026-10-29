@@ -1,0 +1,30 @@
+[
+ {
+  "audio": "assets/audio/cintas/grabadora/frag_1.ogg",
+  "texto": "Solo me guío por las alertas.",
+  "desde": "noche4_rutaA",
+  "dur": 3.56,
+  "voz_en": 0.35
+ },
+ {
+  "audio": "assets/audio/cintas/grabadora/frag_2.ogg",
+  "texto": "Ya no distingo si las cosas se mueven… o si soy yo.",
+  "desde": "noche7",
+  "dur": 3.15,
+  "voz_en": 0.35
+ },
+ {
+  "audio": "assets/audio/cintas/grabadora/frag_3.ogg",
+  "texto": "No sé cuánto más voy a resistir.",
+  "desde": "noche4_rutaA",
+  "dur": 2.64,
+  "voz_en": 0.35
+ },
+ {
+  "audio": "assets/audio/cintas/grabadora/frag_4.ogg",
+  "texto": "Ese cabrón no me deja estar cuerdo.",
+  "desde": "noche4_rutaA",
+  "dur": 3.76,
+  "voz_en": 0.35
+ }
+]

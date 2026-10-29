@@ -1,0 +1,35 @@
+{
+ "anim": {
+  "aberracion_mira": 45,
+  "aberracion_rompe": 60,
+  "aberracion_sirven": 75,
+  "frozen_despues": 30,
+  "frozen_vivo": 99,
+  "insecto_despues": 30,
+  "insecto_vivo": 90,
+  "largo_despues": 30,
+  "largo_vivo": 112,
+  "oficina_sombra": 36,
+  "specimen_despues": 30,
+  "specimen_vivo": 96
+ },
+ "fijas": [
+  "emerg_comms",
+  "emerg_cryo",
+  "emerg_eastHall",
+  "emerg_greenhouse",
+  "emerg_hangar",
+  "emerg_lab",
+  "emerg_medbay",
+  "emerg_mess",
+  "emerg_reactor",
+  "emerg_westHall",
+  "lab_tiembla_0",
+  "lab_tiembla_1",
+  "lab_tiembla_2",
+  "lab_tiembla_3",
+  "lab_tiembla_4",
+  "lab_tiembla_5",
+  "lab_roto_vacio"
+ ]
+}

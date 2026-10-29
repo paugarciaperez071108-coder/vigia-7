@@ -1,0 +1,52 @@
+{
+ "largo": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "specimen": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "frozen": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "errante": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "insecto": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "dislocado": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ },
+ "frozen_v1": {
+  "frames": 22,
+  "w": 744,
+  "h": 418
+ },
+ "frozen_v2": {
+  "frames": 22,
+  "w": 744,
+  "h": 418
+ },
+ "frozen_v3": {
+  "frames": 22,
+  "w": 744,
+  "h": 418
+ },
+ "aberracion": {
+  "frames": 14,
+  "w": 800,
+  "h": 450
+ }
+}

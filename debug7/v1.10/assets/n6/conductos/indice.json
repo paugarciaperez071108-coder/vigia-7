@@ -1,0 +1,30 @@
+{
+ "vistas": {
+  "cruce_FR": 40,
+  "cruce_LF": 40,
+  "cruce_LFR": 40,
+  "pila": 37,
+  "recto": 10,
+  "salida": 37,
+  "salir": 36,
+  "soldada": 37
+ },
+ "enemigos": {
+  "dislocado": [
+   "ataque",
+   "cerca",
+   "lejos",
+   "media",
+   "se_va",
+   "se_va2"
+  ],
+  "insecto": [
+   "ataque",
+   "cerca",
+   "lejos",
+   "media",
+   "se_va",
+   "se_va2"
+  ]
+ }
+}

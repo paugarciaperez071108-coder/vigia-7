@@ -1,0 +1,246 @@
+{
+ "cryo": {
+  "focos": [
+   {
+    "id": "cadaver",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 840,
+    "y": 705,
+    "dist": 9.68,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 470,
+    "y": 520,
+    "dist": 14.77,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "_sprite": {
+  "explosion": 24,
+  "rejilla": 30
+ },
+ "lab": {
+  "focos": [
+   {
+    "id": "cadaver",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 694,
+    "y": 614,
+    "dist": 9.49,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 600,
+    "y": 300,
+    "dist": 22.97,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "greenhouse": {
+  "focos": [
+   {
+    "id": "cadaver",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 862,
+    "y": 686,
+    "dist": 10.23,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 520,
+    "y": 400,
+    "dist": 17.59,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "hangar": {
+  "focos": [
+   {
+    "id": "cadaver",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 936,
+    "y": 695,
+    "dist": 10.42,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 380,
+    "y": 360,
+    "dist": 20.96,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "reactor": {
+  "focos": [
+   {
+    "id": "fuego",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 296,
+    "y": 584,
+    "dist": 14.07,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 470,
+    "y": 210,
+    "dist": 20.23,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "mess": {
+  "focos": [
+   {
+    "id": "fuego",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 611,
+    "y": 496,
+    "dist": 15.3,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 900,
+    "y": 190,
+    "dist": 24.07,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "medbay": {
+  "focos": [
+   {
+    "id": "fuego",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 542,
+    "y": 410,
+    "dist": 16.17,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 820,
+    "y": 250,
+    "dist": 20.17,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "comms": {
+  "focos": [
+   {
+    "id": "fuego",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 515,
+    "y": 539,
+    "dist": 12.8,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 640,
+    "y": 230,
+    "dist": 24.09,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "eastHall": {
+  "focos": [
+   {
+    "id": "fuego",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 694,
+    "y": 583,
+    "dist": 10.9,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 300,
+    "y": 330,
+    "dist": 19.05,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ },
+ "westHall": {
+  "focos": [
+   {
+    "id": "fuego",
+    "tipo": "fuego",
+    "delante": true,
+    "x": 578,
+    "y": 695,
+    "dist": 8.52,
+    "bucle": 42,
+    "explosion": 0
+   },
+   {
+    "id": "pared",
+    "tipo": "explosion",
+    "delante": false,
+    "x": 1000,
+    "y": 310,
+    "dist": 21.3,
+    "bucle": 42,
+    "explosion": 24
+   }
+  ]
+ }
+}

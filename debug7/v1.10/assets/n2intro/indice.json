@@ -1,0 +1,44 @@
+{
+ "vacio": {
+  "archivo": "vacio.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "intro_0": {
+  "archivo": "intro_0.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "intro_1": {
+  "archivo": "intro_1.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "intro_2": {
+  "archivo": "intro_2.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "intro_3": {
+  "archivo": "intro_3.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ },
+ "intro_4": {
+  "archivo": "intro_4.webp",
+  "x": 1180,
+  "y": 330,
+  "w": 392,
+  "h": 570
+ }
+}
