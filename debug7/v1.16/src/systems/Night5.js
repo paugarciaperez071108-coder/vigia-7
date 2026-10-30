@@ -390,6 +390,9 @@ export class Night5 {
       // (v1.14) Noche 7: el hueco del render ya es oscuro (con su profundidad, las brasas y el humo): sin la
       // capa de oscuridad encima (se veía como un rectángulo negro); a El Dislocado solo se le ve alumbrado
       if (!this.g.n7?.active) this._grilleDark(ctx, r, k, dark);
+      // (v1.16) Noche 7: el fondo del conducto, a oscuras salvo alumbrado (si no, a El Dislocado se le veía
+      // atacar sin luz); la sombra va DENTRO del marco y con el borde fundido: nunca un recuadro
+      else this._conductoOscuro(ctx, r, k);
       // La luz sobre la rejilla (al alumbrarla; en la noche 7 ya la pone el render)
       if (k > 0.02 && !(this.g.n7?.active && this.g.ofv2?.tieneRejilla?.(side))) {
         ctx.save();
@@ -512,8 +515,10 @@ export class Night5 {
   /** (v1.14) El asomado dentro del hueco con el borde difuminado (se pinta aparte y se funde hacia los
    * bordes del hueco: así no se ve el recuadro de su imagen sobre la oficina de la noche 7). */
   _drawPeekSuave(ctx, side, r) {
-    // (la mecánica de la noche 5: en la oscuridad del hueco solo se le ve con el ratón encima)
-    const luz = Math.max(0.06, this.reveal[side] ?? 0);
+    // (la mecánica de la noche 5: en la oscuridad del hueco solo se le ve con el ratón encima; v1.16: sin
+    // nada de él a oscuras)
+    const luz = Math.pow(this.reveal[side] ?? 0, 1.4);
+    if (luz < 0.01) return;
     const c = (this._peekCanvas ??= document.createElement('canvas'));
     c.width = r.w;
     c.height = r.h;
@@ -532,6 +537,18 @@ export class Night5 {
     ctx.save();
     ctx.globalAlpha = luz;
     ctx.drawImage(c, r.x, r.y);
+    ctx.restore();
+  }
+
+  /** (v1.16) Noche 7: oscuridad dentro del hueco del conducto (con el ratón encima se va). */
+  _conductoOscuro(ctx, r, k) {
+    const a = D.N7_OSCURO * (1 - k);
+    if (a < 0.01) return;
+    ctx.save();
+    ctx.filter = 'blur(14px)';
+    ctx.fillStyle = `rgba(0,0,0,${a})`;
+    ctx.fillRect(r.x + 44, r.y + 34, r.w - 88, r.h - 66);
+    ctx.filter = 'none';
     ctx.restore();
   }
 

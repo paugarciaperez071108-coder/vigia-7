@@ -76,6 +76,7 @@ export const NIGHT5 = {
     BLACKOUT_DARK: 0.9,    // oscuridad de la rejilla en el apagón (como la pared)
     HOLE_DARK: 0.96,       // oscuridad del interior del conducto (rejilla rota)
     LIT_DARK: 0.12,        // oscuridad que queda con el ratón encima
+    N7_OSCURO: 0.92,       // (v1.16) noche 7: oscuridad del fondo del conducto roto sin alumbrar
     LIT_SPEED: 6,          // rapidez con la que se aclara / oscurece
     FROM_HOUR: 2,          // aparece a partir de esta hora (con el evento de las rejillas)
     INTERVAL: 4.2,         // s entre oportunidades de moverse por los conductos
