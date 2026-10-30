@@ -69,7 +69,7 @@ export class Errante extends Enemy {
     if (!world.cameras.open) return false;
     this.state = 'cam';
     this.camRoom = world.cameras.active;
-    this.t = E.CAM_GRACE;
+    this.t = this.camGrace ?? E.CAM_GRACE;   // (noche 7: camGrace, menos margen)
     world.events.emit('erranteFace', { room: this.camRoom });
     return true;
   }
@@ -119,7 +119,7 @@ export class Errante extends Enemy {
     if (this.stepIn === null) {
       this.room = E.START;
       this.stepIn = this._rand(world, E.FIRST);
-      this.camIn = this._rand(world, E.FIRST) + 15;
+      this.camIn = this.camEvery ? this._rand(world, between(this.camEvery, 0)) : this._rand(world, E.FIRST) + 15;   // (noche 7: la primera, ya con camEvery)
     }
     const k = this.k(world);
     if (this.state === 'idle') {
@@ -142,7 +142,7 @@ export class Errante extends Enemy {
       if (cams.open && cams.fullyOpen && (cams.openTime ?? 0) >= E.CAM_MIN_OPEN && !cams.broken.has(cams.active)) {
         this.camIn -= dt;
         if (this.camIn <= 0) this.forceCam(world);
-      }
+      } else if (this.camSiempre) this.camIn -= dt;   // (noche 7, v1.18: espera también con el monitor bajado; sale en cuanto lo subes)
       return;
     }
     if (this.state === 'door') {

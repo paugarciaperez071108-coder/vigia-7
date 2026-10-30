@@ -491,6 +491,8 @@ export class Game {
         this.ai.errante.soloCamaras = true;   // (el usuario: en la noche 7 El Errante no mata, solo desactiva cámaras)
         this.ai.errante.stareTime = NIGHT7.ERRANTE.STARE_TIME;   // (v0.93: y las apaga más a menudo)
         this.ai.errante.camEvery = NIGHT7.ERRANTE.CAM_EVERY;
+        this.ai.errante.camGrace = NIGHT7.ERRANTE.CAM_GRACE;   // (v1.18)
+        this.ai.errante.camSiempre = true;
       }
       this.cameras.hasLure = true;       // (el señuelo: saca a la Aberración del reactor)
     }
@@ -1699,7 +1701,17 @@ export class Game {
     this.ai.largo.hearLure(this.cameras.active, this.world);
   }
 
+  /** (v1.18, el usuario) Con las cámaras desactivadas por El Errante no se puede enfriar el reactor
+   *  ni tocar el rango de la Criogenia (todas las noches en que sale). */
+  _sinCamaras() {
+    if (!this.n5?.active || !this.n5.camsDead) return false;
+    this.events.emit('denied', 'center');
+    this.terminal.print?.('Error: sin conexion con las camaras (resetcam)');
+    return true;
+  }
+
   _cool() {
+    if (this._sinCamaras()) return;
     if (!this.reactor.startCooling()) this.events.emit('denied', 'center');
   }
 
@@ -1748,6 +1760,7 @@ export class Game {
 
   _adjustCryo(dir) {
     if (!this.cryo.enabled) return;            // (noche 7: sin termostato)
+    if (this._sinCamaras()) return;
     if (this.cryo.adjust(dir)) this.audio.keyClick();
     else this.events.emit('denied', 'center');
   }
