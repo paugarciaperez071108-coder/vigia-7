@@ -1,0 +1,170 @@
+{
+ "v1": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {},
+  "caos": {
+   "rejilla": "4am",
+   "hollin": "430",
+   "cable": "430",
+   "aislante_suelo": "430",
+   "al_rojo": "5am",
+   "fogonazo": "5am"
+  },
+  "luz": 24,
+  "gotas": 16,
+  "humo": 48,
+  "fogonazo_luz": 36
+ },
+ "v2": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {
+   "ventilador": [
+    "4am",
+    40
+   ],
+   "hundido": [
+    "5am",
+    20
+   ]
+  },
+  "caos": {
+   "ventilador": "4am",
+   "rejilla": "430",
+   "hollin": "430",
+   "hundido": "5am",
+   "fogonazo": "5am"
+  },
+  "luz": 24,
+  "gotas": 0,
+  "humo": 48,
+  "fogonazo_luz": 36
+ },
+ "v3": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {
+   "aislante": [
+    "430",
+    30
+   ]
+  },
+  "caos": {
+   "rejilla": "4am",
+   "aislante": "430",
+   "hollin": "430",
+   "al_rojo": "5am",
+   "fogonazo": "430"
+  },
+  "luz": 24,
+  "gotas": 0,
+  "humo": 48,
+  "fogonazo_luz": 36
+ },
+ "v4": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {
+   "aislante": [
+    "430",
+    30
+   ],
+   "hundido": [
+    "5am",
+    20
+   ]
+  },
+  "caos": {
+   "aislante": "430",
+   "hollin": "430",
+   "hundido": "5am",
+   "al_rojo": "5am"
+  },
+  "luz": 0,
+  "gotas": 0,
+  "humo": 48,
+  "fogonazo_luz": 0
+ },
+ "v5": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {
+   "ventilador": [
+    "430",
+    34
+   ]
+  },
+  "caos": {
+   "rejilla": "4am",
+   "ventilador": "430",
+   "hollin": "430",
+   "fogonazo": "5am"
+  },
+  "luz": 24,
+  "gotas": 0,
+  "humo": 48,
+  "fogonazo_luz": 36
+ },
+ "v6": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {},
+  "caos": {
+   "cable": "430",
+   "hollin": "5am",
+   "fondo_naranja": "5am"
+  },
+  "luz": 0,
+  "gotas": 16,
+  "humo": 48,
+  "fogonazo_luz": 0
+ },
+ "v7": {
+  "estados": [
+   "normal",
+   "4am",
+   "430",
+   "5am"
+  ],
+  "eventos": {},
+  "caos": {
+   "rejilla": "430",
+   "hollin": "5am",
+   "fondo_naranja": "5am",
+   "fogonazo": "5am"
+  },
+  "luz": 24,
+  "gotas": 0,
+  "humo": 48,
+  "fogonazo_luz": 36
+ },
+ "comun": {
+  "fogonazo": 36,
+  "rafaga": 22
+ }
+}
