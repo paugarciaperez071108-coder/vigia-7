@@ -31,6 +31,7 @@
 
 import { CONFIG } from '../config.js';
 import { NIGHT5 } from '../night/night5.js';
+import { NIGHT7 } from '../night/night7.js';
 import { ROOMS, ROOM_IDS, VENTS, VENT_IDS } from '../world/StationMap.js';
 import { drawWarnTriangle, ANCHORS } from '../render/CameraView.js';
 import { MINIMAP, miniBox, officeSide } from '../render/MiniMap.js';
@@ -80,7 +81,7 @@ export class Night5 {
     this.active = false;
     this.reset(false);
     const ev = game.events;
-    ev.on('erranteDoor', ({ side }) => this.active && this.snd.errStatic(PAN[side], E.STATIC_VOLUME));
+    ev.on('erranteDoor', ({ side }) => this.active && this.snd.errStatic(PAN[side], E.STATIC_VOLUME * (this.g.n7?.active ? NIGHT7.ENEMIGOS_VOL : 1)));
     ev.on('erranteGone', () => this.snd.errStaticStop());
     ev.on('erranteFace', () => {
       if (!this.active) return;
@@ -239,7 +240,7 @@ export class Night5 {
       if (this.peekCue <= 0) {
         this.peekCue = rand(D.PEEK_CUE);
         const k = Math.min(1, dis.attackT / D.ATTACK_TIME);
-        this.g.audio.lib?.play('criaturas/respiracion', { volume: 0.45 + 0.45 * k, pan: PAN[dis.side], pitch: 0.72 });
+        this.g.audio.lib?.play('criaturas/respiracion', { volume: (0.45 + 0.45 * k) * (this.g.n7?.active ? NIGHT7.ENEMIGOS_VOL : 1), pan: PAN[dis.side], pitch: 0.72 });
         this.snd.drag(0.4 * (1 - k), PAN[dis.side]);
       }
     } else this.peekCue = rand(D.PEEK_CUE);

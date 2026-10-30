@@ -7,7 +7,7 @@
 // =============================================================
 
 export const CONFIG = {
-  VERSION: 'v1.16',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v1.17',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // Resolución lógica: todo se dibuja en 1600×900 y luego se escala
   // a la ventana manteniendo la proporción (con bandas negras).

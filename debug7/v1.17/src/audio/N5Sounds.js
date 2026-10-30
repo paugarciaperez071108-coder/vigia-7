@@ -127,8 +127,8 @@ export class N5Sounds {
     }
     // Roce húmedo de los intestinos (ruido grave que se arrastra)
     this._wet(v * 0.8, pan, muffle, 0.15);
-    // Respiración entrecortada
-    if (Math.random() < 0.7) this._play('criaturas/respiracion', { volume: v * 0.9, pan, muffle, pitch: 0.78, pitchVar: 0.05, when: 0.3 });
+    // (v1.17, el usuario: «que El Dislocado solo respire cuando está fuera del conducto»: dentro, sin
+    // respiración; solo respira asomado por el hueco, Night5.update)
   }
 
   _wet(volume, pan, muffle, when = 0) {
@@ -161,7 +161,6 @@ export class N5Sounds {
     this._play('metal/golpe_pared', { volume: big ? 1 : 0.8, pan, pitch: 0.85, pitchVar: 0.1 });
     this._play('puertas/golpe', { volume: big ? 0.8 : 0.5, pan, pitch: 1.15, when: 0.02 });
     this._play('metal/panel', { volume: 0.35, pan, when: 0.08 });
-    if (Math.random() < 0.5) this._play('criaturas/respiracion', { volume: 0.35, pan, pitch: 0.75, when: 0.35, muffle: 0.4 });
   }
 
   grilleFall(pan = 0) {

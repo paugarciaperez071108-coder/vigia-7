@@ -329,6 +329,7 @@ export class Night7 {
     const d = SON_AB[nombre];
     if (!lib || !d) return;
     const o = { volume: 0.8, pan: 0, ...opts };
+    o.volume *= NIGHT7.ENEMIGOS_VOL;   // (v1.17)
     if (lib.play(d[0], o)) return;
     if (d[1]) lib.play(d[1], { ...o, pitch: d[2] });
   }
