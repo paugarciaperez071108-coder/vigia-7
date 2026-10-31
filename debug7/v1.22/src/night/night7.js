@@ -240,7 +240,7 @@ export const NIGHT7 = {
   // Para cambiarla por otra pista: este archivo (sin extensión: .ogg o .mp3).
   MUSICA: {
     ARCHIVO: 'assets/audio/musica/noche7',
-    VOLUMEN: 0.85,             // (v1.17, el usuario: «bájale un poco la música, a un 85»; v0.88: 1,0; antes 0,55)
+    VOLUMEN: 0.4,              // (v1.22, el usuario: «baja la música»: 0,85 → 0,4; v1.17, el usuario: «bájale un poco la música, a un 85»; v0.88: 1,0; antes 0,55)
     BAJADA: 0.5,               // con un aviso importante, baja a esto… (para que se oiga el enemigo)
     BAJADA_S: 2.6,             // …estos segundos
     DESFASE: 0.3,              // s de diferencia con el reloj a partir de los que se resincroniza

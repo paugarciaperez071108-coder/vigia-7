@@ -632,6 +632,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     panel.innerHTML = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · v0.57 → v0.66</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.22 · Volumen: música más baja, enemigos un poco por encima de los efectos, todo más bajo</h3>
+        ${b('Noche 7 · 3:58 (música y enemigos)', 'conductos:3.97')}${[1, 5].map((n) => b('Noche ' + n, 'ofNoche:' + n)).join('')}
       <h3>v1.21 · El final, Fase 1: fuego corregido y Slaimi te encuentra (salta encima, lo abrazas, te levantas con él)</h3>
         ${b('Con Slaimi vivo (1A)', 'final1:vivo')}${b('Con Slaimi muerto (1B)', 'final1:muerto')}
       <h3>v1.20 · El final, Fase 1: las 6:00 (el estallido, el techo en llamas, aturdido)</h3>
