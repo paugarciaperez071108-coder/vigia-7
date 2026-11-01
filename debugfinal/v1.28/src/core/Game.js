@@ -104,6 +104,7 @@ import { Night5Leak } from '../ending/Night5Leak.js';
 import { Final1 } from '../ending/Final1.js';
 import { Huida } from '../ending/Huida.js';
 import { Persecucion } from '../ending/Persecucion.js';
+import { Libre3D } from '../ending/Libre3D.js';
 import { Night6Ducts } from '../ending/Night6Ducts.js';
 import { Night6Sala } from '../ending/Night6Sala.js';
 import { Night6Final, precargarCine } from '../ending/Night6Final.js';
@@ -634,6 +635,7 @@ export class Game {
     if (!this.final1) this.final1 = new Final1(this);
     if (this.huida) this.huida.activa = false;   // (v1.26: el debug puede volver a la Fase 1 con una huida empezada)
     if (this.persecucion) this.persecucion.activa = false;
+    this.libre?.stop();
     this.final1.start();
     this._setState('n7final');
   }
@@ -643,6 +645,7 @@ export class Game {
     if (!this.huida) this.huida = new Huida(this);
     if (this.final1) this.final1.activa = false;
     if (this.persecucion) this.persecucion.activa = false;
+    this.libre?.stop();
     this.huida.start(desde);
     this._setState('n7final');
   }
@@ -650,14 +653,26 @@ export class Game {
   /** (Fase 2b del final) La persecución: al acabar la huida, o desde su punto de control ('huye'), o en el debug. */
   _empiezaPersecucion(desde = null) {
     if (!this.persecucion) this.persecucion = new Persecucion(this);
+    this.libre?.stop();
     if (this.final1) this.final1.activa = false;
     if (this.huida) this.huida.activa = false;
     this.persecucion.start(desde);
     this._setState('n7final');
   }
 
+  /** (v1.28, M0) El final en 3D en tiempo real: andar libre por una sala (prototipo: el Comedor). */
+  _empiezaLibre(sala = 'mess') {
+    if (!this.libre) this.libre = new Libre3D(this);
+    if (this.final1) this.final1.activa = false;
+    if (this.huida) this.huida.activa = false;
+    if (this.persecucion) this.persecucion.activa = false;
+    this.libre.start(sala);
+    this._setState('n7final');
+  }
+
   /** La parte del final (2a o 2b) que se está jugando, o null. */
   _finActivo() {
+    if (this.libre?.activa) return this.libre;
     if (this.persecucion?.activa && !this.persecucion.acabada) return this.persecucion;
     if (this.huida?.activa && !this.huida.acabada) return this.huida;
     return null;

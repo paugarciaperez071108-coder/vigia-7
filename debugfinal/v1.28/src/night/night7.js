@@ -353,6 +353,28 @@ export const NIGHT7 = {
       },
       FIN_S: 2.0,              // s del fundido a negro en la puerta del Laboratorio (la persecución, Fase 2b, después)
     },
+    // (v1.28, M0) el final en 3D en tiempo real: andar libre (src/ending/Libre3D.js; tools/3d/final/tr/)
+    LIBRE: {
+      LENTE: 74,               // grados en horizontal (como los renders)
+      OJOS: 1.62,              // m, de pie
+      AGACHADO_OJOS: 0.95,     // m, agachado (bajo las vigas)
+      RADIO: 0.3,              // m, el cuerpo (colisiones)
+      PISA: 0.32,              // m: lo que no pasa de aquí se pisa por encima
+      VEL: 2.1,                // m/s andando
+      VEL_CORRE: 4.4,          // m/s corriendo (Shift)
+      VEL_AGACHADO: 1.1,       // m/s agachado
+      ACELERA: 9,              // (lo rápido que llega a la velocidad)
+      FRENA: 11,
+      AGUANTE_S: 6.0,          // s corriendo seguidos hasta quedarte sin aliento
+      RECUPERA_S: 5.0,         // s parado para recuperarlo entero (andando, más)
+      VUELVE_A_CORRER: 0.35,   // aguante para volver a correr tras agotarte
+      PASO: 0.75,              // m por paso andando
+      PASO_CORRE: 1.05,        // m por paso corriendo
+      BALANCEO: 0.035,         // m, la cabeza al andar
+      RATON: 0.0022,           // rad por píxel (con el ratón capturado)
+      EXPOSICION: 1.0,         // (multiplica la exposición de la escena de Blender)
+      AYUDA_S: 6,              // s de la ayuda de controles
+    },
     // Fase 2b del final: la persecución de la Aberración (src/ending/Persecucion.js; renders
     // tools/3d/final/persecucion.py): Laboratorio → Criogenia → conducto → Enfermería (cruce) → pasillo del Hangar
     PERSECUCION: {
