@@ -1,0 +1,37 @@
+# VOCES DE LAS 4 AM (noche 4, ruta A) — una frase por línea.
+#
+#   id | frase | voz provisional (edge-tts) | velocidad | tono
+#
+# - El «id» es el nombre del archivo: originales/<id>.mp3 (provisional, TTS).
+# - Para poner una voz grabada por una persona: guarda la grabación como
+#   originales/<id>_mia.wav (o .mp3, .ogg, .m4a, .flac). Tiene prioridad
+#   sobre la provisional. Después ejecuta procesar_voces.bat (o
+#   python tools/voces_4am.py procesar). No hay que tocar código.
+# - Para añadir una frase nueva: añade una línea aquí y su grabación en
+#   originales/ con ese id (o ejecuta «python tools/voces_4am.py generar»
+#   para hacer la provisional).
+# - Las líneas que empiezan por # no cuentan.
+#
+hay_alguien       | ¿Hay alguien ahí?                          | es-MX-DaliaNeural    | -8%  | +12Hz
+no_abras_celda    | No abras la celda... no la abras...         | es-ES-AlvaroNeural   | -5%  | +4Hz
+apaga_la_luz      | Apaga la luz. Apágala... apágala ya.        | es-AR-ElenaNeural    | +10% | +10Hz
+nos_miran         | Nos están mirando.                          | es-CO-GonzaloNeural  | -12% | +0Hz
+marta             | ¡Marta! ¡Marta! ¡¡Marta!!                   | es-ES-AlvaroNeural   | +15% | +18Hz
+risa_1            | Je... je, je... ja.                         | es-CL-CatalinaNeural | +5%  | +15Hz
+risa_2            | Ja, ja... ja... ja—                         | es-CU-ManuelNeural   | +0%  | +8Hz
+en_los_conductos  | Está en los conductos...                    | es-ES-XimenaNeural   | -10% | +6Hz
+no_respires       | No respires. No respires...                 | es-AR-TomasNeural    | -15% | +0Hz
+solo_seis         | Solo quedamos seis.                         | es-ES-ElviraNeural   | -10% | +4Hz
+compuerta         | ¡La compuerta no abre! ¡No abre!            | es-MX-JorgeNeural    | +18% | +14Hz
+me_oyes           | ¿Me oyes? Contesta... por favor, contesta.  | es-CR-MariaNeural    | -5%  | +10Hz
+ya_viene          | Ya viene... ya viene...                     | es-CL-LorenzoNeural  | -15% | +2Hz
+no_mires_arriba   | No mires arriba.                            | es-ES-XimenaNeural   | -20% | +0Hz
+frio              | Hace tanto frío aquí...                     | es-EC-AndreaNeural   | -12% | +6Hz
+cierrala          | ¡Ciérrala! ¡Ciérrala ya!                    | es-GT-AndresNeural   | +20% | +16Hz
+altisimo          | Lo he visto... es altísimo.                 | es-ES-AlvaroNeural   | -10% | +2Hz
+shh               | Shh... está escuchando.                     | es-HN-KarlaNeural    | -18% | +0Hz
+sellado           | ¿Por qué han sellado el pasillo?            | es-CO-SalomeNeural   | +5%  | +10Hz
+mama              | Mamá...                                     | es-ES-ElviraNeural   | -25% | +8Hz
+alarma            | Que alguien apague esa alarma.              | es-BO-MarceloNeural  | +8%  | +6Hz
+lanzadera         | La lanzadera no tiene combustible...        | es-DO-EmilioNeural   | -8%  | +2Hz
+por_favor         | Por favor, por favor, por favor...          | es-PA-MargaritaNeural| +10% | +12Hz

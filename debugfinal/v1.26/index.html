@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vigía-7</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    canvas { display: block; width: 100vw; height: 100vh; user-select: none; }
+    .message {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; color: #e8eef5; font: 18px/1.6 "Courier New", monospace; text-align: center;
+      background: #000;
+    }
+    .message[hidden] { display: none; }
+    .message code { background: #1d232b; padding: 0.15em 0.4em; }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="msg" class="message" hidden></div>
+
+  <!-- Los módulos ES6 no funcionan con doble clic (file://). Este
+       script normal sí se ejecuta y explica cómo arrancar el juego. -->
+  <script>
+    if (location.protocol === 'file:') {
+      var m = document.getElementById('msg');
+      m.innerHTML = '<div><b>Vigía-7 necesita un servidor local.</b><br><br>' +
+        'En una terminal, dentro de la carpeta del juego:<br>' +
+        '<code>python servidor.py</code> (o doble clic en <code>jugar.bat</code>)<br><br>' +
+        'Después abre <code>http://localhost:8001</code></div>';
+      m.hidden = false;
+    }
+  </script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
