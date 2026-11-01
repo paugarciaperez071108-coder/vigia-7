@@ -636,6 +636,7 @@ export class Game {
     if (this.huida) this.huida.activa = false;   // (v1.26: el debug puede volver a la Fase 1 con una huida empezada)
     if (this.persecucion) this.persecucion.activa = false;
     this.libre?.stop();
+    if (this.libre) this.libre.acabada = false;
     this.final1.start();
     this._setState('n7final');
   }
@@ -660,14 +661,20 @@ export class Game {
     this._setState('n7final');
   }
 
-  /** (v1.28, M0) El final en 3D en tiempo real: andar libre por una sala (prototipo: el Comedor). */
-  _empiezaLibre(sala = 'mess') {
+  /** (v1.28 M0, v1.29 M1) El final en 3D en tiempo real: andar libre por un recorrido ('huida': del pasillo central
+   *  a la puerta del Laboratorio); desde: la zona por la que empezar (debug: 'mess', 'reactor'…). */
+  _empiezaLibre(nombre = 'huida', desde = null) {
     if (!this.libre) this.libre = new Libre3D(this);
     if (this.final1) this.final1.activa = false;
     if (this.huida) this.huida.activa = false;
     if (this.persecucion) this.persecucion.activa = false;
-    this.libre.start(sala);
+    this.libre.start(nombre, desde);
     this._setState('n7final');
+  }
+
+  /** Al acabar un recorrido en 3D: la huida sigue con la persecución (Fase 2b, desde el Laboratorio). */
+  _finLibre(nombre) {
+    if (nombre === 'huida' && Persecucion.lista()) this._empiezaPersecucion();
   }
 
   /** La parte del final (2a o 2b) que se está jugando, o null. */
@@ -2034,7 +2041,11 @@ export class Game {
           break;
         }
         // (Fase 2a) al salir por la compuerta del pasillo central, la huida
-        if (this.final1?.acabada && this.final1.giroSale !== undefined && !this.huida?.activa && !this.persecucion?.activa && Huida.lista()) this._empiezaHuida();
+        if (this.final1?.acabada && this.final1.giroSale !== undefined && !this.huida?.activa && !this.persecucion?.activa && !this.libre?.activa) {
+          // (v1.29) la huida en 3D en tiempo real si se puede; si no, la de los renders
+          if (NIGHT7.FINAL.LIBRE.USAR && Libre3D.soportado() && !this.libre?.acabada) this._empiezaLibre('huida');
+          else if (Huida.lista() && !this.libre?.acabada) this._empiezaHuida();
+        }
         // (Fase 2b) al llegar a la puerta del Laboratorio, la persecución
         if (this.huida?.activa && this.huida.acabada && !this.persecucion?.activa && Persecucion.lista()) this._empiezaPersecucion();
         if (this._finActivo()) {

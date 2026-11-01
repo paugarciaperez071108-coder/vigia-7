@@ -374,6 +374,34 @@ export const NIGHT7 = {
       RATON: 0.0022,           // rad por píxel (con el ratón capturado)
       EXPOSICION: 1.0,         // (multiplica la exposición de la escena de Blender)
       AYUDA_S: 6,              // s de la ayuda de controles
+      // (v1.29, M1) la huida entera en 3D
+      USAR: true,              // al levantarte en la Fase 1, la huida en 3D (false: la de los renders, Huida.js)
+      PISTA_S: 22,             // s en una sala sin encontrar la salida antes de que la pista se aclare
+      PISTA_SUBE_S: 6,         // s que tarda en aclararse del todo
+      FARO: 1.0,               // el resplandor verde del marco de la salida buena (0..1)
+      LLAMA_ANCHO: 2.8,        // (el tamaño de cada llama: ×la de volumen de Blender)
+      LLAMA_ALTO: 2.0,
+      LLAMA_BRILLO: 0.55,
+      FIN_S: 1.2,              // s del fundido al cruzar la puerta del final del recorrido
+      // Los recorridos (coordenadas de Blender: x, y en el suelo). Cajas [x0, y0, x1, y1].
+      RECORRIDOS: {
+        huida: {
+          zonas: ['central', 'mess', 'pas_rm', 'reactor', 'pas_rl', 'lab'],
+          inicio: { p: [80.3, -30.0], mira: [60.0, -30.0] },
+          // cada sala: su caja y su salida buena [x, y, z] (la luz verde)
+          salas: [
+            { n: 'central', caja: [70.2, -31.6, 81.5, -28.4], buena: [70.0, -30.0, 1.8] },
+            { n: 'mess', caja: [50.0, -40.0, 70.0, -20.0], buena: [50.0, -36.0, 1.9] },
+            { n: 'reactor', caja: [20.0, -40.0, 40.0, -20.0], buena: [24.5, -40.0, 1.9] },
+          ],
+          // las salidas bloqueadas: dónde se empujan (zona) y, si lo que las tapa no es sólido (fuego), su bloque
+          bloqueos: [
+            { n: 'invernadero', tipo: 'fuego', zona: [50.4, -40.0, 54.2, -38.3], solido: [50.6, -41.0, 54.0, -39.75] },
+            { n: 'enfermeria', tipo: 'escombros', zona: [20.0, -38.0, 25.0, -33.4] },
+          ],
+          fin: { caja: [22.9, -51.5, 26.1, -50.3] },   // la puerta del Laboratorio: empieza la persecución
+        },
+      },
     },
     // Fase 2b del final: la persecución de la Aberración (src/ending/Persecucion.js; renders
     // tools/3d/final/persecucion.py): Laboratorio → Criogenia → conducto → Enfermería (cruce) → pasillo del Hangar
