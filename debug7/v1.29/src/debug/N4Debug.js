@@ -488,7 +488,8 @@ export function install(g) {
       }
       if (que.startsWith('libre_')) {
         // v1.28 (M0): el final en 3D en tiempo real, andar libre por una sala
-        setTimeout(() => g._empiezaLibre(que.slice(6)), 700);
+        const desde = que.slice(6);
+        setTimeout(() => g._empiezaLibre('huida', desde === 'todo' ? null : desde), 700);
         return;
       }
       if (que.startsWith('p_')) {
@@ -620,7 +621,7 @@ export function install(g) {
       <h3>Antes del final · noche 7</h3>${btn('5:59 (un minuto antes de las 6:00)', 'n7h:' + (5 + 59 / 60))}
       <h3>Fase 1 · las 6:00 (v1.20–v1.23)</h3>${btn('El estallido (desde el principio)', 'fin:f1')}${btn('De pie: mirar alrededor (360°) y salir', 'fin:depie')}
       <h3>Fase 2a · la huida (v1.25)</h3>${btn('Toda la huida', 'fin:huida')}<br>${btn('Pasillo central (la viga)', 'fin:central')}${btn('Comedor (cae el panel)', 'fin:panel')}${btn('Comedor (tras el panel)', 'fin:comedor')}${btn('Cruce del Comedor', 'fin:cruce.mess')}<br>${btn('Hacia el Reactor (la explosión)', 'fin:reactor')}${btn('Cruce del Reactor', 'fin:cruce.reactor')}${btn('Hasta el Laboratorio', 'fin:lab')}
-      <h3>3D en tiempo real (v1.28, prototipo M0)</h3>${btn('Andar libre: el Comedor', 'fin:libre_mess')}
+      <h3>Fase 2a en 3D en tiempo real (v1.29, M1)${g.libre?.activa && g.libre.sala ? ` · ${g.libre.sala.n}: ${Math.round(g.libre.tSala)} s` : ''}</h3>${btn('Toda la huida en 3D', 'fin:libre_todo')}${btn('Desde el Comedor', 'fin:libre_mess')}${btn('Desde el pasillo 3-A', 'fin:libre_pas_rm')}${btn('Desde el Reactor', 'fin:libre_reactor')}${btn('Hasta el Laboratorio', 'fin:libre_pas_rl')}
       <h3>Fase 2b · la persecución (v1.27)${g.persecucion?.activa && g.persecucion.caza ? ` · la Aberración a ${Math.round(Math.min(1, g.persecucion.dist) * 100)} %` : ''}</h3>${btn('Toda la persecución', 'fin:p_todo')}${btn('Punto de control (huye)', 'fin:p_huye')}<br>${btn('Laboratorio: revienta la pared', 'fin:p_revienta')}${btn('Criogenia (viga y fuego)', 'fin:p_cryo')}${btn('El derrumbe', 'fin:p_derrumbe')}<br>${btn('A gatas: el conducto', 'fin:p_rejilla')}${btn('Sales a la Enfermería', 'fin:p_sale')}${btn('Cruce de la Enfermería', 'fin:p_cruce.medbay')}${btn('La puerta atascada', 'fin:p_forzar')}${btn('El pasillo del Hangar', 'fin:p_hangar')}<br>La Aberración: ${btn('lejos', 'finDist:0.2')}${btn('cerca', 'finDist:0.75')}${btn('casi encima', 'finDist:0.95')}${btn('te atrapa', 'finDist:1.1')}
       <h3>En preparación</h3>${gris('Fase 2c · el Hangar y la nave<br>Fase 3 · la cabina y el despegue<br>Fase 4 · los 4 finales<br>Fase 5 · los créditos')}
       <h3>Finales vistos ${vistos.length}/${FINALES.length}</h3>${FINALES.map((f) => btn('marcar ' + f.n, 'finMarcar:' + f.n, vistos.includes(f.n))).join('')}${btn('borrar', 'finBorrar')}
