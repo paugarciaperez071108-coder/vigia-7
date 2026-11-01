@@ -70,13 +70,16 @@ export class Huida {
     return !!IND?.tramos?.central;
   }
 
-  /** desde: el paso de ORDEN por el que empezar (debug: 'mess', 'reactor'…) */
+  /** desde: el paso de ORDEN por el que empezar (debug: 'comedor', 'cruce.mess', 'cruce.reactor'…; sin
+   *  tipo, el primero con ese nombre: 'reactor' es el tramo y 'cruce.reactor' el cruce) */
   start(desde = null) {
     this.slaimi = slaimiDe(this.g.save?.flags)?.estado === 'vivo';
     this.activa = true;
     this.t = 0;
-    this.paso = desde ? Math.max(0, ORDEN.findIndex(([t, n]) => n === desde && t !== 'fin')) : 0;
+    const [tipo, nom] = String(desde).includes('.') ? String(desde).split('.') : [null, desde];
+    this.paso = desde ? Math.max(0, ORDEN.findIndex(([t, n]) => n === nom && (tipo ? t === tipo : t !== 'fin'))) : 0;
     this.teclas = new Set();
+    this.espera = 0;
     this.ayuda = K.AYUDA_S;
     this.latidoIn = 0.3;
     this.fuegoIn = 0.5;
@@ -123,7 +126,17 @@ export class Huida {
       this._son('n7/metal', { volume: 0.6, when: 0.4 });
     } else if (tipo === 'cruce') {
       const C = CRUCES[nombre];
-      if (!C || !this._base()) { this._siguiente(); return; }      // (sin su vista: sigue andando)
+      if (!C || !this._base()) {
+        // (v1.26: empezando en el cruce desde el debug, aún no ha cargado: espera; si no llega, sigue andando)
+        if ((this.espera ?? 0) < 6) {
+          this._precargaCruce(nombre);
+          this.tipo = this.fase = 'espera';
+          return;
+        }
+        this._siguiente();
+        return;
+      }
+      this.espera = 0;
       this.pano ??= new Pano360(1280, 720);
       [this.giro, this.incl] = C.inicio;
       this.reac = null;
@@ -354,6 +367,10 @@ export class Huida {
       }
       if (this.ft * fps >= this.n - 1) this._siguiente();
     } else if (this.tipo === 'cruce') this._updateCruce(dt);
+    else if (this.tipo === 'espera') {
+      this.espera = (this.espera ?? 0) + dt;
+      if ((CRUCES[this.nombre] && this._base()) || this.espera >= 6) this._empiezaPaso();
+    }
     if (this.fase === 'fin') return;
     // el cuerpo y la nave: el corazón, la respiración, el fuego y la alarma
     this.latidoIn -= dt;

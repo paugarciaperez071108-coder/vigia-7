@@ -631,6 +631,7 @@ export class Game {
     this.events.emit('finalNoche7', estado);
     // (v1.20) Fase 1 del final: las 6:00 (el estallido, el suelo, el aturdimiento, levantarse)
     if (!this.final1) this.final1 = new Final1(this);
+    if (this.huida) this.huida.activa = false;   // (v1.26: el debug puede volver a la Fase 1 con una huida empezada)
     this.final1.start();
     this._setState('n7final');
   }

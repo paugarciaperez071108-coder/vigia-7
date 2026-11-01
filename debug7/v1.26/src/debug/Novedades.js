@@ -196,10 +196,15 @@ export function install(g) {
         oficina: 'Desde la oficina: no mires las cámaras, escúchale venir ardiendo (arrastre torpe, crepitar, gemidos, por su lado). Muere asomado en el hueco de una rejilla; después, el rugido de la Aberración.',
         rejilla: 'Directo a la rejilla izquierda: asoma ardiendo, estira el brazo hacia ti, tiembla, cae colgando y se queda ahí el resto de la noche. A los 2 s, la Aberración ruge (la oficina tiembla y parpadean las luces) y viene furiosa.' }[que];
     },
+    // --- v1.26: el debug exclusivo del final (recarga con ?n4debug=1&nochefinal=1) ---
+    debugFinal: () => {
+      location.search = '?n4debug=1&nochefinal=1';
+      return 'Abriendo el debug del final…';
+    },
     // --- v1.25: el final, Fase 2a: la huida (el camino tenso hasta el Laboratorio) ---
     huida: (q) => {
       act.final1(q === 'muerto' ? 'muerto' : 'vivo');
-      const desde = { mess: 'mess', reactor: 'reactor', comedor: 'comedor' }[q] ?? null;
+      const desde = { mess: 'cruce.mess', reactor: 'cruce.reactor', comedor: 'comedor' }[q] ?? null;   // (v1.26: 'reactor' a secas era el tramo)
       setTimeout(() => g._empiezaHuida(desde), 700);
       return { vivo: 'La huida con Slaimi en brazos: W para andar (soltarla, te paras), C para agacharte bajo la viga del pasillo central, el ratón mueve un poco la vista. En los cruces, mira alrededor y W hacia una salida.',
         muerto: 'La huida sin Slaimi (solo).',
@@ -687,6 +692,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     panel.innerHTML = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · v0.57 → v0.66</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.26 · Debug exclusivo del final (cada fase, tramo y cruce; también en …/vigia-7/debugfinal/)</h3>
+        ${b('Abrir el debug del final', 'debugFinal')}
       <h3>v1.25 · El final, Fase 2a: la huida (pasillo central → Comedor → Reactor → Laboratorio)</h3>
         ${b('Con Slaimi', 'huida:vivo')}${b('Sin Slaimi', 'huida:muerto')}${b('Cruce del Comedor', 'huida:mess')}${b('Cruce del Reactor', 'huida:reactor')}
       <h3>v1.24 · Noche 7: la muerte de El Dislocado (5:00) y la Aberración furiosa</h3>
