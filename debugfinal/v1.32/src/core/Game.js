@@ -674,7 +674,10 @@ export class Game {
 
   /** Al acabar un recorrido en 3D: la huida sigue con la persecución (Fase 2b, desde el Laboratorio). */
   _finLibre(nombre) {
-    if (nombre === 'huida' && Persecucion.lista()) this._empiezaPersecucion();
+    if (nombre !== 'huida') return;               // (la persecución: la pantalla de «continuará» de la Fase 2c)
+    // (v1.32) la persecución en 3D si se puede; si no, la de los renders
+    if (NIGHT7.FINAL.LIBRE.USAR && Libre3D.soportado()) this._empiezaLibre('persecucion');
+    else if (Persecucion.lista()) this._empiezaPersecucion();
   }
 
   /** La parte del final (2a o 2b) que se está jugando, o null. */
@@ -1085,6 +1088,7 @@ export class Game {
         else if (this.save?.checkpoint === 'n6sala') this._startN6Sala(); // noche 6: la sala oculta
         else if (this.save?.checkpoint === 'n6turno') this.startNight(6); // noche 6: el turno (vuelta a la oficina)
         else if (this.save?.checkpoint === 'n6final') this._startN6Final(); // noche 6: el final
+        else if (this.save?.checkpoint === 'n7persecucion' && NIGHT7.FINAL.LIBRE.USAR && Libre3D.soportado()) this._empiezaLibre('persecucion', 'reinicio');   // (v1.32, en 3D)
         else if (this.save?.checkpoint === 'n7persecucion' && Persecucion.lista()) this._empiezaPersecucion('huye');   // noche 7: la persecución (v1.27)
         else if (this.save?.checkpoint === 'n7final' || this.save?.checkpoint === 'n7persecucion') {          // noche 7: el final (v1.20: desde la Fase 1)
           if (!this.final1) this.final1 = new Final1(this);
@@ -2220,7 +2224,7 @@ export class Game {
       case 'n7final':
         if (this.final1?.activa && !this.final1.acabada) this.final1.draw(ctx);
         else if (this._finActivo()) this._finActivo().draw(ctx);
-        else this._drawEndScreen(ctx, 'CONTINUARÁ', this.persecucion?.acabada ? 'El Hangar y la nave (Fase 2c del final), en preparación'
+        else this._drawEndScreen(ctx, 'CONTINUARÁ', this.persecucion?.acabada || (this.libre?.acabada && this.libre.nombre === 'persecucion') ? 'El Hangar y la nave (Fase 2c del final), en preparación'
           : this.huida?.acabada ? 'La persecución (Fase 2b del final), en preparación' : 'La huida (Fase 2 del final), en preparación', '#e8eef5');
         break;
       case 'lose':
