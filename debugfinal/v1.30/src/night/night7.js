@@ -386,16 +386,23 @@ export const NIGHT7 = {
       // Los recorridos (coordenadas de Blender: x, y en el suelo). Cajas [x0, y0, x1, y1].
       RECORRIDOS: {
         huida: {
-          zonas: ['central', 'mess', 'pas_rm', 'reactor', 'pas_rl', 'lab'],
-          inicio: { p: [80.3, -30.0], mira: [60.0, -30.0] },
+          // (v1.30) desde la oficina: al levantarte en la Fase 1 (girada para que su compuerta dé al pasillo)
+          zonas: ['oficina', 'central', 'mess', 'pas_rm', 'reactor', 'pas_rl', 'lab'],
+          inicio: { p: [86.9, -29.4], mira: [81.3, -30.0] },
           // cada sala: su caja y su salida buena [x, y, z] (la luz verde)
           salas: [
-            { n: 'central', caja: [70.2, -31.6, 81.5, -28.4], buena: [70.0, -30.0, 1.8] },
+            { n: 'oficina', caja: [81.2, -35.0, 91.3, -25.0], buena: [81.2, -30.0, 2.0] },
+            { n: 'central', caja: [70.2, -31.6, 81.1, -28.4], buena: [70.0, -30.0, 1.8] },
             { n: 'mess', caja: [50.0, -40.0, 70.0, -20.0], buena: [50.0, -36.0, 1.9] },
             { n: 'reactor', caja: [20.0, -40.0, 40.0, -20.0], buena: [24.5, -40.0, 1.9] },
           ],
           // las salidas bloqueadas: dónde se empujan (zona) y, si lo que las tapa no es sólido (fuego), su bloque
           bloqueos: [
+            // la oficina: el C. Oeste arde; la puerta del C. Este, aplastada; las dos rejillas, enterradas
+            { n: 'oeste', tipo: 'fuego', zona: [84.7, -26.6, 87.7, -25.0], solido: [84.7, -25.1, 87.7, -23.8] },
+            { n: 'este', tipo: 'escombros', zona: [83.6, -35.3, 88.3, -32.9] },
+            { n: 'rejilla_izq', tipo: 'escombros', zona: [88.8, -28.4, 91.2, -24.9] },
+            { n: 'rejilla_der', tipo: 'escombros', zona: [88.8, -35.1, 91.2, -31.6] },
             { n: 'invernadero', tipo: 'fuego', zona: [50.4, -40.0, 54.2, -38.3], solido: [50.6, -41.0, 54.0, -39.75] },
             { n: 'enfermeria', tipo: 'escombros', zona: [20.0, -38.0, 25.0, -33.4] },
           ],

@@ -201,7 +201,7 @@ export function install(g) {
       act.final1(q === 'muerto' ? 'muerto' : 'vivo');
       const desde = q === 'todo' || q === 'muerto' ? null : q;
       setTimeout(() => g._empiezaLibre('huida', desde), 700);
-      return { todo: 'La huida en 3D en tiempo real (con Slaimi): del pasillo central a la puerta del Laboratorio, andando libre. W A S D, clic para capturar el ratón y mirar, Shift para correr (con aguante), C para agacharte (la viga del pasillo). En cada sala, una sola salida pasa (luz verde, flechas, el aire, Slaimi brilla al mirarla); empujar las otras da una reacción. Si tardas más de 22 s, la pista se aclara. Al cruzar la puerta del Laboratorio, la persecución.',
+      return { todo: 'La huida en 3D en tiempo real (con Slaimi): de la oficina (5 salidas: solo la compuerta del pasillo central pasa) a la puerta del Laboratorio, andando libre. W A S D, clic para capturar el ratón y mirar, Shift para correr (con aguante), C para agacharte (la viga del pasillo). En cada sala, una sola salida pasa (luz verde, flechas, el aire, Slaimi brilla al mirarla); empujar las otras da una reacción. Si tardas más de 22 s, la pista se aclara. Al cruzar la puerta del Laboratorio, la persecución.',
         muerto: 'La huida en 3D sin Slaimi.',
         mess: 'Desde el Comedor: el Invernadero arde (te echa atrás); el Reactor, por la puerta con luz verde.',
         reactor: 'Desde el Reactor: la Enfermería, enterrada en escombros (empújala: caen, toses…); el Laboratorio, por la puerta sur.' }[q] ?? '';
@@ -713,7 +713,7 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     panel.innerHTML = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · v0.57 → v0.66</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
-      <h3>v1.29 · La huida en 3D en tiempo real (andar libre, salidas bloqueadas, pistas)</h3>
+      <h3>v1.30 · La huida en 3D desde la oficina (v1.29: andar libre, salidas bloqueadas, pistas)</h3>
         ${b('Toda la huida', 'libre:todo')}${b('Sin Slaimi', 'libre:muerto')}${b('El Comedor', 'libre:mess')}${b('El Reactor', 'libre:reactor')}
       <h3>v1.27 · El final, Fase 2b: la persecución (Laboratorio → Criogenia → conducto → Enfermería → Hangar)</h3>
         ${b('Con Slaimi', 'persecucion:vivo')}${b('Sin Slaimi', 'persecucion:muerto')}${b('La Criogenia', 'persecucion:cryo')}${b('El conducto', 'persecucion:rejilla')}${b('La Enfermería', 'persecucion:cruce.medbay')}
