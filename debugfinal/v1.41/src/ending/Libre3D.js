@@ -223,6 +223,9 @@ export class Libre3D {
   _init() {
     if (this.r) return;
     const r = this.r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    // (v1.41) si la tarjeta se queda sin memoria y se pierde la imagen 3D, pedir que la devuelva (three lo vuelve a subir)
+    r.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); console.warn('Libre3D: imagen 3D perdida; recuperando'); });
+    r.domElement.addEventListener('webglcontextrestored', () => console.warn('Libre3D: imagen 3D recuperada'));
     r.setSize(W, H, false);
     r.setPixelRatio(1);
     r.toneMapping = THREE.AgXToneMapping;
@@ -373,12 +376,43 @@ export class Libre3D {
   }
 
   _tex(n) {
-    return new Promise((ok) => new THREE.TextureLoader().load(`${DIR}${n}`, (t) => {
+    // (v1.41) como mucho K.TEX_MAX de lado: si no, entre todas las salas no caben en la tarjeta (y la imagen se va a negro)
+    const tope = K.TEX_MAX ?? 0;
+    const lista = (t) => {
       t.flipY = false;
       t.colorSpace = THREE.NoColorSpace;
       t.anisotropy = 4;
-      ok(t);
-    }, undefined, () => ok(null)));
+      t.needsUpdate = true;
+      return t;
+    };
+    return new Promise((ok) => {
+      const im = new Image();
+      im.onload = () => {
+        if (!tope || (im.naturalWidth <= tope && im.naturalHeight <= tope)) { ok(lista(new THREE.Texture(im))); return; }
+        const k = tope / Math.max(im.naturalWidth, im.naturalHeight);
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(im.naturalWidth * k);
+        cv.height = Math.round(im.naturalHeight * k);
+        const c = cv.getContext('2d');
+        c.imageSmoothingQuality = 'high';
+        c.drawImage(im, 0, 0, cv.width, cv.height);
+        ok(lista(new THREE.CanvasTexture(cv)));
+      };
+      im.onerror = () => ok(null);
+      im.src = `${DIR}${n}`;
+    });
+  }
+
+  /** (v1.41) Suelta una zona de la memoria (de la tarjeta, sobre todo: sus texturas). */
+  _liberaZona(z) {
+    const Z = this.zonas[z];
+    if (!Z?.malla) return;
+    this.escena.remove(Z.malla);
+    Z.malla.traverse((o) => { if (o.isMesh) o.geometry?.dispose(); });
+    Z.mat?.uniforms?.uLuz?.value?.dispose?.();
+    Z.mat?.uniforms?.uFuego?.value?.dispose?.();
+    Z.mat?.dispose?.();
+    delete this.zonas[z];
   }
 
   _cargaZona(z) {
@@ -417,6 +451,7 @@ export class Libre3D {
       Z.uK0 = info.K * (info.brillo ?? 1);
       gltf.scene.traverse((o) => { if (o.isMesh) o.material = mat; });
       Z.malla = gltf.scene;
+      Z.malla.visible = !!this.activas?.includes(z) && this.listo;
       this.escena.add(Z.malla);
       Z.solidos = info.solidos.map((s) => {
         const xs = s.p.map((p) => p[0]), ys = s.p.map((p) => p[1]);
@@ -433,8 +468,9 @@ export class Libre3D {
     if (this.mLlamas) this.escena.remove(this.mLlamas);
     const pts = [];
     const ocupado = new Set();
-    for (const Z of Object.values(this.zonas)) {
-      for (const l of Z.info?.llamas ?? []) {
+    for (const z of this.activas ?? []) {
+      const Z = this.zonas[z];
+      for (const l of Z?.info?.llamas ?? []) {
         const clave = `${Math.round(l.p[0] / 0.22)},${Math.round(l.p[1] / 0.22)},${Math.round(l.p[2] / 0.4)}`;
         if (ocupado.has(clave)) continue;
         ocupado.add(clave);
@@ -478,18 +514,50 @@ export class Libre3D {
     this.humo = { n: N, p: new Float32Array(N * 3), v: new Float32Array(N * 3), edad: new Float32Array(N).fill(99),
       vida: new Float32Array(N).fill(1), techo: new Float32Array(N), sig: 0, acum: 0 };
     // las fuentes: los fuegos de las zonas del recorrido (su luz), más humo cuanto más fuerte
+    this._fuentes();
+    const base = new THREE.PlaneGeometry(1, 1);
+    const g = new THREE.InstancedBufferGeometry();
+    g.index = base.index;
+    g.attributes.position = base.attributes.position;
+    this._humoMalla(N, g);
+  }
+
+  /** (v1.41) Las fuentes del humo: los fuegos de las zonas que se ven. */
+  _fuentes() {
     this.fuentes = [];
-    for (const z of this.R.zonas) {
-      const info = this.zonas[z].info;
+    for (const z of this.activas ?? this.R.zonas) {
+      const info = this.zonas[z]?.info;
+      if (!info) continue;
       if ((K.CABINA?.ALARMA ?? []).includes(z)) continue;      // (sus «fuegos» son las alarmas rojas)
       for (const f of info.fuegos ?? []) {
         this.fuentes.push({ x: f.p[0], y: f.p[1], z: f.p[2], peso: Math.sqrt(Math.max(1, f.e)), techo: info.techo ?? K.HUMO_TECHO });
       }
     }
-    const base = new THREE.PlaneGeometry(1, 1);
-    const g = new THREE.InstancedBufferGeometry();
-    g.index = base.index;
-    g.attributes.position = base.attributes.position;
+    if (this.mHumo && this.fuentes.length && !this.mHumo.parent) this.escena.add(this.mHumo);
+  }
+
+  /** (v1.41) Una bocanada de humo de golpe en un sitio (una explosión): sale hacia fuera y sube. */
+  _bocanada(x, y, z, n) {
+    const H_ = this.humo;
+    if (!H_) return;
+    for (let k = 0; k < n; k++) {
+      const i = H_.sig;
+      H_.sig = (H_.sig + 1) % H_.n;
+      const a = Math.random() * Math.PI * 2, v = 0.6 + Math.random() * 2.2;
+      H_.p[i * 3] = x + (Math.random() - 0.5) * 1.2;
+      H_.p[i * 3 + 1] = y + (Math.random() - 0.5) * 1.2;
+      H_.p[i * 3 + 2] = z + (Math.random() - 0.5) * 1.0;
+      H_.v[i * 3] = Math.cos(a) * v;
+      H_.v[i * 3 + 1] = Math.sin(a) * v;
+      H_.v[i * 3 + 2] = 0.3 + Math.random() * 1.2;
+      H_.edad[i] = 0;
+      H_.vida[i] = K.HUMO_VIDA * (0.8 + 0.8 * Math.random());
+      H_.techo[i] = (K.HUMO_TECHO ?? 3.5) - 0.2 - Math.random() * 0.5;
+    }
+    if (this.mHumo && !this.mHumo.parent) this.escena.add(this.mHumo);
+  }
+
+  _humoMalla(N, g) {
     this.aHumo = {
       pos: new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3),
       tam: new THREE.InstancedBufferAttribute(new Float32Array(N), 1),
@@ -511,12 +579,12 @@ export class Libre3D {
     this.mHumo = new THREE.Mesh(g, m);
     this.mHumo.frustumCulled = false;
     this.mHumo.renderOrder = 2;
-    if (this.fuentes.length) this.escena.add(this.mHumo);
+    this.escena.add(this.mHumo);
   }
 
   _updateHumo(dt) {
     const H_ = this.humo;
-    if (!H_ || !this.fuentes.length) return;
+    if (!H_) return;
     const P = H_.p, V = H_.v;
     // nacen en los fuegos cercanos (lo lejano no se ve; así hay más humo donde estás), según su fuerza
     const cerca = this.fuentes.filter((f) => Math.hypot(f.x - this.x, f.y - this.y) < K.HUMO_LEJOS);
@@ -581,6 +649,11 @@ export class Libre3D {
   /** nombre: el recorrido (NIGHT7.FINAL.LIBRE.RECORRIDOS); desde: la zona por la que empezar (debug). */
   start(nombre = 'huida', desde = null) {
     this._init();
+    // (v1.41) 'sigue': desde donde estabas (la huida acaba en la puerta del Laboratorio y sigue la persecución)
+    const sigue = desde === 'sigue' && this.x !== undefined ? { x: this.x, y: this.y, yaw: this.yaw, pitch: this.pitch,
+      aguante: this.aguante, agotado: this.agotado, vx: this.vx, vy: this.vy } : null;
+    if (desde === 'sigue') desde = null;
+    this.sigue = null;
     if (!this.cabina) this.cabina = new Cabina3D(this);
     if (!this.final4 && K.FINAL4?.USAR) this.final4 = new Final4(this);
     this.cabina.reset();
@@ -595,7 +668,7 @@ export class Libre3D {
     this.activa = true;
     this.listo = false;
     this.acabada = false;
-    this.teclas.clear();
+    if (!sigue) this.teclas.clear();     // (v1.41: si sigues desde la huida, con la W pulsada sigues andando)
     this.t = 0;
     this.ayuda = K.AYUDA_S;
     this.vx = this.vy = 0;
@@ -637,15 +710,21 @@ export class Libre3D {
     const reinicio = desde === 'reinicio';
     if (reinicio) desde = null;
     if (R.plano_inicio && !desde && !reinicio) this.cine = { plano: R.plano_inicio, t: 0, eventos: new Set() };
+    this.mira = null;
+    this.destello = 0;
+    this.lente = 1;
+    this.continua = sigue;
     // (v1.40) los planos del recorrido, pedidos ya: cuando toca uno, sale al instante (sin pararse a cargar)
     for (const pl of new Set([R.plano_inicio, ...(R.eventos ?? []).map((e) => e.plano)])) if (pl) this._precarga(pl);
-    for (const Z of Object.values(this.zonas)) if (Z.malla) Z.malla.visible = false;
     const todas = [...new Set([...R.zonas, ...(R.eventos ?? []).flatMap((e) => (e.pon ? [e.pon] : []))])];
+    // (v1.41) lo del recorrido anterior que ya no hace falta, fuera de la memoria
+    for (const z of Object.keys(this.zonas)) if (!todas.includes(z)) this._liberaZona(z);
+    if (!sigue) for (const Z of Object.values(this.zonas)) if (Z.malla) Z.malla.visible = false;
     if (R.caza) this._cargaAb();
     if (R.caza && this.final4) this.final4.carga();
     Promise.all([...todas.map((z) => this._cargaZona(z)), this.texLlama ?? this._tex('llama.webp')]).then((res) => {
       this.texLlama = res[res.length - 1];
-      for (const z of this.activas) this.zonas[z].malla.visible = true;
+      for (const [z, Z] of Object.entries(this.zonas)) if (Z.malla) Z.malla.visible = this.activas.includes(z);
       if (R.fin?.nave) this.zonas[R.fin.nave.zona].malla.visible = false;
       this._solidos();
       // las salidas bloqueadas: sólidas aunque lo que las tapa (el fuego) no lo sea
@@ -664,19 +743,43 @@ export class Libre3D {
         for (const ev of R.eventos ?? []) this._aplicaEvento(ev, true);
         this.cine = null;
       }
-      const e = desde ? this.zonas[desde].info.entrada : R.inicio;
+      // (v1.41) al reintentar, desde su sitio (la pared ya reventada)
+      if ((reinicio || desde) && R.caza_tras) for (const ev of R.eventos ?? []) if (ev.n === R.caza_tras) this._aplicaEvento(ev, true);
+      const e = desde ? this.zonas[desde].info.entrada : reinicio && R.reinicio ? R.reinicio : R.inicio;
       this.x = e.p[0];
       this.y = e.p[1];
       this.yaw = Math.atan2(e.mira[1] - e.p[1], e.mira[0] - e.p[0]);
       this.pitch = 0;
+      if (sigue) {
+        Object.assign(this, sigue);
+        this.fundido = 0;
+      }
       if (this.caza) {
         if (desde) this.caza.ab = this._sCarril() - R.caza.ventaja;
-        if (!this.cine) this._empiezaCaza();
+        // (la caza empieza cuando sale la Aberración; si se empieza más allá o se reintenta, ya)
+        const espera = R.caza_tras && !this.hechos.has(R.caza_tras);
+        if (!this.cine && !espera) this._empiezaCaza();
       }
       if (enCabina) this.cabina.empieza(true);
       if (aFinal) this.cabina.alEspacio();
       this.listo = true;
+      this.continua = null;
+      // (v1.41) mientras dura la huida, se van cargando (sin verse) las zonas de la persecución, para seguir sin cortes
+      if (R.fin?.sigue) setTimeout(() => this._precargaRecorrido('persecucion'), 4000);
     }).catch((err) => { console.warn('Libre3D:', err); this.activa = false; });
+  }
+
+  /** (v1.41) Carga sin enseñar las zonas de otro recorrido (de una en una, para no atascar). */
+  async _precargaRecorrido(nombre) {
+    const R2 = K.RECORRIDOS[nombre];
+    if (!R2) return;
+    const zs = [...new Set([...R2.zonas, ...(R2.eventos ?? []).flatMap((e) => (e.pon ? [e.pon] : []))])];
+    for (const z of zs) {
+      if (!this.activa || this.R.fin?.sigue !== true) return;
+      try { await this._cargaZona(z); } catch (e) { /* (luego, al empezar) */ }
+      const Z = this.zonas[z];
+      if (Z?.malla && !this.activas.includes(z)) Z.malla.visible = false;
+    }
   }
 
   /** Los sólidos de las zonas activas (más los bloqueos que no se ven sólidos, como el fuego). */
@@ -719,6 +822,8 @@ export class Libre3D {
       if (ev.pon && !this.activas.includes(ev.pon)) this.activas.push(ev.pon);
       for (const z of Object.keys(this.zonas)) if (this.zonas[z].malla) this.zonas[z].malla.visible = this.activas.includes(z);
       this._solidos();
+      if (this.texLlama) this._llamas(this.texLlama);
+      if (this.humo) this._fuentes();
     }
     if (ev.buena) this.buenaDe[ev.buena.sala] = ev.buena.p;
     if (ev.carril !== undefined && this.caza) this.caza.tramo = ev.carril;
@@ -1089,6 +1194,10 @@ export class Libre3D {
       if (ev.plano) {
         this.cine = { plano: ev.plano, t: 0, eventos: new Set(), evento: ev };
         this.teclas.clear();
+      } else if (ev.sale) {
+        this._sale(ev);
+      } else if (ev.explota) {
+        this._explota(ev);
       } else if (ev.revienta) {
         // (la Aberración revienta la entrada detrás de ti: no hay plano; se oye y tiembla todo, y está ahí)
         this.hechos.add(ev.n);
@@ -1105,6 +1214,59 @@ export class Libre3D {
       }
       return;
     }
+  }
+
+  /** (v1.41) La Aberración sale (como Seek: sin plano). Revienta la pared detrás de ti, la vista se gira sola hacia ella
+   *  un momento (puedes seguir moviéndote) y empieza a perseguirte. */
+  _sale(ev) {
+    const S = K.SALE;
+    this._aplicaEvento(ev);
+    this.sacude = 1.3;
+    this.destello = S.DESTELLO;
+    this._son('n7/explosion', { volume: 1.0, pitch: 0.8 });
+    this._son('metal/panel', { volume: 1.0, when: 0.03 });
+    this._son('final/escombros', { volume: 1.0, when: 0.1 });
+    this._son('final/escombros', { volume: 0.8, when: 0.55 });
+    this._son('aberracion/furia', { volume: 1.0, when: S.RUGE_TRAS });
+    this._son('aberracion/grito', { volume: 0.8, when: S.RUGE_TRAS + 0.4 });
+    this._son('aberracion/arrastre', { volume: 1.0, when: S.RUGE_TRAS + 0.9 });
+    const [px, py, pz] = ev.sale.p;
+    this._bocanada(px - 0.8, py, pz, 40);
+    this.mira = { t: 0, x: px, y: py, z: pz, yaw0: this.yaw };
+    // la caza, con ella en el agujero
+    this._empiezaCaza();
+    const fr = Math.abs(this.ab?.info?.frente ?? 3.2);
+    this.caza.ab = (this.R.caza.desfase?.[0] ?? 0) + fr * 0.6 + 0.4;
+  }
+
+  /** (v1.41) La puerta de evacuación de la Criogenia revienta de lejos (sin plano): fogonazo, sacudida, humo y escombros. */
+  _explota(ev) {
+    const D = K.DERRUMBE;
+    this._aplicaEvento(ev);
+    this.sacude = D.SACUDE;
+    this.destello = D.DESTELLO;
+    this._son('n7/explosion', { volume: 1.0 });
+    this._son('final/escombros', { volume: 1.0, when: 0.15 });
+    this._son('final/escombros', { volume: 0.9, when: 0.6 });
+    this._son('final/acufeno', { volume: 0.4, when: 0.3 });
+    const [px, py, pz] = ev.explota.p;
+    this._bocanada(px, py + 1.0, pz, D.HUMO);
+    if (this.caza?.empezada) this.caza.ab = Math.max(this.caza.ab, this._sCarril() - (ev.ab_tras ?? this.R.caza.ventaja));
+  }
+
+  /** (v1.41) La vista se gira sola hacia donde sale la Aberración (y se cierra un poco la lente), y la suelta. */
+  _updateMira(dt) {
+    const M = this.mira;
+    if (!M) { this.lente += (1 - this.lente) * Math.min(1, dt * 3); return; }
+    const S = K.SALE;
+    M.t += dt;
+    const k = Math.min(1, dt * S.MIRA_FUERZA);
+    const objY = Math.atan2(M.y - this.y, M.x - this.x);
+    const objP = Math.atan2(M.z - this.ojosZ, Math.hypot(M.x - this.x, M.y - this.y));
+    this.yaw += Math.atan2(Math.sin(objY - this.yaw), Math.cos(objY - this.yaw)) * k;
+    this.pitch += (objP - this.pitch) * k;
+    this.lente += (S.LENTE - this.lente) * Math.min(1, dt * 6);
+    if (M.t >= S.MIRA_S) this.mira = null;
   }
 
   /** La puerta atascada: cada W contra ella la abre un poco; si paras, vuelve; abierta del todo, se queda. */
@@ -1226,6 +1388,14 @@ export class Libre3D {
     }
     // (v1.35) en la cabina: sentado o despegando, la cabina se ocupa de todo
     if (this.cabina?.update(dt)) return;
+    if (this.fin && this.R.fin?.sigue) {
+      // (v1.41) la huida no se acaba en negro: sigue la persecución desde aquí
+      this.acabada = true;
+      this.sigue = true;
+      this.fin = null;
+      this.g._finLibre?.(this.nombre);
+      return;
+    }
     if (this.fin) {
       this.fin.t += dt;
       if (this.fin.t >= K.FIN_S) {
@@ -1240,6 +1410,8 @@ export class Libre3D {
       const dx = (this.g.mouse.x - W / 2) / (W / 2);
       if (Math.abs(dx) > 0.6) this.yaw -= Math.sign(dx) * 1.8 * ((Math.abs(dx) - 0.6) / 0.4) ** 1.4 * dt;
     }
+    this._updateMira(dt);
+    this.destello = Math.max(0, (this.destello ?? 0) - dt * 1.4);
     const tc = this.teclas;
     const agacha = this.agachado || tc.has('ControlLeft') || tc.has('ControlRight');
     const quiereCorrer = (tc.has('ShiftLeft') || tc.has('ShiftRight')) && !agacha;
@@ -1255,7 +1427,9 @@ export class Libre3D {
     if (this.aguante <= 0) this.agotado = true;
     if (this.agotado && this.aguante >= K.VUELVE_A_CORRER) this.agotado = false;
     const vmax = agacha && this._aGatas() ? K.VEL_GATAS : agacha ? K.VEL_AGACHADO : corre ? K.VEL_CORRE : K.VEL;
-    const cy = Math.cos(this.yaw), sy = Math.sin(this.yaw);
+    // (v1.41) mientras la vista se gira sola hacia la Aberración, sigues yendo hacia donde ibas
+    const yawMov = this.mira ? this.mira.yaw0 : this.yaw;
+    const cy = Math.cos(yawMov), sy = Math.sin(yawMov);
     // (adelante = (cos yaw, sin yaw); la derecha = (sin yaw, -cos yaw))
     const ox = anda ? (fx * cy + lx * sy) * vmax : 0, oy = anda ? (fx * sy - lx * cy) * vmax : 0;
     const a = Math.min(1, dt * (anda ? K.ACELERA : K.FRENA) * (this.reac ? 0.25 : 1));
@@ -1371,8 +1545,23 @@ export class Libre3D {
     // el fuego parpadea (la luz horneada del fuego, multiplicada)
     const t = this.t;
     this.flick.value = 0.78 + 0.12 * Math.sin(t * 9.1) + 0.07 * Math.sin(t * 23.7 + 1.3) + 0.05 * Math.sin(t * 4.3 + 2.1);
+    // (v1.41) la lente se cierra un poco mientras miras salir a la Aberración
+    if (this.fov0 === undefined) this.fov0 = this.cam.fov;
+    const fov = this.fov0 * (this.lente ?? 1);
+    if (Math.abs(this.cam.fov - fov) > 1e-3) {
+      this.cam.fov = fov;
+      this.cam.updateProjectionMatrix();
+    }
     this.r.render(this.escena, this.cam);
     ctx.drawImage(this.r.domElement, 0, 0, W, H);
+    // (v1.41) el fogonazo de una explosión cercana (la pared, la puerta de evacuación)
+    if (this.destello > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(255,150,70,${Math.min(0.85, this.destello * this.destello).toFixed(3)})`;
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
     this._drawSlaimi(ctx, amp);
     if (this.quema > 0) {
       ctx.save();

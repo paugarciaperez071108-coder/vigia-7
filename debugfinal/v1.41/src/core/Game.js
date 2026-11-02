@@ -677,7 +677,8 @@ export class Game {
   _finLibre(nombre) {
     if (nombre !== 'huida') return;               // (la persecución: la pantalla de «continuará» de la Fase 2c)
     // (v1.32) la persecución en 3D si se puede; si no, la de los renders
-    if (NIGHT7.FINAL.LIBRE.USAR && Libre3D.soportado()) this._empiezaLibre('persecucion');
+    // (v1.41) sin cortes: desde donde estás, en la puerta del Laboratorio
+    if (NIGHT7.FINAL.LIBRE.USAR && Libre3D.soportado()) this._empiezaLibre('persecucion', this.libre?.sigue ? 'sigue' : null);
     else if (Persecucion.lista()) this._empiezaPersecucion();
   }
 

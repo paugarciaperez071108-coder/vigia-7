@@ -201,9 +201,9 @@ export function install(g) {
       act.final1(q === 'muerto' || q === 'cabina_muerto' || q === 'final3' || q === 'final4' ? 'muerto' : 'vivo');
       const desde = q === 'todo' || q === 'muerto' ? null : q === 'cabina_muerto' ? 'cabina' : q;
       setTimeout(() => g._empiezaLibre('persecucion', desde), 700);
-      return { todo: 'La persecución en 3D (con Slaimi): la pared del Laboratorio revienta y entra la Aberración; corre (W A S D, Shift) por la puerta sur a la Criogenia (la viga: C; el suelo que arde a la izquierda), la puerta de evacuación se derrumba: a gatas por el conducto (C), sales por la rejilla de la Enfermería, la puerta del Hangar atascada (W una y otra vez). Si te paras o fallas, se acerca (rojo); si te alcanza, su susto y vuelves al principio.',
+      return { todo: 'La persecución en 3D (con Slaimi): cruzas el Laboratorio y, antes del pasillo de la Criogenia, la pared revienta detrás de ti y sale la Aberración (la vista se gira sola un momento); corre (W A S D, Shift) por la puerta sur a la Criogenia (la viga: C; el suelo que arde a la izquierda), la puerta de evacuación explota en cuanto entras (de lejos): a gatas por el conducto (C), sales por la rejilla de la Enfermería, la puerta del Hangar atascada (W una y otra vez). Si te paras o fallas, se acerca (rojo); si te alcanza, su susto y vuelves al principio.',
         muerto: 'La persecución en 3D sin Slaimi (sin su respiro).',
-        cryo_a: 'La Criogenia: la viga, el fuego del suelo y la puerta que se derrumba.',
+        cryo_a: 'La Criogenia: al entrar, la puerta de evacuación explota de lejos (sin plano) y la salida es el conducto; la viga y el fuego del suelo.',
         conda: 'El conducto, a gatas (ella no cabe: golpea la boca).',
         medbay: 'La Enfermería: el Reactor arde; el Hangar, por la puerta atascada (W repetido).',
         cabina: 'Dentro de la nave de escape, la compuerta cerrada: ella la golpea (se abolla). Anda hasta la cabina y siéntate (el asiento de la izquierda): las pantallas se encienden, dejas a Slaimi en el asiento del copiloto y la tapa del botón se levanta. Clic en el botón rojo (o Espacio mirándolo): la nave cae por la trampilla del Hangar, gira, ves el agujero en llamas con ella asomada, los motores y fuera.',
@@ -730,8 +730,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
-      <h3>v1.40 · Sin las pausas que avisaban (la pared del Laboratorio revienta en cuanto te giras; el derrumbe explota nada más llegar) y la VIGIA-7 revienta mejor</h3>
-        ${b('Toda la persecución (la pared)', 'persec3d:todo')}${b('La Criogenia (el derrumbe)', 'persec3d:cryo_a')}${b('Final 1 (la explosión)', 'persec3d:final1')}${b('Final 3 (la explosión, solo)', 'persec3d:final3')}
+      <h3>v1.41 · La Aberración sale como Seek (sin cinemática: revienta la pared detrás de ti antes del pasillo de la Criogenia), la puerta de evacuación explota de lejos y sin pantalla negra al llegar al Laboratorio</h3>
+        ${b('Desde el Reactor (la huida sigue sin cortes)', 'libre:reactor')}${b('Toda la persecución (sale la Aberración)', 'persec3d:todo')}${b('La Criogenia (la puerta explota)', 'persec3d:cryo_a')}
       <h3>v1.39 · Slaimi en el asiento del copiloto (lo dejas ahí al sentarte) y ya se le ve durante la explosión</h3>
         ${b('Dentro de la nave (con Slaimi)', 'persec3d:cabina')}${b('Desde el pasillo del Hangar', 'persec3d:pas_hm')}${b('Final 1 (la explosión, con Slaimi)', 'persec3d:final1')}${b('Final 2', 'persec3d:final2')}
       <h3>v1.38 · El debug del final, sin la persecución antigua en 2D (la del «cruce de la Enfermería», que acababa antes del Hangar)</h3>
