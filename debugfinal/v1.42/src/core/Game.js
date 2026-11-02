@@ -126,6 +126,7 @@ import { NIGHT3 } from '../night/night3.js';
 import { glitchSlices as cortesGlitch } from '../render/Atmosphere.js';
 import { sustoPuertaListo, sustoPuertaSalto, drawSustoPuerta } from '../render/SustoPuerta.js';
 import { MenuMusic } from '../audio/MenuMusic.js';
+import { Creditos } from '../ending/Creditos.js';
 
 const KEYMAP = {
   KeyQ: { type: 'door', side: 'left' },
@@ -319,6 +320,7 @@ export class Game {
         else if (this.state === 'n4dark') this.n4dark.keyUp(code);
         else if (this.state === 'n6ducts') this.n6ducts.keyUp(code);
         else if (this.state === 'n6sala') this.n6sala.keyUp(code);
+        else if (this.state === 'n7final' && this.creditos?.activo) this.creditos.tecla(code, false);
         else if (this.state === 'n7final') (this._finActivo() ?? this.huida)?.keyUp(code);
       },
       onMove: (x, y) => this._onMove(x, y),
@@ -1049,6 +1051,19 @@ export class Game {
     if (this.save || this.debugNight || this.debugFinal) this._menuAction('continue');
   }
 
+  /** (v1.42, Fase 5) Los créditos del final n (1–4); también desde el debug. */
+  _empiezaCreditos(n) {
+    this.creditos ??= new Creditos(this);
+    this._creditosDe = this.libre ?? null;
+    if (this.state !== 'n7final') this._setState('n7final');
+    this.creditos.start(n);
+  }
+
+  /** (v1.42) Al acabar los créditos: al menú. */
+  _finCreditos() {
+    this._toMenu();
+  }
+
   _toMenu() {
     this.audio.stopAll();
     this.audio.setMasterLevel(1);
@@ -1620,6 +1635,10 @@ export class Game {
       this._finActivo().tecla(code);
       return;
     }
+    if (this.state === 'n7final' && this.creditos?.activo) {     // (v1.42) los créditos: Enter/Espacio deprisa, Escape salta
+      this.creditos.tecla(code, true);
+      return;
+    }
     if ((this.state === 'win' || (this.state === 'n7final' && this.stateTime > 2)) && this.stateTime > 1.5 && (code === 'Enter' || code === 'Space')) {
       this._toMenu();
       return;
@@ -2059,6 +2078,12 @@ export class Game {
           this._f1Fin = this.stateTime;
           break;
         }
+        // (v1.42, Fase 5) acabado uno de los 4 finales: los créditos (y al menú cuando acaban)
+        if (this.libre?.acabada && this.libre.finalVisto && this._creditosDe !== this.libre) this._empiezaCreditos(this.libre.finalVisto);
+        if (this.creditos?.activo) {
+          this.creditos.update(dt);
+          break;
+        }
         if (this.stateTime - (this._f1Fin ?? 0) >= NIGHT7.FINAL.PANTALLA) this._toMenu();
         break;
       case 'n2done':
@@ -2226,10 +2251,8 @@ export class Game {
       case 'n7final':
         if (this.final1?.activa && !this.final1.acabada) this.final1.draw(ctx);
         else if (this._finActivo()) this._finActivo().draw(ctx);
-        else if (this.libre?.acabada && this.libre.finalVisto) {
-          const f = FINALES.find((q) => q.n === this.libre.finalVisto);
-          this._drawEndScreen(ctx, `Final ${f.n}/${FINALES.length}`, `${f.titulo}  ·  (los créditos, Fase 5, en preparación)`, '#e8eef5');
-        } else this._drawEndScreen(ctx, 'CONTINUARÁ', this.libre?.acabada && this.libre.nombre === 'persecucion' ? 'Los finales (Fase 4 del final), en preparación'
+        else if (this.creditos?.activo) this.creditos.draw(ctx);   // (v1.42, Fase 5: los créditos)
+        else this._drawEndScreen(ctx, 'CONTINUARÁ', this.libre?.acabada && this.libre.nombre === 'persecucion' ? 'Los finales (Fase 4 del final), en preparación'
           : this.persecucion?.acabada ? 'El Hangar y la nave (Fase 2c del final), en preparación'
           : this.huida?.acabada ? 'La persecución (Fase 2b del final), en preparación' : 'La huida (Fase 2 del final), en preparación', '#e8eef5');
         break;

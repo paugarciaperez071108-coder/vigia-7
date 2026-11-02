@@ -197,6 +197,11 @@ export function install(g) {
         rejilla: 'Directo a la rejilla izquierda: asoma ardiendo, estira el brazo hacia ti, tiembla, cae colgando y se queda ahí el resto de la noche. A los 2 s, la Aberración ruge (la oficina tiembla y parpadean las luces) y viene furiosa.' }[que];
     },
     // --- v1.32: la persecución en 3D ---
+    // --- v1.42: los créditos ---
+    creditos: (q) => {
+      setTimeout(() => g._empiezaCreditos(Number(q)), 300);
+      return 'Los créditos del final ' + q + ': suben despacio con «Clair de lune» (Enter o Espacio pulsados: más deprisa; Escape: salta). Al acabar, al menú.';
+    },
     persec3d: (q) => {
       act.final1(q === 'muerto' || q === 'cabina_muerto' || q === 'final3' || q === 'final4' ? 'muerto' : 'vivo');
       const desde = q === 'todo' || q === 'muerto' ? null : q === 'cabina_muerto' ? 'cabina' : q;
@@ -730,6 +735,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.42 · Los créditos (Fase 5) al acabar cada final y Slaimi más grande en el asiento del copiloto</h3>
+        ${b('Créditos del final 1', 'creditos:1')}${b('Créditos del final 2', 'creditos:2')}${b('Créditos del final 3', 'creditos:3')}${b('Créditos del final 4', 'creditos:4')}${b('Dentro de la nave (Slaimi en su asiento)', 'persec3d:cabina')}${b('Final 1 entero (con los créditos)', 'persec3d:final1')}
       <h3>v1.41 · La Aberración sale como Seek (sin cinemática: revienta la pared detrás de ti antes del pasillo de la Criogenia), la puerta de evacuación explota de lejos y sin pantalla negra al llegar al Laboratorio</h3>
         ${b('Desde el Reactor (la huida sigue sin cortes)', 'libre:reactor')}${b('Toda la persecución (sale la Aberración)', 'persec3d:todo')}${b('La Criogenia (la puerta explota)', 'persec3d:cryo_a')}
       <h3>v1.39 · Slaimi en el asiento del copiloto (lo dejas ahí al sentarte) y ya se le ve durante la explosión</h3>

@@ -470,6 +470,12 @@ export function install(g) {
     },
     // v1.26 (debug del final): cada momento del final, con el Slaimi elegido
     fin: (que) => {
+      // (v1.42) los créditos del final n, directamente
+      if (/^creditos[1-4]$/.test(que)) {
+        if (g.libre?.activa) g.libre.stop?.();
+        g._empiezaCreditos(Number(que.slice(8)));
+        return;
+      }
       const s = slaimiDe(g.save?.flags);
       const cual = !s ? 'n4' : s.estado === 'vivo' ? 'vivo' : s.donde;
       act.finF1(cual);
@@ -630,7 +636,7 @@ export function install(g) {
       <h3>Fase 2b · la persecución (3D)${g.libre?.activa && g.libre.caza?.empezada ? ` · la Aberración a ${(g.libre._sCarril() - g.libre.caza.ab).toFixed(1)} m` : ''}</h3>${btn('Toda la persecución en 3D', 'fin:lp_todo')}${btn('Punto de control', 'fin:lp_reinicio')}${btn('La Criogenia', 'fin:lp_cryo_a')}${btn('Tras el derrumbe', 'fin:lp_cryo_d')}<br>${btn('El conducto', 'fin:lp_conda')}${btn('La rejilla de la Enfermería', 'fin:lp_condb')}${btn('La Enfermería', 'fin:lp_medbay')}${btn('El pasillo del Hangar', 'fin:lp_pas_hm')}${btn('El Hangar y la nave (2c)', 'fin:lp_hangar')}
       <h3>Fase 3 en 3D: la cabina y el despegue (v1.35)${g.libre?.cabina?.activa ? ` · ${g.libre.cabina.fase}${g.libre.cabina.d ? ` ${g.libre.cabina.d.t.toFixed(1)} s` : ''}` : ''}</h3>${btn('Dentro de la nave (la compuerta cerrada)', 'fin:lp_cabina')}
       <h3>Fase 4 en 3D: los finales (v1.36)${g.libre?.final4?.activo ? ` · final ${g.libre.final4.n}: ${g.libre.final4.t.toFixed(1)} s` : ''}</h3>${btn('Final 1 (Slaimi, sin el Errante)', 'fin:lp_final1')}${btn('Final 2 (Slaimi, el Errante)', 'fin:lp_final2')}${btn('Final 3 (solo)', 'fin:lp_final3')}${btn('Final 4 (solo, el Errante)', 'fin:lp_final4')}
-      <h3>En preparación</h3>${gris('Fase 5 · los créditos')}
+      <h3>Fase 5: los créditos (v1.42)</h3>${btn('Créditos del final 1', 'fin:creditos1')}${btn('Final 2', 'fin:creditos2')}${btn('Final 3', 'fin:creditos3')}${btn('Final 4', 'fin:creditos4')}
       <h3>Finales vistos ${vistos.length}/${FINALES.length}</h3>${FINALES.map((f) => btn('marcar ' + f.n, 'finMarcar:' + f.n, vistos.includes(f.n))).join('')}${btn('borrar', 'finBorrar')}
       <h3>Velocidad</h3>${[1, 2, 5].map((v) => btn('x' + v, 'vel:' + v, g.speed === v)).join('')}
       <h3>Otros</h3>${btn('Información', 'hud', dbg.hud)}${btn('VOLVER A EMPEZAR EL FINAL', 'fin:f1')}`;
