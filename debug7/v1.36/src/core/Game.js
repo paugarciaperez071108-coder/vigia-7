@@ -104,6 +104,7 @@ import { Night5Leak } from '../ending/Night5Leak.js';
 import { Final1 } from '../ending/Final1.js';
 import { Huida } from '../ending/Huida.js';
 import { Persecucion } from '../ending/Persecucion.js';
+import { FINALES } from './Finales.js';
 import { Libre3D } from '../ending/Libre3D.js';
 import { Night6Ducts } from '../ending/Night6Ducts.js';
 import { Night6Sala } from '../ending/Night6Sala.js';
@@ -2224,7 +2225,10 @@ export class Game {
       case 'n7final':
         if (this.final1?.activa && !this.final1.acabada) this.final1.draw(ctx);
         else if (this._finActivo()) this._finActivo().draw(ctx);
-        else this._drawEndScreen(ctx, 'CONTINUARÁ', this.libre?.acabada && this.libre.nombre === 'persecucion' ? 'Los finales (Fase 4 del final), en preparación'
+        else if (this.libre?.acabada && this.libre.finalVisto) {
+          const f = FINALES.find((q) => q.n === this.libre.finalVisto);
+          this._drawEndScreen(ctx, `Final ${f.n}/${FINALES.length}`, `${f.titulo}  ·  (los créditos, Fase 5, en preparación)`, '#e8eef5');
+        } else this._drawEndScreen(ctx, 'CONTINUARÁ', this.libre?.acabada && this.libre.nombre === 'persecucion' ? 'Los finales (Fase 4 del final), en preparación'
           : this.persecucion?.acabada ? 'El Hangar y la nave (Fase 2c del final), en preparación'
           : this.huida?.acabada ? 'La persecución (Fase 2b del final), en preparación' : 'La huida (Fase 2 del final), en preparación', '#e8eef5');
         break;

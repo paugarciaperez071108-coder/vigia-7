@@ -198,7 +198,7 @@ export function install(g) {
     },
     // --- v1.32: la persecución en 3D ---
     persec3d: (q) => {
-      act.final1(q === 'muerto' || q === 'cabina_muerto' ? 'muerto' : 'vivo');
+      act.final1(q === 'muerto' || q === 'cabina_muerto' || q === 'final3' || q === 'final4' ? 'muerto' : 'vivo');
       const desde = q === 'todo' || q === 'muerto' ? null : q === 'cabina_muerto' ? 'cabina' : q;
       setTimeout(() => g._empiezaLibre('persecucion', desde), 700);
       return { todo: 'La persecución en 3D (con Slaimi): la pared del Laboratorio revienta y entra la Aberración; corre (W A S D, Shift) por la puerta sur a la Criogenia (la viga: C; el suelo que arde a la izquierda), la puerta de evacuación se derrumba: a gatas por el conducto (C), sales por la rejilla de la Enfermería, la puerta del Hangar atascada (W una y otra vez). Si te paras o fallas, se acerca (rojo); si te alcanza, su susto y vuelves al principio.',
@@ -207,7 +207,11 @@ export function install(g) {
         conda: 'El conducto, a gatas (ella no cabe: golpea la boca).',
         medbay: 'La Enfermería: el Reactor arde; el Hangar, por la puerta atascada (W repetido).',
         cabina: 'Dentro de la nave de escape, la compuerta cerrada: ella la golpea (se abolla). Anda hasta la cabina y siéntate (el asiento de la izquierda): las pantallas se encienden, Slaimi se queda en el hueco de la consola y la tapa del botón se levanta. Clic en el botón rojo (o Espacio mirándolo): la nave cae por la trampilla del Hangar, gira, ves el agujero en llamas con ella asomada, los motores y fuera.',
-        cabina_muerto: 'Lo mismo sin Slaimi: al sentarte, la vista pasa por el asiento vacío de al lado.' }[q] ?? '';
+        cabina_muerto: 'Lo mismo sin Slaimi: al sentarte, la vista pasa por el asiento vacío de al lado.',
+        final1: 'Final 1 (Slaimi vivo, sin el Errante): desde la cabina, la VIGIA-7 entera sobre el planeta; explosiones en cadena, el reactor en blanco, la onda, los trozos. En silencio: tu respiración se calma; Slaimi te mira y brilla. «VIGIA-7».',
+        final2: 'Final 2 (Slaimi vivo, el Errante en tu cabeza): la imagen se tuerce, su cara en el reflejo del parabrisas y después en toda la pantalla; la nave se da la vuelta sola (A/D no bastan), Slaimi te empuja, el fogonazo, el cristal y negro; las respiraciones.',
+        final3: 'Final 3 (sin Slaimi, sin el Errante): el 1 con el asiento vacío; entre los restos, un brillo azul diminuto que se apaga.',
+        final4: 'Final 4 (sin Slaimi, el Errante): el 2 sin Slaimi.' }[q] ?? '';
     },
     // --- v1.28: el final en 3D en tiempo real (prototipo M0: el Comedor) ---
     libre: (q) => {
@@ -726,6 +730,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     panel.innerHTML = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · v0.57 → v0.66</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.36 · Los 4 finales (Fase 4): la VIGIA-7 desde fuera y su destrucción; el Errante en tu cabeza</h3>
+        ${b('Final 1', 'persec3d:final1')}${b('Final 2', 'persec3d:final2')}${b('Final 3', 'persec3d:final3')}${b('Final 4', 'persec3d:final4')}
       <h3>v1.35 · La cabina y el despegue (Fase 3): te sientas, Slaimi en el hueco, el botón; la nave cae por la trampilla y te alejas</h3>
         ${b('Dentro de la nave (con Slaimi)', 'persec3d:cabina')}${b('Dentro de la nave (sin Slaimi)', 'persec3d:cabina_muerto')}${b('Desde el pasillo del Hangar', 'persec3d:pas_hm')}
       <h3>v1.34 · El Hangar y la nave de escape (Fase 2c): la Aberración revienta la entrada, la compuerta se cierra delante de ella</h3>
