@@ -59,9 +59,10 @@ export class Creditos {
     const f = FINALES.find((q) => q.n === this.n);
     const add = (t, tam = 30, color = '#c9d3dd', h = null, extra = {}) => L.push({ t, tam, color, h: h ?? Math.round(tam * 1.7), ...extra });
     const hueco = (h = 60) => L.push({ t: '', tam: 1, color: '#000', h });
-    add('VIGÍA-7', 110, '#e8eef5', 170, { negrita: true });
-    add(`Final ${f.n}/${FINALES.length}  ·  ${f.titulo}`, 28, '#8fa3b5');
-    hueco(160);
+    // (v1.43, el usuario: «después del título, los créditos y "Final 1/4 – Escapaste con Slaimi", y vuelta al menú»:
+    // el título «VIGIA-7» ya lo pone el final; el número de final va al acabar)
+    this.cierre = `Final ${f.n}/${FINALES.length} – ${f.titulo.replace(/\.$/, '')}`;
+    hueco(60);
     if (KC.AUTOR) {
       add('UN JUEGO DE', 22, '#6f8294');
       add(KC.AUTOR, 44, '#e8eef5', 90, { negrita: true });
@@ -229,9 +230,12 @@ export class Creditos {
       ctx.save();
       ctx.globalAlpha = a;
       ctx.fillStyle = '#e8eef5';
-      ctx.font = '40px monospace';
+      ctx.font = 'bold 46px monospace';
       ctx.textAlign = 'center';
-      ctx.fillText('Gracias por jugar.', W / 2, H / 2);
+      ctx.fillText(this.cierre ?? '', W / 2, H / 2 - 10);
+      ctx.fillStyle = '#8fa3b5';
+      ctx.font = '24px monospace';
+      ctx.fillText('Gracias por jugar.', W / 2, H / 2 + 50);
       ctx.restore();
       // (1 y 2) el brillo azul de Slaimi cruza la pantalla, lejos
       if (this.slaimi) {

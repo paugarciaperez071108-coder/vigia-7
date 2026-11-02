@@ -409,6 +409,9 @@ export const NIGHT7 = {
       HUMO_AIRE_R: 7,          // m alrededor de la salida buena
       // (v1.32, M3a) la persecución en 3D
       GATAS_OJOS: 0.45,        // m, a gatas (el conducto)
+      // (v1.43) Slaimi en tus brazos en el 3D (la capa de tools/3d/final/slaimi_brazos.py): abajo a la derecha
+      BRAZOS: { ARCHIVO: 'assets/final/huida/brazos_v143.webp', BAJA: 0.0, CENTRO: [971 / 1280, 547 / 720], RADIO: 0.26,
+        MIEDO_DESDE: 0.2, TIEMBLA: 1.4, BRILLO_MIEDO: 1.4 },
       GATAS_BOCA: 0.8,         // (v1.43) m alrededor de las cajas «a gatas»: ya se choca como a gatas (para entrar por la boca)
       VEL_GATAS: 0.9,          // m/s a gatas
       SALTO_S: 1.1,            // s del fundido a negro al final del conducto (y otro tanto al salir)
@@ -469,7 +472,7 @@ export const NIGHT7 = {
         MIRA: [45.0, -45.0, 6.0],          // el centro de la estación (adonde mira la nave)
         DESDE: [235.0, 15.0, 140.0],        // dónde está la nave (al este y por encima: la estación, sobre el planeta)
         MORRO_BAJO: 0.32,                   // rad: el morro, por debajo de la estación (se la ve en el parabrisas)
-        MIRA_ARRIBA: 0.2,                   // rad: tu cabeza
+        MIRA_ARRIBA: 0.1,                   // rad: tu cabeza (v1.43: 0,2 → 0,1, que se vea a Slaimi junto al cristal)
         DERIVA: 3.0,                        // m/s: la nave se aleja despacio
         LEJOS: 9000,                        // m: lo más lejos que se dibuja
         BRILLO: 1.0,
@@ -483,7 +486,17 @@ export const NIGHT7 = {
         REACTOR: 15.0,                      // s: el reactor estalla
         ONDA_VEL: 140,                      // m/s de la onda
         VEL_REACTOR: 45,                    // m/s de los trozos
-        SLAIMI_TE_MIRA: 27,                 // s: te giras hacia Slaimi (1) — o el brillo azul (3)
+        SLAIMI_TE_MIRA: 21,                 // s: te giras hacia Slaimi (1) — o el brillo azul (3) (v1.43: antes 27)
+        // (v1.43, el usuario: «Slaimi tiene que verse junto a la ventanilla mientras explota la nave, iluminado por la
+        // explosión, y después girarse hacia el protagonista y brillar. Dale 4-5 segundos y luz suficiente»)
+        SLAIMI_VENTANA: [-6.1, 6.62, 2.0],   // dónde se pone (en la consola, junto al parabrisas, a la vista)
+        SLAIMI_GIRA: 20.5,                   // s: se da la vuelta hacia ti (de espaldas, mirando fuera, a de frente)
+        SLAIMI_GIRA_S: 0.9,                  // s que tarda en girarse
+        SLAIMI_BRILLA_S: 4.8,                // s que brilla mirándote
+        SLAIMI_LUZ: 1.6,                     // cuánto le ilumina la explosión
+        // (v1.43, el usuario: «en los momentos clave guía la vista hacia la ventanilla») la vista vuelve sola al parabrisas
+        // si te apartas más de LIBRE rad, y no se aparta más de MAX (desde la cadena hasta que se calma)
+        GUIA: { DESDE: 4.5, HASTA: 26, YAW: -0.1, LIBRE: 0.15, MAX: 0.4, FUERZA: 4 },
         MANO_TRAS: 9.5,                     // (3) s tras el reactor: tu mano en el cristal
         FIN: 36,                            // s: fin (con «VIGIA-7»)
         ERRANTE: {                          // (2 y 4)

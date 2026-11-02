@@ -735,6 +735,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.44 · Final 1 revisado: Slaimi en brazos más pequeño (abajo a la derecha, con tus manos), Slaimi junto a la ventanilla en la explosión (se gira hacia ti y brilla), la vista guiada al parabrisas y «Final 1/4» al acabar los créditos (v1.43: sin atravesar paredes ni conductos)</h3>
+        ${b('Desde el Comedor (Slaimi en brazos)', 'libre:mess')}${b('Toda la persecución (tiembla con ella cerca)', 'persec3d:todo')}${b('Final 1 (la ventanilla)', 'persec3d:final1')}${b('Final 2', 'persec3d:final2')}${b('Créditos del final 1', 'creditos:1')}
       <h3>v1.42 · Los créditos (Fase 5) al acabar cada final y Slaimi más grande en el asiento del copiloto</h3>
         ${b('Créditos del final 1', 'creditos:1')}${b('Créditos del final 2', 'creditos:2')}${b('Créditos del final 3', 'creditos:3')}${b('Créditos del final 4', 'creditos:4')}${b('Dentro de la nave (Slaimi en su asiento)', 'persec3d:cabina')}${b('Final 1 entero (con los créditos)', 'persec3d:final1')}
       <h3>v1.41 · La Aberración sale como Seek (sin cinemática: revienta la pared detrás de ti antes del pasillo de la Criogenia), la puerta de evacuación explota de lejos y sin pantalla negra al llegar al Laboratorio</h3>

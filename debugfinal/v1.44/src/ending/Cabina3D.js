@@ -29,6 +29,7 @@ const suave = (a, b, t) => {
 const angulo = (a) => Math.atan2(Math.sin(a), Math.cos(a));
 
 let SLAIMI = null;                  // (su hoja quieta, asustado: assets/slaimi/slaimi_triste.webp)
+let GIRO = null;                   // (v1.43) Slaimi dándose la vuelta (9 fotogramas)
 
 // la compuerta abollada: la luz es horneada (no cambia al hundirse), así que lo hundido se oscurece (aHund)
 const VS_HUND = `
@@ -574,6 +575,8 @@ export class Cabina3D {
   /** (v1.39) Dónde se queda Slaimi (sus pies, coordenadas de Blender): en el asiento del copiloto (o en el hueco). */
   sitioSlaimi() {
     const c = this._m.copiloto, h = this._m.hueco;
+    // (v1.43) en los finales, junto a la ventanilla (Final4.js)
+    if (this.enVentana && NIGHT7.FINAL.LIBRE.FINAL4?.SLAIMI_VENTANA) return [...NIGHT7.FINAL.LIBRE.FINAL4.SLAIMI_VENTANA];
     if (KC.SLAIMI_EN === 'copiloto' && c) return [c[0], c[1] + KC.SLAIMI_ASIENTO[0], c[2] + KC.SLAIMI_ASIENTO[1]];
     return h ? [h[0], h[1], h[2] + KC.SLAIMI_SUBE] : null;
   }
@@ -581,6 +584,7 @@ export class Cabina3D {
   /** Slaimi en su sitio: aparece al dejarlo, respira, tiembla con los golpes y con el despegue. */
   _slaimi(dt) {
     if (!this.slaimi) return;
+    if (!this.final4Activo) this.enVentana = false;
     const L = this.L;
     const ver = !!(L.slaimi && this.slaimiPuesto);
     this.slaimi.visible = this.slaimiLuz.visible = ver;
@@ -595,6 +599,24 @@ export class Cabina3D {
     this.slaimi.position.set(p.x + (Math.random() - 0.5) * 0.008 * tiembla, p.y + 0.05 * Math.sin(Math.PI * salta), p.z);
     const resp = 1 + 0.04 * Math.sin(this.t * 2.4);
     this.slaimi.scale.set(KC.SLAIMI_ALTO * 0.75 * (2 - resp), KC.SLAIMI_ALTO * resp, 1);
+    // (v1.43) de espaldas / girándose (la tira «giro», assets/slaimi/slaimi_giro.webp) y la luz de la explosión
+    if (this.slaimiGiro !== undefined && this.slaimiGiro !== null) {
+      if (!GIRO) {
+        GIRO = new THREE.TextureLoader().load('assets/slaimi/slaimi_giro.webp', (t) => { t.colorSpace = THREE.SRGBColorSpace; });
+        GIRO.repeat.set(1 / 9, 1);
+      }
+      if (this.slaimi.material.map !== GIRO) {
+        this.slaimi.material.map = GIRO;
+        this.slaimi.material.needsUpdate = true;
+      }
+      GIRO.offset.x = Math.round(Math.max(0, Math.min(8, this.slaimiGiro))) / 9;
+    } else if (this.slaimi.material.map !== SLAIMI) {
+      this.slaimi.material.map = SLAIMI;
+      this.slaimi.material.needsUpdate = true;
+    }
+    const lz = this.slaimiLuzExt ?? null;
+    if (lz) this.slaimi.material.color.setRGB(lz[0], lz[1], lz[2]);
+    else this.slaimi.material.color.setRGB(1, 1, 1);
     this.slaimiLuz.position.set(p.x, p.y + KC.SLAIMI_ALTO * 0.35, p.z);
     this.slaimiLuz.material.opacity = 0.35 + 0.15 * Math.sin(this.t * 5) + (this.d ? 0.3 : 0);
   }
@@ -699,6 +721,10 @@ export class Cabina3D {
     const objPitch = KC.MIRA_CONSOLA + (D.MIRA_ARRIBA - KC.MIRA_CONSOLA) * gira * (1 - pica);
     L.pitch += (objPitch - L.pitch) * Math.min(1, dt * 1.6);
     L.yaw += angulo(Math.PI / 2 - L.yaw) * Math.min(1, dt * 1.6);
+    // (v1.43, el usuario: «en el despegue guía la vista hacia la ventanilla para que no mire paredes vacías»)
+    const desv = angulo(L.yaw - Math.PI / 2), lim = KC.DESPEGUE.MIRA_MAX ?? 0.45;
+    if (Math.abs(desv) > lim) L.yaw = Math.PI / 2 + Math.sign(desv) * lim;
+    L.pitch = Math.max(objPitch - lim, Math.min(objPitch + lim, L.pitch));
     if (t > D.IGNICION && t < D.IGNICION + 1.2) L.sacude = Math.max(L.sacude, 0.7);
     L.sacude = Math.max(0, L.sacude - dt);
     this.flash = Math.max(0, (this.flash ?? 0) - dt * 1.5);

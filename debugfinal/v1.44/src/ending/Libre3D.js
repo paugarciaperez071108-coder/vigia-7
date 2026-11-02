@@ -193,7 +193,9 @@ let BRAZOS = null;                 // (Slaimi en tus brazos: la capa de la Fase 
 function brazos() {
   if (!BRAZOS) {
     BRAZOS = new Image();
-    BRAZOS.src = 'assets/final/huida/brazos.webp';
+    // (v1.43, el usuario: «más pequeño, abajo a un lado, sujeto por las manos… sin tapar la vista»:
+    // tools/3d/final/slaimi_brazos.py; antes, la capa de la Fase 1, enorme en el centro)
+    BRAZOS.src = K.BRAZOS?.ARCHIVO ?? 'assets/final/huida/brazos.webp';
   }
   return BRAZOS.complete && BRAZOS.naturalWidth ? BRAZOS : null;
 }
@@ -1666,7 +1668,10 @@ export class Libre3D {
     if (!br || (this.dejaSlaimi ?? 0) >= 1) return;
     const deja = this.dejaSlaimi ?? 0;
     const r = this.reac;
-    const tiembla = r?.tipo === 'slaimi' ? (1 - r.t / r.dur) : (this.sacude > 0.5 ? 0.4 : 0);
+    const KB = K.BRAZOS ?? {};
+    // (v1.43) con la Aberración cerca tiembla y brilla más (cerca: 0 lejos … 1 te alcanza)
+    const miedo = this.caza?.empezada ? Math.max(0, Math.min(1, ((this.cerca ?? 0) - (KB.MIEDO_DESDE ?? 0.2)) / (1 - (KB.MIEDO_DESDE ?? 0.2)))) : 0;
+    const tiembla = Math.max(r?.tipo === 'slaimi' ? (1 - r.t / r.dur) : (this.sacude > 0.5 ? 0.4 : 0), miedo * (KB.TIEMBLA ?? 1));
     let hacia = 0;
     if (this.sala && this.pista > 0.3) {
       const b = this.buenaDe[this.sala.n] ?? this.sala.buena;
@@ -1674,16 +1679,20 @@ export class Libre3D {
       hacia = -Math.max(-1, Math.min(1, rel / 1.2)) * 40 * this.pista;
     }
     const bx = (Math.random() - 0.5) * 10 * tiembla + Math.sin(this.t * 1.7) * 4 + Math.sin(this.balanceo) * 6 * andando + hacia;
-    const by = H * KM.BRAZOS_BAJA + Math.abs(Math.cos(this.balanceo)) * 10 * andando + Math.sin(this.t * 2.3) * 3
+    const by = H * (KB.BAJA ?? KM.BRAZOS_BAJA) + Math.abs(Math.cos(this.balanceo)) * 10 * andando + Math.sin(this.t * 2.3) * 3
       + Math.max(0, -this.pitch) * 120 + deja * deja * H * 0.75;
     ctx.save();
     ctx.globalAlpha = 1 - deja * deja;
     ctx.drawImage(br, bx, by, W, H);
     ctx.restore();
-    const brillo = 0.15 + KM.BRILLO_SLAIMI * Math.max(this.mirandoBuena, 0.15) * (0.85 + 0.15 * Math.sin(this.t * 5));
+    const late = 0.85 + 0.15 * Math.sin(this.t * (5 + 9 * miedo));
+    const brillo = (0.15 + KM.BRILLO_SLAIMI * Math.max(this.mirandoBuena, 0.15) + (KB.BRILLO_MIEDO ?? 1.2) * miedo) * late;
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
-    const gr = ctx.createRadialGradient(W / 2 + bx, H * 0.7 + by, 10, W / 2 + bx, H * 0.7 + by, H * 0.42);
+    // (su brillo, sobre él: el centro de Slaimi en la capa)
+    const [cx, cy] = KB.CENTRO ?? [0.5, 0.7];
+    const gx = W * cx + bx, gy = H * cy + by;
+    const gr = ctx.createRadialGradient(gx, gy, 6, gx, gy, H * (KB.RADIO ?? 0.42));
     gr.addColorStop(0, `rgba(190,225,255,${(0.32 * brillo).toFixed(3)})`);
     gr.addColorStop(1, 'rgba(190,225,255,0)');
     ctx.fillStyle = gr;
