@@ -724,7 +724,7 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     panel.innerHTML = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · v0.57 → v0.66</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
-      <h3>v1.32 · La persecución en 3D en tiempo real (la Aberración detrás)</h3>
+      <h3>v1.33 · La persecución en 3D: la Aberración en 3D detrás de ti y sus brazos en los bordes (v1.32: la persecución en 3D)</h3>
         ${b('Toda la persecución', 'persec3d:todo')}${b('Sin Slaimi', 'persec3d:muerto')}${b('La Criogenia', 'persec3d:cryo_a')}${b('El conducto', 'persec3d:conda')}${b('La Enfermería', 'persec3d:medbay')}
       <h3>v1.31 · La huida en 3D: escombros reales y humo (v1.30: desde la oficina; v1.29: andar libre, salidas bloqueadas, pistas)</h3>
         ${b('Toda la huida', 'libre:todo')}${b('Sin Slaimi', 'libre:muerto')}${b('El Comedor', 'libre:mess')}${b('El Reactor', 'libre:reactor')}
