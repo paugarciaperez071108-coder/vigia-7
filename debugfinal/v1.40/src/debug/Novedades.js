@@ -730,6 +730,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.40 · Sin las pausas que avisaban (la pared del Laboratorio revienta en cuanto te giras; el derrumbe explota nada más llegar) y la VIGIA-7 revienta mejor</h3>
+        ${b('Toda la persecución (la pared)', 'persec3d:todo')}${b('La Criogenia (el derrumbe)', 'persec3d:cryo_a')}${b('Final 1 (la explosión)', 'persec3d:final1')}${b('Final 3 (la explosión, solo)', 'persec3d:final3')}
       <h3>v1.39 · Slaimi en el asiento del copiloto (lo dejas ahí al sentarte) y ya se le ve durante la explosión</h3>
         ${b('Dentro de la nave (con Slaimi)', 'persec3d:cabina')}${b('Desde el pasillo del Hangar', 'persec3d:pas_hm')}${b('Final 1 (la explosión, con Slaimi)', 'persec3d:final1')}${b('Final 2', 'persec3d:final2')}
       <h3>v1.38 · El debug del final, sin la persecución antigua en 2D (la del «cruce de la Enfermería», que acababa antes del Hangar)</h3>

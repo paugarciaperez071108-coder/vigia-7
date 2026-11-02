@@ -637,6 +637,8 @@ export class Libre3D {
     const reinicio = desde === 'reinicio';
     if (reinicio) desde = null;
     if (R.plano_inicio && !desde && !reinicio) this.cine = { plano: R.plano_inicio, t: 0, eventos: new Set() };
+    // (v1.40) los planos del recorrido, pedidos ya: cuando toca uno, sale al instante (sin pararse a cargar)
+    for (const pl of new Set([R.plano_inicio, ...(R.eventos ?? []).map((e) => e.plano)])) if (pl) this._precarga(pl);
     for (const Z of Object.values(this.zonas)) if (Z.malla) Z.malla.visible = false;
     const todas = [...new Set([...R.zonas, ...(R.eventos ?? []).flatMap((e) => (e.pon ? [e.pon] : []))])];
     if (R.caza) this._cargaAb();
@@ -976,21 +978,65 @@ export class Libre3D {
   }
 
   /** Un plano de Blender a pantalla completa (la pared que revienta, el derrumbe), con sus sonidos. */
+  /** (v1.40) Los fotogramas de un plano que se ven, en orden (PLANOS_SEC: sin la pausa de antes). */
+  _sec(plano) {
+    const T = PLANOS.ind?.tramos?.[plano];
+    if (!T) return null;
+    this._secs ??= {};
+    if (!this._secs[plano]) {
+      const tramos = K.PLANOS_SEC?.[plano] ?? [[0, T.n - 1]];
+      this._secs[plano] = tramos.flatMap(([a, b]) => {
+        const s = [];
+        for (let i = Math.max(0, a); i <= Math.min(T.n - 1, b); i++) s.push(i);
+        return s;
+      });
+    }
+    return this._secs[plano];
+  }
+
+  /** (v1.40) Pide de antemano los fotogramas de un plano (para que no se pare a cargarlos cuando toca). */
+  _precarga(plano) {
+    const s = this._sec(plano);
+    if (!s) {                            // (el índice aún no ha llegado: luego)
+      setTimeout(() => this._precarga(plano), 300);
+      return;
+    }
+    for (const i of s) PLANOS.img(`${plano}_${n3(i)}`);
+  }
+
+  /** (v1.40) El fotograma de Blender que toca ahora en el plano en curso. */
+  _fotoCine() {
+    const s = this._sec(this.cine.plano);
+    if (!s) return 0;
+    return s[Math.min(s.length - 1, Math.floor(this.cine.t * (PLANOS.ind?.fps ?? 12)))];
+  }
+
   _updateCine(dt) {
     const c = this.cine;
     const T = PLANOS.ind?.tramos?.[c.plano];
-    if (!T) {                            // (aún sin cargar el índice: espera)
+    const s = this._sec(c.plano);
+    if (!T || !s) {                      // (aún sin cargar el índice: espera)
       c.espera = (c.espera ?? 0) + dt;
       if (c.espera > 8) this._finCine();
       return;
     }
     const fps = PLANOS.ind.fps ?? 12;
-    if (c.t === 0) for (let i = 0; i < T.n; i++) PLANOS.img(`${c.plano}_${n3(i)}`);
-    // (no corre hasta que el primer fotograma está cargado)
-    if (!PLANOS.img(`${c.plano}_000`)) return;
+    if (c.t === 0) this._precarga(c.plano);
+    // (no corre hasta que están cargados sus fotogramas: así no se traba a medias; como mucho 1,5 s)
+    if (c.t === 0) {
+      c.espera = (c.espera ?? 0) + dt;
+      const listos = s.every((i) => PLANOS.img(`${c.plano}_${n3(i)}`));
+      if (!listos && !(c.espera > 1.5 && PLANOS.img(`${c.plano}_${n3(s[0])}`))) return;
+    }
     c.t += dt;
-    const f = c.t * fps;
-    const ev = (n, en, fn) => { if (!c.eventos.has(n) && f >= en) { c.eventos.add(n); fn(); } };
+    const p = c.t * fps;                 // (el puesto en la secuencia que se ve)
+    // un sonido del plano suena en su fotograma de Blender; si ese fotograma está cortado, no suena
+    const ev = (n, en, fn) => {
+      if (c.eventos.has(n)) return;
+      const k = s.indexOf(en);
+      if (k < 0) { c.eventos.add(n); return; }
+      if (p >= k) { c.eventos.add(n); fn(); }
+    };
     if (c.plano === 'revienta') {
       (T.golpes ?? []).forEach((g_, k) => ev('g' + k, g_, () => {
         this.sacude = 0.35 + 0.15 * k;
@@ -1012,7 +1058,7 @@ export class Libre3D {
         this._son('final/acufeno', { volume: 0.5, when: 0.3 });
       });
     }
-    if (f >= T.n - 1) this._finCine();
+    if (p >= s.length - 1) this._finCine();
   }
 
   _finCine() {
@@ -1299,8 +1345,7 @@ export class Libre3D {
       return;
     }
     if (this.cine) {
-      const T = PLANOS.ind?.tramos?.[this.cine.plano];
-      const f = Math.min((T?.n ?? 1) - 1, Math.floor(this.cine.t * (PLANOS.ind?.fps ?? 12)));
+      const f = this._fotoCine();
       const im = PLANOS.img(`${this.cine.plano}_${n3(f)}`) ?? this._ultimoPlano;
       if (im) {
         this._ultimoPlano = im;

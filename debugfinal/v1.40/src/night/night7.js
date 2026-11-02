@@ -397,6 +397,10 @@ export const NIGHT7 = {
       GATAS_OJOS: 0.45,        // m, a gatas (el conducto)
       VEL_GATAS: 0.9,          // m/s a gatas
       SALTO_S: 1.1,            // s del fundido a negro al final del conducto (y otro tanto al salir)
+      // (v1.40, el usuario: «quitar la pausa… se sabe muy bien que va a aparecer algo») los fotogramas que se ven de
+      // cada plano, [desde, hasta]: la pared revienta en cuanto te giras (fuera 18–39, mirando la pared intacta) y
+      // el derrumbe explota nada más llegar (fuera 0–4, el plano quieto)
+      PLANOS_SEC: { revienta: [[0, 17], [40, 95]], derrumbe: [[5, 35]] },
       PUERTA: { POR_W: 0.085, VUELVE: 0.12 },   // la puerta atascada: lo que abre cada W (de 1) y lo que vuelve por segundo
       AB_BORDES: 0.62,         // (v1.33) cerca a partir de la que sus brazos entran por los bordes de la pantalla
       // (v1.35, Fase 3) dentro de la nave de escape: la cabina, el botón y el despegue (src/ending/Cabina3D.js)
