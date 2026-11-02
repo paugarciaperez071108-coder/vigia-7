@@ -146,6 +146,15 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
+let MANO = null;                    // (v1.37) tu mano en el cristal (final 3): tools/3d/final/mano_cristal.py
+function mano() {
+  if (!MANO) {
+    MANO = new Image();
+    MANO.src = 'assets/final/tr/mano_cristal.webp';
+  }
+  return MANO.complete && MANO.naturalWidth ? MANO : null;
+}
+
 let CARA = null;                    // la cara de El Errante (su render: assets/n4/mira/mira_cara.jpg)
 function cara() {
   if (!CARA) {
@@ -593,6 +602,7 @@ export class Final4 {
       ctx.restore();
     }
     if (this.errante) this._drawErrante(ctx);
+    else if (!this.L.slaimi) this._drawMano(ctx);
     // fundidos: de entrada y de salida (con «VIGIA-7» en los finales 1 y 3)
     let negro = 1 - suave(0, KF.ENTRA_S, t);
     if (!this.errante) {
@@ -670,6 +680,32 @@ export class Final4 {
       ctx.fillRect(0, 0, W, H);
       ctx.restore();
     }
+  }
+
+  /** (final 3) Tu mano en el cristal: sube despacio y se queda, con el vaho en el cristal alrededor de los dedos. */
+  _drawMano(ctx) {
+    const m = mano();
+    const t0 = this.tReactor + KF.MANO_TRAS;
+    if (!m || this.t < t0) {
+      mano();
+      return;
+    }
+    const k = suave(t0, t0 + 2.2, this.t);
+    const y = (1 - k) * H * 0.35 + Math.sin(this.t * 0.8) * 3;
+    ctx.save();
+    // el vaho: una mancha clara en el cristal donde apoya la mano (crece y respira)
+    const vx = W * 0.615, vy = H * 0.3 + y;
+    const r = H * (0.12 + 0.03 * Math.sin(this.t * 1.1)) * k;
+    if (r > 1) {
+      const gr = ctx.createRadialGradient(vx, vy, 1, vx, vy, r * 1.6);
+      gr.addColorStop(0, `rgba(200,220,240,${(0.16 * k).toFixed(3)})`);
+      gr.addColorStop(1, 'rgba(200,220,240,0)');
+      ctx.fillStyle = gr;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.globalAlpha = Math.min(1, k * 1.2);
+    ctx.drawImage(m, 0, y, W, H);
+    ctx.restore();
   }
 
   /** El parabrisas que se raja (un instante). */
