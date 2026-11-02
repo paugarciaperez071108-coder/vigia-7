@@ -494,10 +494,10 @@ export class Final4 {
     }
     if (L.slaimi) {
       // al final te giras hacia él: te mira, brilla y su último sonido, tranquilo
-      const h = C._m.hueco;
+      const h = C.sitioSlaimi();
       if (t > KF.SLAIMI_TE_MIRA && h) {
         const objY = Math.atan2(h[1] - L.y, h[0] - L.x);
-        const objP = Math.atan2(h[2] + 0.12 - L.ojosZ, Math.hypot(h[0] - L.x, h[1] - L.y));
+        const objP = Math.atan2(h[2] + NIGHT7.FINAL.LIBRE.CABINA.SLAIMI_ALTO * 0.4 - L.ojosZ, Math.hypot(h[0] - L.x, h[1] - L.y));
         L.yaw += angulo(objY - L.yaw) * Math.min(1, dt * 1.5);
         L.pitch += (objP - L.pitch) * Math.min(1, dt * 1.5);
       }

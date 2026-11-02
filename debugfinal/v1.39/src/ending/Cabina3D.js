@@ -3,7 +3,7 @@
 // La compuerta se ha cerrado delante de la Aberración: la oyes golpearla (la compuerta se abolla con cada golpe y
 // todo tiembla). Andas por la bodega hasta la cabina y te sientas: las pantallas se encienden (estado de la nave, sin
 // decirte qué hacer) y la tapa del botón de despegue se levanta; el botón late en rojo. Con Slaimi: lo dejas en el
-// hueco de la consola y se queda mirándote. Sin él: la vista pasa un momento por el asiento vacío de al lado.
+// asiento del copiloto (v1.39; antes, el hueco de la consola) y se queda mirándote. Sin él: la vista pasa un momento por el asiento vacío de al lado.
 // Clic en el botón: los anclajes sueltan la nave, se abre la trampilla del suelo del Hangar y la nave cae; gira y,
 // por el parabrisas, el agujero del Hangar en llamas se aleja con la Aberración asomada, mirándote irte. Los motores
 // se encienden, la nave se aleja y fundido (sigue la Fase 4, los finales).
@@ -390,10 +390,10 @@ export class Cabina3D {
       if (L.slaimi) {
         this.dejaSlaimi = Math.min(1, this.tFase / KC.DEJA_S);
         L.dejaSlaimi = this.dejaSlaimi;
-        const h = this._m.hueco;
+        const h = this.sitioSlaimi();
         const mira = h && this.tFase < KC.DEJA_S + 0.9;
         const hy = mira ? Math.atan2(h[1] - L.y, h[0] - L.x) : objYaw;
-        const hp = mira ? Math.atan2(h[2] + 0.12 - L.ojosZ, Math.hypot(h[0] - L.x, h[1] - L.y)) : objPitch;
+        const hp = mira ? Math.atan2(h[2] + KC.SLAIMI_ALTO * 0.4 - L.ojosZ, Math.hypot(h[0] - L.x, h[1] - L.y)) : objPitch;
         L.yaw += angulo(hy - L.yaw) * Math.min(1, dt * 3);
         L.pitch += (hp - L.pitch) * Math.min(1, dt * 3);
         if (this.tFase > KC.DEJA_S * 0.7 && !this.slaimiPuesto) {
@@ -571,19 +571,28 @@ export class Cabina3D {
     this.bRojo.position.z = this.pulsado ? -0.025 : 0;
   }
 
-  /** Slaimi en el hueco: aparece al dejarlo, respira, tiembla con los golpes y con el despegue. */
+  /** (v1.39) Dónde se queda Slaimi (sus pies, coordenadas de Blender): en el asiento del copiloto (o en el hueco). */
+  sitioSlaimi() {
+    const c = this._m.copiloto, h = this._m.hueco;
+    if (KC.SLAIMI_EN === 'copiloto' && c) return [c[0], c[1] + KC.SLAIMI_ASIENTO[0], c[2] + KC.SLAIMI_ASIENTO[1]];
+    return h ? [h[0], h[1], h[2] + KC.SLAIMI_SUBE] : null;
+  }
+
+  /** Slaimi en su sitio: aparece al dejarlo, respira, tiembla con los golpes y con el despegue. */
   _slaimi(dt) {
     if (!this.slaimi) return;
     const L = this.L;
     const ver = !!(L.slaimi && this.slaimiPuesto);
     this.slaimi.visible = this.slaimiLuz.visible = ver;
     if (!ver) return;
-    const h = this._m.hueco;
+    const h = this.sitioSlaimi();
     if (!h) return;
     const p = b2t(h[0], h[1], h[2]);
+    // (v1.39) en el grupo de la nave (al despegar) va en sus coordenadas: si no, se quedaba fuera de la cabina
+    if (this.naveG && this.slaimi.parent === this.naveG) p.sub(this.pivote);
     const tiembla = Math.max(L.sacude > 0.4 ? 0.6 : 0, this.d ? 0.8 : 0);
     const salta = Math.max(0, 1 - this.tFase * 3) * (this.fase === 'boton' ? 0 : 1);
-    this.slaimi.position.set(p.x + (Math.random() - 0.5) * 0.008 * tiembla, p.y + KC.SLAIMI_SUBE + 0.05 * Math.sin(Math.PI * salta), p.z);
+    this.slaimi.position.set(p.x + (Math.random() - 0.5) * 0.008 * tiembla, p.y + 0.05 * Math.sin(Math.PI * salta), p.z);
     const resp = 1 + 0.04 * Math.sin(this.t * 2.4);
     this.slaimi.scale.set(KC.SLAIMI_ALTO * 0.75 * (2 - resp), KC.SLAIMI_ALTO * resp, 1);
     this.slaimiLuz.position.set(p.x, p.y + KC.SLAIMI_ALTO * 0.35, p.z);

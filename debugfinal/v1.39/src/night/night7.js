@@ -421,6 +421,8 @@ export const NIGHT7 = {
         APUNTA: 0.13,                         // rad: lo que puedes fallar al apuntar al botón
         SLAIMI_ALTO: 0.36,                    // m
         SLAIMI_SUBE: 0.1,                     // m sobre el fondo del hueco (que se le vea entero)
+        SLAIMI_EN: 'copiloto',                // (v1.39) dónde lo dejas: 'copiloto' (su asiento) o 'hueco' (la consola)
+        SLAIMI_ASIENTO: [-0.08, -0.28],       // m desde la marca del copiloto: hacia el respaldo y hasta el cojín
         AB_BORDE: [-6.0, -2.3],               // dónde se asoma ella, al borde del agujero (al sur)
         AB_INCLINA: 0.5,                      // rad hacia el agujero
         DESPEGUE: {                           // s desde el botón
