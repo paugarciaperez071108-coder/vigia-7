@@ -2224,7 +2224,8 @@ export class Game {
       case 'n7final':
         if (this.final1?.activa && !this.final1.acabada) this.final1.draw(ctx);
         else if (this._finActivo()) this._finActivo().draw(ctx);
-        else this._drawEndScreen(ctx, 'CONTINUARÁ', this.persecucion?.acabada || (this.libre?.acabada && this.libre.nombre === 'persecucion') ? 'El Hangar y la nave (Fase 2c del final), en preparación'
+        else this._drawEndScreen(ctx, 'CONTINUARÁ', this.libre?.acabada && this.libre.nombre === 'persecucion' ? 'La cabina y el despegue (Fase 3 del final), en preparación'
+          : this.persecucion?.acabada ? 'El Hangar y la nave (Fase 2c del final), en preparación'
           : this.huida?.acabada ? 'La persecución (Fase 2b del final), en preparación' : 'La huida (Fase 2 del final), en preparación', '#e8eef5');
         break;
       case 'lose':
