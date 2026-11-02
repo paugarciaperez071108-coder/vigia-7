@@ -602,6 +602,7 @@ export class Libre3D {
     Promise.all([...todas.map((z) => this._cargaZona(z)), this.texLlama ?? this._tex('llama.webp')]).then((res) => {
       this.texLlama = res[res.length - 1];
       for (const z of this.activas) this.zonas[z].malla.visible = true;
+      if (R.fin?.nave) this.zonas[R.fin.nave.zona].malla.visible = false;
       this._solidos();
       // las salidas bloqueadas: sólidas aunque lo que las tapa (el fuego) no lo sea
       this._llamas(this.texLlama);
@@ -609,6 +610,10 @@ export class Libre3D {
       // (desde una zona que solo sale tras un evento, ese evento ya ha pasado: el derrumbe)
       for (const ev of R.eventos ?? []) {
         if (desde && ev.pon === desde) this._aplicaEvento(ev, true);
+      }
+      // (desde una zona de después del conducto: el derrumbe y el conducto ya han pasado; el segundo tramo del carril)
+      if (desde && (R.caza?.tras_conducto ?? []).includes(desde)) {
+        for (const ev of R.eventos ?? []) if (ev.n === 'derrumbe' || ev.n === 'conducto') this._aplicaEvento(ev, true);
       }
       const e = desde ? this.zonas[desde].info.entrada : R.inicio;
       this.x = e.p[0];
@@ -625,7 +630,8 @@ export class Libre3D {
 
   /** Los sólidos de las zonas activas (más los bloqueos que no se ven sólidos, como el fuego). */
   _solidos() {
-    this.solidos = this.activas.flatMap((z) => this.zonas[z].solidos);
+    const nave = this.R.fin?.nave?.zona;
+    this.solidos = this.activas.filter((z) => z !== nave).flatMap((z) => this.zonas[z].solidos);
     for (const b of this.R.bloqueos ?? []) {
       if (!b.solido || (b.tras && !this.hechos.has(b.tras))) continue;
       const p = rect(b.solido);
@@ -855,6 +861,53 @@ export class Libre3D {
     }
   }
 
+  /** (v1.34, Fase 2c) Dentro de la nave: te das la vuelta, la compuerta se cierra (ella llega corriendo detrás) y la
+   *  golpea desde fuera; después, a negro (la Fase 3, la cabina, después). */
+  _finNave(dt) {
+    const F = this.fin, N = F.nave;
+    F.t += dt;
+    // entras un paso y te giras hacia la compuerta
+    const k = Math.min(1, F.t / 0.9);
+    this.x += (N.dentro[0] - this.x) * Math.min(1, dt * 3);
+    this.y += (N.dentro[1] - this.y) * Math.min(1, dt * 3);
+    const objetivo = Math.atan2(N.mira[1] - this.y, N.mira[0] - this.x);
+    this.yaw += angulo(objetivo - this.yaw) * Math.min(1, dt * 4);
+    this.pitch *= 0.9;
+    this.ojosZ = 0.7 + K.OJOS;               // (sobre el suelo de la nave)
+    this.vel = 0;
+    // ella, corriendo hacia la rampa
+    if (this.caza) this.caza.ab = Math.max(this.caza.ab, this._sCarril() - (8 - 6 * k));
+    const Z = this.zonas[N.zona];
+    if (Z?.malla) {
+      const c = Math.max(0, Math.min(1, (F.t - 0.8) / N.cierra_s));
+      Z.malla.visible = F.t > 0.8;
+      Z.malla.position.x = N.abre * (1 - c * c * (3 - 2 * c));
+      if (c >= 1 && !F.cerrada) {
+        F.cerrada = true;
+        this.sacude = 0.6;
+        this._son('metal/golpe_pared', { volume: 1.0, pitch: 0.6 });
+        this._son('metal/tuberia', { volume: 0.7, pitch: 0.5, when: 0.1 });
+      }
+    }
+    // los golpes de fuera: la compuerta tiembla (se abolla) y todo con ella
+    while (F.golpes < N.golpes.length && F.t >= N.golpes[F.golpes]) {
+      F.golpes++;
+      this.sacude = 1.0;
+      this.golpeRojo = 1;
+      this._son('aberracion/metal', { volume: 1.0, pitch: 0.7 });
+      this._son('metal/golpe_pared', { volume: 1.0, pitch: 0.45, when: 0.03 });
+      if (F.golpes === 2) this._son('aberracion/furia', { volume: 1.0, when: 0.2 });
+    }
+    this.golpeRojo = Math.max(0, (this.golpeRojo ?? 0) - dt * 2);
+    if (Z?.malla && F.cerrada) Z.malla.position.z = (Math.random() - 0.5) * 0.05 * this.sacude;
+    this.sacude = Math.max(0, this.sacude - dt);
+    if (F.t >= N.fin_s) {
+      this.acabada = true;
+      this.stop();
+      this.g._finLibre?.(this.nombre);
+    }
+  }
+
   /** Un plano de Blender a pantalla completa (la pared que revienta, el derrumbe), con sus sonidos. */
   _updateCine(dt) {
     const c = this.cine;
@@ -923,6 +976,15 @@ export class Libre3D {
       if (ev.plano) {
         this.cine = { plano: ev.plano, t: 0, eventos: new Set(), evento: ev };
         this.teclas.clear();
+      } else if (ev.revienta) {
+        // (la Aberración revienta la entrada detrás de ti: no hay plano; se oye y tiembla todo, y está ahí)
+        this.hechos.add(ev.n);
+        this.sacude = 1.2;
+        this._son('n7/explosion', { volume: 1.0, pitch: 0.75 });
+        this._son('metal/panel', { volume: 1.0, when: 0.05 });
+        this._son('final/escombros', { volume: 1.0, when: 0.2 });
+        this._son('aberracion/furia', { volume: 1.0, when: 0.35 });
+        if (this.caza) this.caza.ab = Math.max(this.caza.ab, this._sCarril() - ev.ab_tras);
       } else {
         this.hechos.add(ev.n);
         this.salto = { t: 0, ev };
@@ -1037,6 +1099,10 @@ export class Libre3D {
     this.ayuda = Math.max(0, this.ayuda - dt);
     this.fundido = Math.max(0, this.fundido - dt / 0.8);
     this.quema = Math.max(0, this.quema - dt / 0.9);
+    if (this.fin?.nave) {
+      this._finNave(dt);
+      return;
+    }
     if (this.fin) {
       this.fin.t += dt;
       if (this.fin.t >= K.FIN_S) {
@@ -1135,8 +1201,12 @@ export class Libre3D {
     this._updateCaza(dt);
     // el final del recorrido (la puerta del Laboratorio)
     if (this.R.fin && enCaja(this.R.fin.caja, this.x, this.y)) {
-      this.fin = { t: 0 };
+      this.fin = { t: 0, nave: this.R.fin.nave ?? null, golpes: 0 };
       this._son('pasos/metal', { volume: 0.6 });
+      if (this.fin.nave) {
+        this.teclas.clear();
+        this._son('metal/tuberia', { volume: 0.8, pitch: 1.3, when: 0.3 });
+      }
     }
   }
 
@@ -1209,7 +1279,14 @@ export class Libre3D {
       ctx.restore();
     }
     const fundeSalto = this.salto ? 1 - Math.abs(this.salto.t / K.SALTO_S - 1) : 0;
-    const negro = Math.max(this.fin ? Math.min(1, this.fin.t / K.FIN_S) : this.fundido, fundeSalto);
+    const finNegro = this.fin?.nave ? Math.max(0, (this.fin.t - (this.fin.nave.fin_s - 1.2)) / 1.2) : this.fin ? Math.min(1, this.fin.t / K.FIN_S) : 0;
+    const negro = Math.max(this.fin ? finNegro : this.fundido, fundeSalto);
+    if (this.golpeRojo > 0) {
+      ctx.save();
+      ctx.fillStyle = `rgba(120,0,0,${(0.35 * this.golpeRojo).toFixed(3)})`;
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
     if (negro > 0) {
       ctx.fillStyle = `rgba(0,0,0,${negro.toFixed(3)})`;
       ctx.fillRect(0, 0, W, H);

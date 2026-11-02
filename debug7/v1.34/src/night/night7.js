@@ -403,7 +403,7 @@ export const NIGHT7 = {
       RECORRIDOS: {
         // (v1.32) la persecución: del Laboratorio (la pared revienta) al pasillo del Hangar
         persecucion: {
-          zonas: ['plab', 'pas_lc', 'cryo_a', 'conda', 'condb', 'medbay', 'pas_mr', 'hoja', 'pas_hm', 'hangar'],
+          zonas: ['plab', 'pas_lc', 'cryo_a', 'conda', 'condb', 'medbay', 'pas_mr', 'hoja', 'pas_hm', 'hangar', 'compuerta'],
           plano_inicio: 'revienta',
           inicio: { p: [22.6, -61.0], mira: [22.3, -70.0] },
           gatas: [[15.0, -111.0, 27.2, -100.1], [9.8, -32.3, 13.2, -30.7]],
@@ -426,18 +426,22 @@ export const NIGHT7 = {
             // el derrumbe de la puerta de evacuación (su plano); la buena pasa a ser la boca del conducto
             { n: 'derrumbe', caja: [27.0, -99.6, 33.0, -95.6], plano: 'derrumbe', quita: 'cryo_a', pon: 'cryo_d',
               fin: { p: [29.6, -94.6], mira: [26.0, -100.0] }, buena: { sala: 'cryo', p: [26.0, -100.0, 0.5] }, ab_tras: 9 },
+            // (v1.34) al entrar en el Hangar, la Aberración revienta la entrada detrás de ti
+            { n: 'hangar', caja: [-3.0, -9.4, 3.0, -7.0], revienta: true, ab_tras: 6 },
             // el final del conducto: la oscuridad y sales por la rejilla de la Enfermería (otro tramo del carril)
-            { n: 'conducto', caja: [15.0, -110.7, 17.0, -108.3], fin: { p: [12.6, -31.5], mira: [8.0, -31.5], gatas: true },
+            { n: 'conducto', caja: [15.0, -110.7, 17.0, -108.3], fin: { p: [12.75, -31.15], mira: [8.0, -31.15], gatas: true },
               carril: 1, ab_tras: 11 },
           ],
           puerta: { zona: 'hoja', empuje: [-1.6, -21.9, 1.6, -20.1], recorre: -0.95 },
-          fin: { caja: [-1.6, -10.6, 1.6, -9.4] },   // la entrada del Hangar (la Fase 2c, después)
+          // (v1.34, Fase 2c) el final: la compuerta de la nave de escape (al oeste del Hangar, la rampa al sur)
+          fin: { caja: [-6.75, -0.75, -5.25, 0.2], nave: { zona: 'compuerta', mira: [-6.0, -6.0], dentro: [-6.0, 0.4],
+            abre: 1.6, cierra_s: 1.4, golpes: [2.3, 3.0, 3.6, 4.5], fin_s: 6.5 } },
           // la Aberración: su carril (dos tramos: hasta el fondo del conducto y desde la rejilla de la Enfermería)
           caza: {
             carril: [
               [[22.6, -61.0], [22.3, -70.0], [22.3, -80.3], [26.2, -85.4], [28.75, -91.3], [29.6, -94.6], [26.0, -100.7],
                 [26.0, -104.0], [16.0, -104.0], [16.0, -110.0]],
-              [[12.6, -31.5], [9.5, -31.5], [6.6, -30.4], [3.0, -28.4], [0.6, -21.5], [0.0, -15.0], [0.0, -10.0]],
+              [[12.75, -31.15], [9.5, -31.15], [6.6, -30.4], [3.0, -28.4], [0.6, -21.5], [0.0, -15.0], [0.0, -10.0], [-3.0, -5.5], [-6.0, -2.8], [-6.0, 0.0]],
             ],
             desfase: [0, 100],    // (el segundo tramo, más adelante en el camino)
             ventaja: 9,           // m de ventaja al empezar (y al reintentar)
@@ -450,6 +454,7 @@ export const NIGHT7 = {
             respiro_en: 3.0,      // m: Slaimi la ciega (una vez)
             respiro: 6.0,         // m que la echa atrás
             sin: [[15.0, -111.0, 27.2, -100.4], [9.8, -32.3, 13.2, -30.7]],   // (el conducto: no cabe)
+            tras_conducto: ['condb', 'medbay', 'pas_mr', 'pas_hm', 'hangar'],   // (empezar ahí: el segundo tramo)
           },
         },
         huida: {
