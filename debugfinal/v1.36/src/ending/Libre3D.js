@@ -26,6 +26,7 @@ import { slaimiDe, SaveData } from '../core/SaveData.js';
 import { datosFinal, n3 } from './Huida.js';
 import { drawJumpscare } from '../ui/Jumpscare.js';
 import { Cabina3D } from './Cabina3D.js';
+import { Final4 } from './Final4.js';
 
 const PLANOS = datosFinal('assets/final/persecucion/');     // (los planos de la persecución: la pared, el derrumbe)
 
@@ -298,7 +299,8 @@ export class Libre3D {
       this.escena.add(new THREE.HemisphereLight(0x3a3028, 0x080404, 0.5));
       this.escena.add(A.grupo);
       // sus brazos en los bordes de la pantalla (copias de dos brazos, pegadas a la cámara)
-      this.escena.add(this.cam);
+      // (v1.36: si ya va dentro de la nave, se queda ahí)
+      if (!this.cam.parent) this.escena.add(this.cam);
       A.bordes = [];
       const largos = A.brazos.filter((b) => info.piezas[b.name].largo > 1.2).slice(0, 4);
       for (const [k, b] of largos.entries()) {
@@ -580,8 +582,13 @@ export class Libre3D {
   start(nombre = 'huida', desde = null) {
     this._init();
     if (!this.cabina) this.cabina = new Cabina3D(this);
+    if (!this.final4 && K.FINAL4?.USAR) this.final4 = new Final4(this);
     this.cabina.reset();
-    const enCabina = desde === 'cabina';
+    this.finalVisto = null;
+    // (debug: 'cabina' = dentro de la nave; 'final1'…'final4' = directo a ese final)
+    const aFinal = /^final[1-4]$/.test(desde ?? '') ? Number(desde.slice(5)) : null;
+    this.finalForzado = aFinal;
+    const enCabina = desde === 'cabina' || !!aFinal;
     if (enCabina) desde = null;
     const R = this.R = K.RECORRIDOS[nombre];
     this.nombre = nombre;
@@ -633,6 +640,7 @@ export class Libre3D {
     for (const Z of Object.values(this.zonas)) if (Z.malla) Z.malla.visible = false;
     const todas = [...new Set([...R.zonas, ...(R.eventos ?? []).flatMap((e) => (e.pon ? [e.pon] : []))])];
     if (R.caza) this._cargaAb();
+    if (R.caza && this.final4) this.final4.carga();
     Promise.all([...todas.map((z) => this._cargaZona(z)), this.texLlama ?? this._tex('llama.webp')]).then((res) => {
       this.texLlama = res[res.length - 1];
       for (const z of this.activas) this.zonas[z].malla.visible = true;
@@ -664,6 +672,7 @@ export class Libre3D {
         if (!this.cine) this._empiezaCaza();
       }
       if (enCabina) this.cabina.empieza(true);
+      if (aFinal) this.cabina.alEspacio();
       this.listo = true;
     }).catch((err) => { console.warn('Libre3D:', err); this.activa = false; });
   }

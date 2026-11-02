@@ -337,6 +337,7 @@ export class Cabina3D {
       L.cam.updateProjectionMatrix();
     }
     L.dejaSlaimi = 0;
+    L.final4?.reset();
   }
 
   /** Cada fotograma. Devuelve true si la cabina se ocupa de todo (sentado, el despegue): sin andar. */
@@ -352,6 +353,10 @@ export class Cabina3D {
       // (sentado, Libre3D no anda: lo que se apaga solo)
       L.sacude = Math.max(0, L.sacude - dt);
       L.golpeRojo = Math.max(0, (L.golpeRojo ?? 0) - dt * 2);
+    }
+    if (this.fase === 'espacio') {
+      L.final4?.update(dt);
+      return true;
     }
     if (this.fase === 'despegue') {
       this._despegue(dt);
@@ -693,6 +698,13 @@ export class Cabina3D {
     if (Zc?.mat) Zc.mat.uniforms.uK.value = Zc.uK0 * (1 - 0.55 * suave(D.CAE, D.GIRA[1], t));
     for (const b of this.balizas) b.material.opacity = Math.sin(this.t * 3 + b.userData.fase) > 0.6 ? 1 : 0.1;
     if (t >= D.FIN_S) {
+      // (v1.36, Fase 4) los finales: la nave se da la vuelta y, por el parabrisas, la VIGIA-7
+      if (L.final4) {
+        this.fase = 'espacio';
+        const err = !!L.g.save?.flags?.erranteEnCabeza;
+        L.final4.empieza(L.finalForzado ?? (L.slaimi ? (err ? 2 : 1) : (err ? 4 : 3)));
+        return;
+      }
       L.acabada = true;
       L.stop();
       this.zumbido?.stop?.(0.2);
@@ -700,9 +712,29 @@ export class Cabina3D {
     }
   }
 
+  /** (debug) Directo a los finales: como si ya hubieras despegado. */
+  alEspacio() {
+    const L = this.L, D = KC.DESPEGUE;
+    this._crea();
+    this.fase = 'despegue';
+    this.pulsado = true;
+    this.slaimiPuesto = !!L.slaimi;
+    this.dejaSlaimi = L.dejaSlaimi = 1;
+    this.encendidas = 0;
+    this.tEnc = -10;
+    const a = this._m.asiento;
+    if (a) {
+      L.x = a[0];
+      L.y = a[1];
+      L.ojosZ = a[2];
+    }
+    this.d = { t: D.FIN_S - 0.02, vel: 0, v: new THREE.Vector3(), hechos: new Set([D.ANCLAS, D.BAHIA, D.CAE, D.FURIA, D.MOTOR, D.IGNICION]) };
+    this.naveY = 0;
+  }
+
   /** La Aberración durante la caída: asomada al borde del agujero, inclinada hacia ti. Devuelve si se ve. */
   aberracion(A) {
-    if (!this.d || this.d.t < KC.DESPEGUE.CAE) return false;
+    if (!this.d || this.d.t < KC.DESPEGUE.CAE || this.fase === 'espacio') return false;
     const [x, y] = KC.AB_BORDE;
     A.grupo.visible = true;
     A.grupo.position.set(x, Math.sin(this.t * 2.6) * 0.05, -y);
@@ -718,6 +750,10 @@ export class Cabina3D {
   /** Lo que va encima en 2D: el fogonazo de los motores y el fundido final. */
   draw(ctx) {
     if (!this.activa) return;
+    if (this.fase === 'espacio') {
+      this.L.final4?.draw(ctx);
+      return;
+    }
     if (this.flash > 0) {
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
