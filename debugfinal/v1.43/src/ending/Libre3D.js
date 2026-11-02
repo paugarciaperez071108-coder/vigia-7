@@ -886,8 +886,8 @@ export class Libre3D {
   }
 
   /** ¿A gatas? (agachado en un sitio más bajo que agachado: el conducto) */
-  _aGatas() {
-    return (this.R.gatas ?? []).some((c) => enCaja(c, this.x, this.y));
+  _aGatas(margen = 0) {
+    return (this.R.gatas ?? []).some((c) => enCaja([c[0] - margen, c[1] - margen, c[2] + margen, c[3] + margen], this.x, this.y));
   }
 
   _choca(alto) {
@@ -917,6 +917,45 @@ export class Libre3D {
       }
     }
     return toca;
+  }
+
+  /** (v1.43) ¿El paso de (ax, ay) a (bx, by) atraviesa algo sólido? (acabar dentro o cruzar una de sus caras). Con dos
+   *  sólidos solapados, el empuje de uno te metía en el otro y te sacaba por el otro lado: se atravesaban paredes y
+   *  conductos (y la cámara se quedaba dentro de un marco). */
+  _atraviesa(ax, ay, bx, by, alto) {
+    const x0 = Math.min(ax, bx), x1 = Math.max(ax, bx), y0 = Math.min(ay, by), y1 = Math.max(ay, by);
+    const cruza = (p, q, r, s_) => {
+      const d = (q[0] - p[0]) * (s_[1] - r[1]) - (q[1] - p[1]) * (s_[0] - r[0]);
+      if (Math.abs(d) < 1e-12) return false;
+      const t = ((r[0] - p[0]) * (s_[1] - r[1]) - (r[1] - p[1]) * (s_[0] - r[0])) / d;
+      const u = ((r[0] - p[0]) * (q[1] - p[1]) - (r[1] - p[1]) * (q[0] - p[0])) / d;
+      return t > 1e-6 && t < 1 - 1e-6 && u >= 0 && u <= 1;
+    };
+    for (const s of this.solidos) {
+      if (s.x1 < x0 || s.x0 > x1 || s.y1 < y0 || s.y0 > y1) continue;
+      if (!this._bloquea(s, alto)) continue;
+      if (cercano(s.p, ax, ay).dentro) continue;       // (si ya estabas dentro, que pueda salir)
+      if (cercano(s.p, bx, by).dentro) return true;
+      const P = s.p;
+      for (let i = 0; i < P.length; i++) if (cruza([ax, ay], [bx, by], P[i], P[(i + 1) % P.length])) return true;
+    }
+    return false;
+  }
+
+  /** (v1.43) Choca y, si para ello habría que atravesar algo, solo se desliza (o se queda donde estaba). */
+  _mueve(px, py, alto) {
+    this._choca(alto);
+    if (!this._atraviesa(px, py, this.x, this.y, alto)) return;
+    const nx = this.x, ny = this.y;
+    for (const [x, y] of [[nx, py], [px, ny]]) {
+      this.x = x;
+      this.y = y;
+      this._choca(alto);
+      if (!this._atraviesa(px, py, this.x, this.y, alto)) return;
+    }
+    this.x = px;
+    this.y = py;
+    this.vx = this.vy = 0;
   }
 
   /** ¿Cabe de pie aquí? (para levantarse bajo una viga) */
@@ -1439,9 +1478,13 @@ export class Libre3D {
     this.x += this.vx * dt;
     this.y += this.vy * dt;
     const debajo = !agacha && !this._cabeDePie();
-    // (agachado choca como a gatas: así se entra en la boca baja del conducto; los ojos, más abajo dentro)
-    const altoAhora = agacha || debajo ? K.GATAS_OJOS + 0.15 : K.OJOS + 0.15;
-    this._choca(altoAhora);
+    // (v1.43) se choca a la altura de los ojos que llevas: agachado, a la de agachado (antes, como a gatas: con los ojos
+    // a 0,95 m se pasaba bajo la punta de la viga, a 0,73, y la cámara se metía dentro: «un marco beige llena la
+    // pantalla»); a gatas solo en el conducto y en su boca (para poder entrar)
+    const gatasAhora = agacha && this._aGatas(K.GATAS_BOCA ?? 0.8);
+    const ojosObj = gatasAhora ? K.GATAS_OJOS : agacha || debajo ? K.AGACHADO_OJOS : K.OJOS;
+    const altoAhora = Math.max(ojosObj, Math.min(this.alto ?? ojosObj, K.OJOS)) + 0.15;
+    this._mueve(px, py, altoAhora);
     const recorrido = Math.hypot(this.x - px, this.y - py);
     this.vel = recorrido / Math.max(dt, 1e-4);
     // el suelo bajo tus pies: si se acaba (la rejilla de la Enfermería), caes
@@ -1467,7 +1510,7 @@ export class Libre3D {
     }
     // la altura de los ojos (agacharse, suave) y el balanceo al andar
     const gatas = agacha && this._aGatas();
-    const ojos = gatas ? K.GATAS_OJOS : agacha || debajo ? K.AGACHADO_OJOS : K.OJOS;
+    const ojos = gatasAhora ? K.GATAS_OJOS : agacha || debajo ? K.AGACHADO_OJOS : K.OJOS;
     this.alto += (ojos - this.alto) * Math.min(1, dt * (this.cayendo ? 0 : 6));
     this.ojosZ = this.base + this.alto + caida;
     this.gatas = gatas;

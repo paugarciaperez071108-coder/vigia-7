@@ -409,6 +409,7 @@ export const NIGHT7 = {
       HUMO_AIRE_R: 7,          // m alrededor de la salida buena
       // (v1.32, M3a) la persecución en 3D
       GATAS_OJOS: 0.45,        // m, a gatas (el conducto)
+      GATAS_BOCA: 0.8,         // (v1.43) m alrededor de las cajas «a gatas»: ya se choca como a gatas (para entrar por la boca)
       VEL_GATAS: 0.9,          // m/s a gatas
       SALTO_S: 1.1,            // s del fundido a negro al final del conducto (y otro tanto al salir)
       // (v1.40, el usuario: «quitar la pausa… se sabe muy bien que va a aparecer algo») los fotogramas que se ven de
@@ -513,6 +514,9 @@ export const NIGHT7 = {
           bloqueos: [
             // (la puerta norte del Laboratorio, por donde entraste: la pared reventada ha echado fuego sobre ella)
             { n: 'lab_n', tipo: 'fuego', zona: [22.7, -51.8, 26.3, -50.2], solido: [22.8, -50.4, 26.2, -49.5], tras: 'sale' },
+            // (v1.43) el fondo del conducto de la Criogenia: entre la tapa y las paredes quedaba un hueco por el que se salía a
+            // gatas por fuera de las paredes (el usuario: «es un bug de los conductos que literalmente los puedo atravesar»)
+            { n: 'cond_fondo', tipo: 'escombros', zona: [14.9, -110.15, 17.1, -110.0], solido: [14.9, -111.2, 17.1, -110.15] },
             // (v1.41) detrás de ti, el final del pasillo del Reactor (el Reactor ya no está cargado: no se vuelve)
             { n: 'vuelta', tipo: 'fuego', zona: [22.0, -42.2, 27.0, -41.0], solido: [22.0, -41.0, 27.0, -40.2] },
             // la puerta de evacuación de la Criogenia, derrumbada (después del derrumbe)
