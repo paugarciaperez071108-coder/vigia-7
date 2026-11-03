@@ -415,7 +415,8 @@ export const NIGHT7 = {
         MIEDO_DESDE: 0.2, TIEMBLA: 1.4, BRILLO_MIEDO: 1.4 },
       // (v1.45, el usuario: «algunas salas están vacías y muy oscuras») más luz en las que medían menos (brillo medio de
       // la imagen desde su entrada, 0–255: condb 19, central 29, lab 32, pas_mr 32, pas_lc 35, medbay 38; las demás, 43–79)
-      BRILLO_ZONA: { condb: 1.9, central: 1.45, lab: 1.35, pas_mr: 1.7, pas_lc: 1.3, medbay: 1.2 },
+      // (v1.46: el pasillo central y el Laboratorio seguían muy oscuros; «plab» es el Laboratorio de la persecución, antes sin ajuste)
+      BRILLO_ZONA: { condb: 1.9, central: 1.9, lab: 1.75, plab: 1.75, pas_mr: 1.7, pas_lc: 1.3, medbay: 1.2 },
       GATAS_BOCA: 0.8,         // (v1.43) m alrededor de las cajas «a gatas»: ya se choca como a gatas (para entrar por la boca)
       VEL_GATAS: 0.9,          // m/s a gatas
       SALTO_S: 1.1,            // s del fundido a negro al final del conducto (y otro tanto al salir)
@@ -566,10 +567,14 @@ export const NIGHT7 = {
             { n: 'conducto', caja: [15.0, -110.7, 17.0, -108.3], fin: { p: [12.75, -31.15], mira: [8.0, -31.15], gatas: true },
               carril: 1, ab_tras: 11 },
           ],
-          puerta: { zona: 'hoja', empuje: [-1.6, -21.9, 1.6, -20.1], recorre: -0.95 },
+          // (v1.46: abierta del todo, se va hasta el fondo —recorre_libre—: con -0,95 quedaba un hueco estrecho a un lado y,
+          // empujando por el centro, te quedabas clavado contra ella)
+          puerta: { zona: 'hoja', empuje: [-1.6, -21.9, 1.6, -20.1], recorre: -0.95, recorre_libre: -1.9 },
           // (v1.34, Fase 2c) el final: la compuerta de la nave de escape (al oeste del Hangar, la rampa al sur)
           // (v1.35, Fase 3) dentro, el suelo a 1 m (piso); a los «cabina» s ya andas por la nave (Cabina3D.js)
-          fin: { caja: [-6.75, -0.75, -5.25, 0.2], nave: { zona: 'compuerta', mira: [-6.0, -6.0], dentro: [-6.0, 0.4], piso: 1.0,
+          // (v1.46: empieza 0,6 m antes: el casco de la nave choca entero y no se llegaba a la caja de antes —te quedabas a
+          // 0,9 m de la compuerta y te alcanzaba—; desde aquí la nave te mete sola)
+          fin: { caja: [-6.75, -1.35, -5.25, 0.2], nave: { zona: 'compuerta', mira: [-6.0, -6.0], dentro: [-6.0, 0.4], piso: 1.0,
             abre: 1.6, cierra_s: 1.4, golpes: [2.3, 3.0], cabina: 3.4, fin_s: 6.5 } },
           // la Aberración: su carril (dos tramos: hasta el fondo del conducto y desde la rejilla de la Enfermería)
           caza: {

@@ -484,6 +484,91 @@ export class Final4 {
   }
 
   /** (v1.40) n chispas desde p, a unos vel m/s, que duran unos s. */
+  /** (v1.46, pendiente de la v1.45: «los restos de la explosión se ven planos», porque las chapas del casco son finas)
+   *  trozos macizos e irregulares (vigas, bloques, cascotes del módulo del reactor) que salen al rojo y se enfrían y se
+   *  ennegrecen mientras giran a la deriva. Con luz de verdad (el sol y las explosiones les dan volumen). */
+  _trozosEn(p, n, t0) {
+    const L = this.L;
+    if (!this.trozosVol) {
+      // una piedra irregular (icosaedro con los vértices movidos) que cada trozo estira a su manera
+      const geo = new THREE.IcosahedronGeometry(1, 1);
+      const pos = geo.attributes.position;
+      const vista = new Map();
+      for (let i = 0; i < pos.count; i++) {
+        const k = `${pos.getX(i).toFixed(3)},${pos.getY(i).toFixed(3)},${pos.getZ(i).toFixed(3)}`;
+        if (!vista.has(k)) vista.set(k, 0.62 + Math.random() * 0.6);
+        const f = vista.get(k);
+        pos.setXYZ(i, pos.getX(i) * f, pos.getY(i) * f, pos.getZ(i) * f);
+      }
+      geo.computeVertexNormals();
+      const mat = new THREE.MeshStandardMaterial({ color: 0x5a5c60, roughness: 0.62, metalness: 0.55, flatShading: true });
+      // (el color de cada trozo es su calor: brilla con él, no lo tiñe)
+      // (con un atributo propio, aCalor: three no activa el color por instancia en este caso)
+      mat.onBeforeCompile = (sh) => {
+        sh.vertexShader = 'attribute vec3 aCalor;\nvarying vec3 vCalor;\n' + sh.vertexShader
+          .replace('#include <begin_vertex>', '#include <begin_vertex>\nvCalor = aCalor;');
+        sh.fragmentShader = 'varying vec3 vCalor;\n' + sh.fragmentShader
+          .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vCalor * 1.3;');
+      };
+      mat.customProgramCacheKey = () => 'trozosVol_v146';
+      const N = KF.TROZOS_VOL ?? 220;
+      const calor = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
+      calor.setUsage(THREE.DynamicDrawUsage);
+      geo.setAttribute('aCalor', calor);
+      const m = this.trozosVol = new THREE.InstancedMesh(geo, mat, N);
+      m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      m.frustumCulled = false;
+      m.count = 0;
+      this.trozosDat = [];
+      L.escena.add(m);
+    }
+    const m = this.trozosVol;
+    this.trozosDat.length = 0;
+    for (let i = 0; i < Math.min(n, m.instanceMatrix.count); i++) {
+      const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.7, Math.random() - 0.5).normalize();
+      const grande = Math.random() < 0.12;
+      const lado = grande ? 4 + Math.random() * 5 : 0.6 + Math.pow(Math.random(), 2) * 3.2;
+      this.trozosDat.push({
+        p: p.clone().addScaledVector(d, 4 + Math.random() * 26),
+        v: d.multiplyScalar((grande ? 6 : 14) + Math.random() * (grande ? 14 : 46)),
+        esc: new THREE.Vector3(lado * (0.5 + Math.random()), lado * (0.25 + Math.random() * 0.6), lado * (0.4 + Math.random() * 0.9)),
+        q: new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.random() * 6.3, Math.random() * 6.3, Math.random() * 6.3)),
+        eje: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
+        giro: (Math.random() - 0.5) * (grande ? 0.5 : 2.4),
+        calor: 0.6 + Math.random() * 0.9,
+        enfria: 1.2 + Math.random() * 2.8,
+        t0: t0 + Math.random() * 0.25,
+      });
+    }
+    m.count = this.trozosDat.length;
+  }
+
+  _updateTrozos(t, dt) {
+    const m = this.trozosVol;
+    if (!m || !this.trozosDat?.length) return;
+    const M = new THREE.Matrix4(), dq = new THREE.Quaternion(), aC = m.geometry.attributes.aCalor, c = aC.array;
+    this.trozosDat.forEach((r, i) => {
+      const e = t - r.t0;
+      if (e < 0) {
+        M.makeScale(0, 0, 0);
+        m.setMatrixAt(i, M);
+        return;
+      }
+      r.p.addScaledVector(r.v, dt);
+      r.v.multiplyScalar(1 - dt * 0.05);
+      r.q.multiply(dq.setFromAxisAngle(r.eje, r.giro * dt));
+      M.compose(r.p, r.q, r.esc);
+      m.setMatrixAt(i, M);
+      // al blanco → naranja → rojo oscuro → apagado (más lento los grandes, que guardan el calor)
+      const k = Math.max(0, r.calor * Math.exp(-e / r.enfria));
+      c[i * 3] = Math.min(1.4, k * 1.05);
+      c[i * 3 + 1] = Math.min(0.8, k * k * 0.32);
+      c[i * 3 + 2] = Math.min(0.4, k * k * k * 0.07);
+    });
+    m.instanceMatrix.needsUpdate = true;
+    aC.needsUpdate = true;
+  }
+
   _chispasEn(p, n, vel, t0, vida = 1.6) {
     const N = this.chT.length / 2;
     for (let k = 0; k < n; k++) {
@@ -637,6 +722,7 @@ export class Final4 {
     this.activo = true;
     this.t = 0;
     this.hechos = new Set();
+    if (this.trozosVol) { this.trozosVol.count = 0; this.trozosDat.length = 0; }   // (v1.46: si se repite el final)
     if (!this.grupo) {
       // (aún cargando: espera en negro)
       this.espera = true;
@@ -763,6 +849,7 @@ export class Final4 {
         this._bola(p, 30 + Math.random() * 45, t + Math.random() * 0.9, 2.2 + Math.random() * 2);
       }
       this._chispasEn(this.nucleo, 700, 120, t, 3.2);
+      this._trozosEn(this.nucleo, KF.TROZOS_VOL ?? 220, t);
       // el humo de después: una nube que se abre despacio con los restos dentro
       for (let k = 0; k < 60; k++) {
         const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.7, Math.random() - 0.5).normalize();
@@ -773,6 +860,7 @@ export class Final4 {
       this.tOnda = t + this.nucleo.distanceTo(C.naveG.position) / KF.ONDA_VEL;
       if (L.slaimi && !this.errante) C.slaimiLuz && (C.slaimiLuz.material.opacity = 1);
     });
+    this._updateTrozos(t, dt);
     if (t >= this.tReactor) {
       const e = t - this.tReactor;
       this.brillo.position.copy(this.nucleo);

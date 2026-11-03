@@ -67,7 +67,9 @@ attribute float iAng;
 uniform float uT;
 varying vec2 vUv;
 varying float vF;
+varying float vS;
 void main() {
+  vS = iFase * 1.7 + iAng * 3.1;
   vec3 der = iAng < 0.0 ? normalize(vec3(viewMatrix[0][0], 0.0, viewMatrix[2][0])) : vec3(cos(iAng), 0.0, sin(iAng));
   float ancho = iAng < 0.0 ? 1.0 : 0.85;
   vec3 p = iPos + der * position.x * iTam.x * ancho + vec3(0.0, position.y * iTam.y, 0.0);
@@ -79,16 +81,25 @@ void main() {
 const FS_LLAMA = `
 uniform sampler2D uAtlas;
 uniform float uBrillo;
+uniform float uT;
 varying vec2 vUv;
 varying float vF;
+varying float vS;
+vec2 uvL;
 vec3 foto(float f) {
   float col = mod(f, 6.0), fila = floor(f / 6.0);
-  return texture2D(uAtlas, vec2((col + clamp(vUv.x, 0.004, 0.996)) / 6.0, (fila + 1.0 - clamp(vUv.y, 0.004, 0.996)) / 4.0)).rgb;
+  return texture2D(uAtlas, vec2((col + clamp(uvL.x, 0.004, 0.996)) / 6.0, (fila + 1.0 - clamp(uvL.y, 0.004, 0.996)) / 4.0)).rgb;
 }
 void main() {
+  // (v1.46, pendiente de la v1.45: «la silueta cambia poco») la llama se ondula y se estira: más arriba, más se mueve
+  // (dos ondas que suben a distinto ritmo) y su altura late; así el contorno cambia de verdad, no solo por dentro
+  float y = vUv.y;
+  float onda = sin(y * 7.0 - uT * 9.0 + vS) * 0.07 + sin(y * 13.0 - uT * 14.5 + vS * 2.3) * 0.035;
+  float estira = 1.0 + 0.16 * sin(uT * 4.7 + vS) + 0.08 * sin(uT * 11.3 + vS * 1.9);
+  uvL = vec2(vUv.x + onda * y * y * 1.6, y / estira);
   float f0 = floor(vF), f1 = mod(f0 + 1.0, 24.0);
   vec3 c = mix(foto(f0), foto(f1), fract(vF));
-  float borde = smoothstep(0.0, 0.18, vUv.x) * smoothstep(1.0, 0.82, vUv.x) * smoothstep(1.0, 0.8, vUv.y)
+  float borde = smoothstep(0.0, 0.18, uvL.x) * smoothstep(1.0, 0.82, uvL.x) * smoothstep(1.0, 0.8, uvL.y)
     * smoothstep(0.0, 0.16, vUv.y);   // (v1.45: también la base: si no, las llamas apiladas dejaban un corte recto)
   gl_FragColor = vec4(c * uBrillo * borde, 1.0);
 }`;
@@ -166,6 +177,7 @@ function cercano(pol, x, y) {
 
 /** Un rectángulo [x0, y0, x1, y1] como polígono antihorario. */
 const rect = ([x0, y0, x1, y1]) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+const MOVER = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight']);
 const enCaja = (c, x, y) => x >= c[0] && x <= c[2] && y >= c[1] && y <= c[3];
 const angulo = (a) => ((a + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
 
@@ -233,7 +245,7 @@ export class Libre3D {
   // ------------------------------------------------------------------ cargar
   _init() {
     if (this.r) return;
-    const r = this.r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    const r = this.r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
     // (v1.41) si la tarjeta se queda sin memoria y se pierde la imagen 3D, pedir que la devuelva (three lo vuelve a subir)
     r.domElement.addEventListener('webglcontextlost', (e) => { e.preventDefault(); console.warn('Libre3D: imagen 3D perdida; recuperando'); });
     r.domElement.addEventListener('webglcontextrestored', () => console.warn('Libre3D: imagen 3D recuperada'));
@@ -251,12 +263,16 @@ export class Libre3D {
     this.alarma = { value: 1 };     // (v1.35: las alarmas rojas de la cabina de la nave)
     this.tLlama = { value: 0 };
     // el ratón: con el puntero capturado, movementX/Y; sin capturar, el borde de la pantalla (como en los cruces)
-    this._mueve = (e) => {
-      if (!this.activa || document.pointerLockElement !== this.g.canvas) return;
+    // (v1.46: se llamaba _mueve, igual que el paso con colisiones de v1.43, y lo tapaba: al andar se llamaba a ESTE con
+    // un número; sin colisiones se atravesaban las paredes y, con el ratón capturado, la vista se volvía NaN: pantalla
+    // negra y quieto sin poder avanzar)
+    this._raton = (e) => {
+      if (!this.activa || document.pointerLockElement !== this.g.canvas || !Number.isFinite(e?.movementX)) return;
       this.yaw -= e.movementX * K.RATON;
       this.pitch = Math.max(-1.35, Math.min(1.35, this.pitch - e.movementY * K.RATON));
     };
-    document.addEventListener('mousemove', this._mueve);
+    document.addEventListener('mousemove', this._raton);
+    window.addEventListener('blur', () => { this.teclas.clear(); this.pulsadas?.clear(); });
     // la pista de la salida buena: un resplandor verde en su marco (sumando luz)
     const cv = document.createElement('canvas');
     cv.width = cv.height = 128;
@@ -437,7 +453,11 @@ export class Libre3D {
         ok(lista(new THREE.CanvasTexture(cv)));
       };
       im.onerror = () => ok(null);
+      // (v1.46) se descodifica fuera del hilo del juego antes de usarla (antes, al subirla a la tarjeta: tirones)
+      const onload = im.onload;
+      im.onload = null;
       im.src = `${DIR}${n}`;
+      im.decode().then(onload, () => (im.complete && im.naturalWidth ? onload() : ok(null)));
     });
   }
 
@@ -820,11 +840,22 @@ export class Libre3D {
     const R2 = K.RECORRIDOS[nombre];
     if (!R2) return;
     const zs = [...new Set([...R2.zonas, ...(R2.eventos ?? []).flatMap((e) => (e.pon ? [e.pon] : []))])];
+    // (v1.46, el usuario: «a veces la pantalla se vuelve negra» / «me quedo quieto»: en el pasillo central bajaba a
+    // 3–14 FPS y en la puerta del Laboratorio se trababa) de una en una con un respiro entre ellas, y sus texturas se
+    // suben ya a la tarjeta, de una en una (antes se subían todas a la vez al aparecer las zonas: el tirón y el negro)
+    const respiro = (ms) => new Promise((ok) => setTimeout(ok, ms));
+    const cuadro = () => new Promise((ok) => requestAnimationFrame(() => ok()));
     for (const z of zs) {
       if (!this.activa || this.R.fin?.sigue !== true) return;
       try { await this._cargaZona(z); } catch (e) { /* (luego, al empezar) */ }
       const Z = this.zonas[z];
       if (Z?.malla && !this.activas.includes(z)) Z.malla.visible = false;
+      for (const t of [Z?.mat?.uniforms?.uLuz?.value, Z?.mat?.uniforms?.uFuego?.value]) {
+        if (!t) continue;
+        await cuadro();
+        try { this.r.initTexture(t); } catch (e) { /* (se subirá al verse) */ }
+      }
+      await respiro(K.PRECARGA_RESPIRO ?? 700);
     }
   }
 
@@ -892,6 +923,10 @@ export class Libre3D {
 
   // ------------------------------------------------------------------ teclas
   tecla(code) {
+    // (v1.46, el usuario: «hay muchos sitios en los que me quedo quieto y no puedo avanzar») las teclas que tienes
+    // pulsadas DE VERDAD, aunque el juego no las atienda en ese momento (una escena, un susto): al acabar, si sigues con la
+    // W pulsada, sigues andando (antes había que soltarla y volver a pulsarla, porque el teclado no repite la pulsación)
+    (this.pulsadas ??= new Set()).add(code);
     if (this.atrapado || this.cine) return;
     if (code === 'Space' && this.cabina?.activa && this.cabina.pulsa()) return;
     if ((code === 'KeyW' || code === 'ArrowUp') && !this.teclas.has(code)) this.empujaW = true;
@@ -901,6 +936,13 @@ export class Libre3D {
 
   keyUp(code) {
     this.teclas.delete(code);
+    this.pulsadas?.delete(code);
+  }
+
+  /** (v1.46) Vuelve a atender las teclas de moverse que sigues pulsando (tras una escena, un susto o un evento). */
+  _resincroniza() {
+    if (!this.pulsadas) return;
+    for (const c of this.pulsadas) if (MOVER.has(c)) this.teclas.add(c);
   }
 
   click() {
@@ -1417,19 +1459,31 @@ export class Libre3D {
     if (!Z) return;
     const empujando = enCaja(P.empuje, this.x, this.y);
     if (!E.libre) {
+      // (v1.46) manteniendo la W contra ella también se abre (antes solo a golpes de W: con la W pulsada no pasaba nada
+      // y en plena persecución te alcanzaba ahí)
+      const tc = this.teclas;
+      if (empujando && (tc.has('KeyW') || tc.has('ArrowUp'))) {
+        E.abre = Math.min(1, E.abre + (K.PUERTA.MANTENER ?? 0.45) * dt);
+        E.golpeT = (E.golpeT ?? 0) - dt;
+        if (E.golpeT <= 0) {           // (empujando: un golpe y una sacudida cada poco)
+          E.golpeT = 0.55;
+          this.sacude = Math.max(this.sacude, 0.3);
+          this._son('metal/golpe_pared', { volume: 0.55, pitch: 0.75 + Math.random() * 0.15 });
+        }
+      }
       if (w && empujando) {
         E.abre = Math.min(1, E.abre + K.PUERTA.POR_W);
         this.sacude = Math.max(this.sacude, 0.45);
         this._son('metal/golpe_pared', { volume: 0.75, pitch: 0.8 + Math.random() * 0.15 });
         this._son('final/golpe', { volume: 0.5, when: 0.04 });
-        if (E.abre >= 1) {
-          E.libre = true;
-          this._son('metal/tuberia', { volume: 0.9, pitch: 0.7 });
-        }
+      }
+      if (E.abre >= 1) {
+        E.libre = true;
+        this._son('metal/tuberia', { volume: 0.9, pitch: 0.7 });
       }
       E.abre = Math.max(0, E.abre - K.PUERTA.VUELVE * dt);
     }
-    const dx = P.recorre * (E.libre ? 1 : E.abre);
+    const dx = E.libre ? (P.recorre_libre ?? P.recorre) : P.recorre * E.abre;
     Z.dx += (dx - Z.dx) * Math.min(1, dt * 10);
     Z.malla.position.x = Z.dx;
     for (const s of Z.solidos) {
@@ -1518,6 +1572,15 @@ export class Libre3D {
     if (this.cine) {
       this._updateCine(dt);
       return;
+    }
+    this._resincroniza();
+    // (v1.46) red de seguridad: si la posición o la vista se estropean (NaN), vuelven a las últimas buenas en vez de
+    // dejar la pantalla negra y al jugador clavado
+    if ([this.x, this.y, this.yaw, this.pitch, this.vx, this.vy].every(Number.isFinite)) this._bueno = [this.x, this.y, this.yaw, this.pitch];
+    else if (this._bueno) {
+      console.warn('Libre3D: posición o vista inválidas; recuperadas');
+      [this.x, this.y, this.yaw, this.pitch] = this._bueno;
+      this.vx = this.vy = 0;
     }
     this.ayuda = Math.max(0, this.ayuda - dt);
     this.fundido = Math.max(0, this.fundido - dt / 0.8);
