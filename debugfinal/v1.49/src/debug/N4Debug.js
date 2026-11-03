@@ -40,6 +40,7 @@
 // =============================================================
 
 import { CONFIG } from '../config.js';
+import { LogoRewap } from '../ui/LogoRewap.js';
 import { SaveData, slaimiDe, ponSlaimi } from '../core/SaveData.js';
 import { FINALES, Finales, finalQueToca } from '../core/Finales.js';
 import { NIGHT7 } from '../night/night7.js';
@@ -163,6 +164,12 @@ export function install(g) {
       const vivos = d.enemies.filter((e) => e.state !== 'gone').length;
       dbg.dosMsg = `forzar dos: 1º ${a ? 'entra' : 'bloqueado'} · 2º ${b ? 'ENTRA (FALLO)' : 'bloqueado'} · dentro ${vivos}`;
       console.info('Vigía-7 debug:', dbg.dosMsg);
+    },
+    // (v1.49) el logo de rewapstudios otra vez
+    logo: () => {
+      g.audio?.init?.();
+      g.logo = new LogoRewap(g.audio);
+      g._setState('logo');
     },
     vel: (v) => { g.speed = v; },
     // (v1.48) el susto de la Aberración, aquí y ahora: en la oficina de la noche 7 o en la sala de la persecución
@@ -644,7 +651,7 @@ export function install(g) {
       <h3>Fase 5: los créditos (v1.42)</h3>${btn('Créditos del final 1', 'fin:creditos1')}${btn('Final 2', 'fin:creditos2')}${btn('Final 3', 'fin:creditos3')}${btn('Final 4', 'fin:creditos4')}
       <h3>Finales vistos ${vistos.length}/${FINALES.length}</h3>${FINALES.map((f) => btn('marcar ' + f.n, 'finMarcar:' + f.n, vistos.includes(f.n))).join('')}${btn('borrar', 'finBorrar')}
       <h3>Velocidad</h3>${[1, 2, 5].map((v) => btn('x' + v, 'vel:' + v, g.speed === v)).join('')}
-      <h3>Otros</h3>${btn('Información', 'hud', dbg.hud)}${btn('VOLVER A EMPEZAR EL FINAL', 'fin:f1')}`;
+      <h3>Otros</h3>${btn('Información', 'hud', dbg.hud)}${btn('Ver el logo (v1.49)', 'logo')}${btn('VOLVER A EMPEZAR EL FINAL', 'fin:f1')}`;
       return;
     }
     if (dbg.soloN7) {
@@ -655,7 +662,7 @@ export function install(g) {
       <h3>El susto de la Aberración (v1.48)</h3>${btn('SUSTO aquí (en la oficina)', 'sustoAb')}
       <h3>Velocidad</h3>${[1, 2, 5].map((v) => btn('x' + v, 'vel:' + v, g.speed === v)).join('')}
       <h3>Enemigos</h3>${btn('Invencible', 'inv', dbg.invincible)}${ENEMIES.filter(([id]) => id === 'errante' || id === 'dislocado' || id === 'aberracion').map(([id, n]) => btn(n + (dbg.off.has(id) ? ' OFF' : ' ON'), 'enemigo:' + id, !dbg.off.has(id))).join('')}
-      <h3>Otros</h3>${btn('Información', 'hud', dbg.hud)}${btn('VOLVER A EMPEZAR LA NOCHE 7', 'n7:cinta')}`;
+      <h3>Otros</h3>${btn('Información', 'hud', dbg.hud)}${btn('Ver el logo (v1.49)', 'logo')}${btn('VOLVER A EMPEZAR LA NOCHE 7', 'n7:cinta')}`;
       return;
     }
     if (dbg.soloN6) {

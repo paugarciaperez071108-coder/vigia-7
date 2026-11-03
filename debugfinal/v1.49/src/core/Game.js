@@ -127,6 +127,7 @@ import { glitchSlices as cortesGlitch } from '../render/Atmosphere.js';
 import { sustoPuertaListo, sustoPuertaSalto, drawSustoPuerta } from '../render/SustoPuerta.js';
 import { MenuMusic } from '../audio/MenuMusic.js';
 import { Creditos } from '../ending/Creditos.js';
+import { LogoRewap } from '../ui/LogoRewap.js';
 import { SustoDevora, SUSTO_DEVORA, precargaDevora, textoDevora, PISTA_DEVORA } from '../ui/SustoDevora.js';
 
 const KEYMAP = {
@@ -390,7 +391,18 @@ export class Game {
     this.menu = new Menu();
     this.save = SaveData.load(); // null si no hay partida (o está dañada)
     this.menu.selected = this.save ? 'continue' : 'newGame';
-    this.state = 'menu';
+    // (v1.49, Fase A del prólogo) el logo de rewapstudios, cada vez que se abre el juego (?sinlogo=1: sin él)
+    this.state = /[?&]sinlogo=1/.test(location.search) ? 'menu' : 'logo';
+    if (this.state === 'logo') {
+      // (en el .exe, WebView2 deja sonar sin pulsar nada: el zumbido del logo suena desde el principio; en el
+      // navegador no se puede hasta la primera pulsación, que salta el logo y enciende el audio a la vez)
+      try {
+        const prueba = new AudioContext();
+        if (prueba.state === 'running') this.audio.init();
+        prueba.close();
+      } catch (e) { /* sin audio todavía */ }
+      this.logo = new LogoRewap(this.audio);
+    }
     this.nightNumber = 1;
     this.stateTime = 0;
     this.lastTime = null;
@@ -921,6 +933,13 @@ export class Game {
   // ---------------------------------------------------------------
 
   _onClick(x, y) {
+    if (this.state === 'logo') {
+      // (la misma pulsación: enciende el audio, si hacía falta, y salta el logo)
+      if (!this.audio.ctx) this.audio.init();
+      this.logo.salta();
+      this._finLogo();
+      return;
+    }
     switch (this.state) {
       case 'menu': {
         const splash = this._splashMenu;
@@ -1039,10 +1058,27 @@ export class Game {
 
   /** El navegador solo deja sonar tras un clic o tecla: el primero lo activa. */
   _ensureAudio() {
-    if (this.audio.ctx) return;
+    if (this.audio.ctx) {
+      // (v1.49: el audio se encendió en el logo, sin el ambiente; se enciende ya)
+      if (!this._ambiente && this.state !== 'logo') {
+        this._ambiente = true;
+        this.audio.startAmbience();
+        if (this.state === 'menu') this.menuMusic.start(this._nocheGuardada());
+      }
+      return;
+    }
     this.audio.init();
+    if (this.state === 'logo') return;
+    this._ambiente = true;
     this.audio.startAmbience();
     if (this.state === 'menu') this.menuMusic.start(this._nocheGuardada());
+  }
+
+  /** (v1.49) Se acaba el logo (o se salta): al menú, sin pantalla de «pulsa una tecla» si ya hay audio. */
+  _finLogo() {
+    if (this.state !== 'logo') return;
+    this._setState('menu');
+    if (this.audio.ctx) this._ensureAudio();
   }
 
   /**
@@ -1580,6 +1616,12 @@ export class Game {
   }
 
   _onKey(code, e) {
+    if (this.state === 'logo') {
+      if (!this.audio.ctx) this.audio.init();
+      this.logo.salta();
+      this._finLogo();
+      return;
+    }
     if (this.state === 'menu') {
       this._menuKey(code);
       return;
@@ -1898,6 +1940,10 @@ export class Game {
     this.cameraView.update(dt);
 
     switch (this.state) {
+      case 'logo':
+        this.logo.update(dt);
+        if (this.logo.acabado) this._finLogo();
+        break;
       case 'menu':
         this.menu.update(dt);
         this.menuMusic.update(dt);
@@ -2151,6 +2197,9 @@ export class Game {
     this.renderer.begin();
 
     switch (this.state) {
+      case 'logo':
+        this.logo.draw(ctx);
+        break;
       case 'menu':
         this.menu.draw(ctx, { save: this.save, effects: this.effects, audioReady: !!this.audio.ctx, splash: this._splashMenu, musicaMuda: this.menuMusic.muted });
         break;
