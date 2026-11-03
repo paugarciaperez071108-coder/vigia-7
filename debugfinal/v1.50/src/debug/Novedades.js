@@ -742,6 +742,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.50 · El logo de rewapstudios con el logo del usuario: la R se forma cubito a cubito en verde lima sobre la rejilla y debajo «rewap studios» letra a letra</h3>
+        ${b('Ver el logo', 'logo')}
       <h3>v1.49 · Prólogo, Fase A: el logo de rewapstudios al abrir el juego (la R trazada en verde de terminal, el nombre letra a letra, la interferencia y el fundido; cualquier tecla o clic lo salta)</h3>
         ${b('Ver el logo', 'logo')}
       <h3>v1.48 · El susto nuevo de la Aberración (el más fuerte del juego): sin puerta, sus brazos entran por los bordes, te cogen (hombro, brazo y cara; Slaimi se cae), te arrastran, te giran hacia ella, el desgarro se abre con las caras mirándote y las costillas se cierran: negro y el sonido de dentro. El mismo en la oficina de la noche 7 y en la persecución (solo cambia el fondo). «La Aberración te ha devorado.»</h3>
