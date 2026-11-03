@@ -416,7 +416,7 @@ export const NIGHT7 = {
       // (v1.45, el usuario: «algunas salas están vacías y muy oscuras») más luz en las que medían menos (brillo medio de
       // la imagen desde su entrada, 0–255: condb 19, central 29, lab 32, pas_mr 32, pas_lc 35, medbay 38; las demás, 43–79)
       // (v1.46: el pasillo central y el Laboratorio seguían muy oscuros; «plab» es el Laboratorio de la persecución, antes sin ajuste)
-      BRILLO_ZONA: { condb: 1.9, central: 1.9, lab: 1.75, plab: 1.75, pas_mr: 1.7, pas_lc: 1.3, medbay: 1.2 },
+      BRILLO_ZONA: { condb: 1.9, central: 2.5, lab: 1.75, plab: 1.75, pas_mr: 1.7, pas_lc: 1.3, medbay: 1.2 },
       GATAS_BOCA: 0.8,         // (v1.43) m alrededor de las cajas «a gatas»: ya se choca como a gatas (para entrar por la boca)
       VEL_GATAS: 0.9,          // m/s a gatas
       SALTO_S: 1.1,            // s del fundido a negro al final del conducto (y otro tanto al salir)
@@ -463,15 +463,28 @@ export const NIGHT7 = {
         SLAIMI_SUBE: 0.1,                     // m sobre el fondo del hueco (que se le vea entero)
         SLAIMI_EN: 'copiloto',                // (v1.39) dónde lo dejas: 'copiloto' (su asiento) o 'hueco' (la consola)
         SLAIMI_ASIENTO: [-0.08, -0.28],       // m desde la marca del copiloto: hacia el respaldo y hasta el cojín
+        VENTANUCO: { R: 0.24, SUBE: 0.36 },   // (v1.47) el ventanuco de la escotilla: radio y altura sobre su centro (m)
         AB_BORDE: [-6.0, -2.3],               // dónde se asoma ella, al borde del agujero (al sur)
         AB_INCLINA: 0.5,                      // rad hacia el agujero
+        // (v1.47, el usuario: «después de pulsar el botón no hay sensación de despegue… la cámara gira sola hacia la
+        // pared de atrás… un segundo en negro») la salida sin cortes, plano a plano (plan aprobado: «me parece bien»):
+        // S1 botón y alarma · S2 la escotilla (la Aberración golpea, su abolladura y sus dedos en el ventanuco) · S3 al
+        // frente · S4 anclajes · S5 la caída por el tubo de lanzamiento · S6 los motores por el tubo · sigue Final4 (S7
+        // fuera, el rugido se corta; S8 el silencio, la nave se gira y aparece la VIGIA-7)
         DESPEGUE: {                           // s desde el botón
-          ANCLAS: 0.7, BAHIA: 1.0, CAE: 1.6, FURIA: 2.6, MOTOR: 6.4, IGNICION: 7.8, FUNDE: 10.0, FIN_S: 11.4,
-          G: 2.4,                             // m/s² de la caída
-          GIRA: [3.2, 6.6], YAW: Math.PI * 0.95, PITCH: 1.0,      // gira y levanta el morro: el agujero del Hangar
-          MIRA_ARRIBA: 0.45,                  // rad: tu cabeza, hacia arriba
-          PICA: [7.8, 9.6], PITCH_FIN: -0.75, // con los motores, el morro abajo (el planeta) y lejos
-          EMPUJE: 22,                         // m/s² de los motores
+          ALARMA: 0.3,                        // la alarma corta (y la luz roja de la cabina)
+          ATRAS: [1.2, 1.8],                  // la vista se gira sola hacia la escotilla
+          GOLPES: [2.0, 2.8, 3.5],            // la Aberración golpea (cada golpe abolla)
+          ZOOM: [3.0, 3.8], ZOOM_LENTE: 0.5,  // la vista se acerca a la abolladura y a sus dedos (fov × 0,5)
+          VUELVE: [4.0, 4.6],                 // al frente (lo lleva el golpe de los anclajes)
+          ANCLAS: 4.6, BAHIA: 5.0, CAE: 5.6, IGNICION: 6.4,
+          G: 6.0,                             // m/s² de la caída
+          EMPUJE_TUBO: 34,                    // m/s² hacia abajo por el tubo (los motores de separación)
+          SALE_Z: -17.5,                      // m: la nave ha salido del tubo (sigue Final4)
+          MIRA_MAX: 0.2,                      // rad que puedes mover la vista con el ratón (nunca pierdes la acción)
+          PEGA: 0.06, LENTE_MOTOR: 1.14,      // m que la cabeza va hacia atrás con los motores; fov × 1,14 (velocidad)
+          ROJO: 0.85,                         // la luz roja de alarma sobre la escotilla
+          ASOMA: [0.5, 0.2],                  // m: al girarte, la cabeza hacia el pasillo y arriba (que no tape el respaldo)
         },
         FUERA: { PANZA: 400, PANZA_Z: -3.2, HUECO: [-8.5, -3.5, -0.75, 8.0], LUZ_HUECO: 220, LUZ_PLANETA: 0.6,
           PLANETA_R: 1400, PLANETA_LEJOS: 260 },
@@ -483,40 +496,55 @@ export const NIGHT7 = {
         DESDE: [174.0, -4.0, 97.0],         // dónde está la nave (v1.44: más cerca, la estación más grande; antes 235, 15, 140)
         MORRO_BAJO: 0.32,                   // rad: el morro, por debajo de la estación (se la ve en el parabrisas)
         MIRA_ARRIBA: 0.1,                   // rad: tu cabeza (v1.43: 0,2 → 0,1, que se vea a Slaimi junto al cristal)
-        DERIVA: 3.0,                        // m/s: la nave se aleja despacio
+        MORRO: 0.2,                         // (v1.47) rad: el morro, por debajo de la estación (que salga en el parabrisas)
+        ALTURA: 0.2,                        // (v1.47) rad: se la ve algo desde arriba (el planeta debajo)
+        DERIVA: 14.0,                       // (v1.47) m/s: la nave se aleja (la VIGIA-7 se hace más pequeña; antes 3)
+        // (v1.47) la salida, sin cortes desde la cabina (t = 0 al salir del tubo): los motores (S7), el corte del rugido
+        // y el silencio en que la nave se gira hacia la estación (S8); luego la explosión, plano a plano
+        SALIDA: { EMPUJE: 45, DURA: 1.4, GIRA: [1.4, 3.8], FRENA: 1.3 },
+        E0: 3.8,                            // la estación entera, centrada, con el planeta debajo
         LEJOS: 9000,                        // m: lo más lejos que se dibuja
         BRILLO: 1.0,
         SOL: [0.55, 0.45, -0.7],            // (three: x, y, z) de dónde viene el sol
-        PLANETA_R: 4000, HORIZONTE: 0.35,   // el planeta (de fondo): su borde, 0,35 rad por debajo del horizonte
+        PLANETA_R: 4000, HORIZONTE: 0.27,   // el planeta (de fondo): su borde, por debajo del horizonte (v1.47: 0,35 → 0,27: que se vea bajo la estación)
         NUBES: 70,                          // (lo menudas que son las nubes y los continentes)
         CIELO: 6000,
         BOLAS: 160,                         // bolas de fuego a la vez
         ENTRA_S: 2.5,                       // s del fundido de entrada
-        CADENA: 6.0, CADENA_S: 1.3, CADENA_PARTE: 0.35,   // s: empiezan las explosiones en cadena; s por cada 30 m; parte que salta
-        REACTOR: 15.0,                      // s: el reactor estalla
-        ONDA_VEL: 140,                      // m/s de la onda
-        VEL_REACTOR: 45,                    // m/s de los trozos
-        TROZO: 7.0,                         // (v1.44) m: las placas vecinas saltan juntas, en trozos de casco de este tamaño
-        TROZO_SUELTAS: 0.25,                // la parte que salta sola (las placas sueltas)
-        REACTOR_LATE: 5.0,                  // s antes del reactor: el núcleo empieza a latir en azul, cada vez más
-        SLAIMI_TE_MIRA: 21,                 // s: te giras hacia Slaimi (1) — o el brillo azul (3) (v1.43: antes 27)
+        CADENA: 6.8, CADENA_S: 0.7, CADENA_PARTE: 0.12,   // (v1.47) s: los fallos en cadena (3–4 s de un extremo a otro); s por cada 30 m; parte que salta
+        REACTOR: 11.3,                      // s: el reactor estalla (v1.47: antes 15)
+        TEMBLOR: 1.0,                       // (v1.47) s tras el fogonazo: el temblor grave que llega por el casco
+        FOGONAZO_S: 2.2,                    // (v1.47) s que tarda en volver la imagen quemada
+        ONDA_VEL: 150,                      // m/s de la onda
+        VEL_REACTOR: 24,                    // m/s de los trozos (v1.47: antes 45; despacio, que se vean girar)
+        TROZO: 16.0,                        // (v1.47) m: las placas vecinas saltan juntas, en secciones del casco (antes 7)
+        TROZO_SUELTAS: 0.0,                 // la parte que salta sola (v1.47: antes 0,25: «confeti»)
+        REACTOR_LATE: 1.0,                  // (v1.47) s antes del reactor: el núcleo pasa de rojo a blanco
+        TROZOS_VOL: 150,                    // (v1.46) los trozos macizos
+        CRISTALES: 900,                     // (v1.47) polvo y cristales que brillan
+        FUGACES: 26,                        // (v1.47) restos que caen al planeta y arden al entrar (estrellas fugaces)
+        SLAIMI_TE_MIRA: 999,                // (v1.47) la vista ya no se gira hacia Slaimi: se le ve abajo a la derecha
         // (v1.43, el usuario: «Slaimi tiene que verse junto a la ventanilla mientras explota la nave, iluminado por la
         // explosión, y después girarse hacia el protagonista y brillar. Dale 4-5 segundos y luz suficiente»)
-        SLAIMI_VENTANA: [-6.1, 6.62, 2.0],   // dónde se pone (en la consola, junto al parabrisas, a la vista)
-        SLAIMI_GIRA: 20.5,                   // s: se da la vuelta hacia ti (de espaldas, mirando fuera, a de frente)
+        // (v1.47, el usuario: «Slaimi tapa el centro de la ventanilla… debería estar a un lado») abajo a la derecha
+        SLAIMI_VENTANA: [-6.0, 6.75, 1.98],
+        INCORPORA: [0, 0.05, 0.15],         // (v1.47) m: al girarte hacia la estación te incorporas (la consola tapa menos)
+        SLAIMI_GIRA: 19.8,                   // s: se da la vuelta hacia ti (de espaldas, mirando fuera, a de frente)
         SLAIMI_GIRA_S: 0.9,                  // s que tarda en girarse
-        SLAIMI_BRILLA_S: 4.8,                // s que brilla mirándote
-        SLAIMI_LUZ: 1.6,                     // cuánto le ilumina la explosión
+        SLAIMI_BRILLA_S: 4.0,                // s que brilla mirándote
+        SLAIMI_LUZ: 0.7,                     // cuánto le ilumina la explosión (v1.47: 1,6 → 0,7: se quemaba en blanco)
         // (v1.43, el usuario: «en los momentos clave guía la vista hacia la ventanilla») la vista vuelve sola al parabrisas
         // si te apartas más de LIBRE rad, y no se aparta más de MAX (desde la cadena hasta que se calma)
-        GUIA: { DESDE: 4.5, HASTA: 26, YAW: -0.1, LIBRE: 0.15, MAX: 0.4, FUERZA: 4 },
+        // (v1.47) la nave apunta a la estación: la vista, al frente, con ±0,12 rad de ratón (la ventanilla, recta)
+        GUIA: { DESDE: 0, HASTA: 99, YAW: 0, LIBRE: 0.06, MAX: 0.12, FUERZA: 4 },
         MANO_TRAS: 9.5,                     // (3) s tras el reactor: tu mano en el cristal
-        FIN: 36,                            // s: fin (con «VIGIA-7»)
+        FIN: 33,                            // s: fin (con «VIGIA-7»): silencio 23,8–27,8, fundido 27,8–30,8, título
         ERRANTE: {                          // (2 y 4)
-          CADENA: 9.0, REACTOR: 16.6,
-          TUERCE: 4.0, REFLEJO: 5.0, CARA: 8.0, GIRA: 9.6, SLAIMI: 12.6, NEGRO: 16.75, FIN: 27.0,
+          // (v1.47) la misma explosión; su cara en el reflejo antes del fogonazo; la nave acelera recta hacia la estación
+          CADENA: 6.8, REACTOR: 11.3,
+          TUERCE: 7.0, REFLEJO: 7.4, CARA: 8.6, GIRA: 9.1, SLAIMI: 10.2, NEGRO: 11.35, FIN: 22.0,
           LUCHA: 0.25,                      // rad/s que consigues girar con A/D (al revés) — no basta
-          EMPUJE: 9,                        // m/s² hacia la estación (llegas justo cuando estalla)
+          EMPUJE: 95,                       // m/s² hacia la estación (v1.47: llegas justo cuando estalla)
         },
       },
       // Los recorridos (coordenadas de Blender: x, y en el suelo). Cajas [x0, y0, x1, y1].

@@ -47,11 +47,12 @@ uniform sampler2D uLuz;
 uniform sampler2D uFuego;
 uniform float uK;
 uniform float uFlick;
+uniform vec3 uTinte;    // (v1.47) una luz de color encima de la horneada (la alarma roja en la bodega de la nave)
 varying vec2 vUv;
 void main() {
   vec3 base = pow(texture2D(uLuz, vUv).rgb, vec3(2.2)) * uK;
   vec3 fue = pow(texture2D(uFuego, vUv).rgb, vec3(2.2)) * uK;
-  gl_FragColor = vec4(base + fue * uFlick, 1.0);
+  gl_FragColor = vec4((base + fue * uFlick) * (1.0 + uTinte) + uTinte * 0.012, 1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
 }`;
@@ -297,12 +298,8 @@ export class Libre3D {
     // (v1.45, revisión del Final 1, punto 3) la versión con el diseño de la biblia: más caras, color de 4096 con la
     // oclusión horneada y su relieve (mapa de normales); con material que brilla algo (piel húmeda, metal)
     const AB = K.AB_ARCHIVO ?? 'aberracion';
-    const texAb = (n, srgb) => new Promise((ok) => new THREE.TextureLoader().load(`${DIR}${AB}_${n}.webp`, (t) => {
-      t.flipY = false;
-      if (srgb) t.colorSpace = THREE.SRGBColorSpace;
-      t.anisotropy = 4;
-      ok(t);
-    }, undefined, () => ok(null)));
+    // (v1.47) con la carga fuera del hilo del juego (ImageBitmap), a su tamaño entero (4096)
+    const texAb = (n, srgb) => this._tex(`${AB}_${n}.webp`, 8192, srgb);
     this.abP = Promise.all([
       new Promise((ok, mal) => new GLTFLoader().load(`${DIR}${AB}.glb`, ok, undefined, mal)),
       texAb('color', true),
@@ -349,12 +346,24 @@ export class Libre3D {
       this.escena.add(A.grupo);
       // (v1.45) preparar ya sus shaders y texturas —y los de la sala con sus 3 luces más—: si no, la primera vez que
       // se la ve (justo en el susto) el juego se atasca un momento (8 FPS en la prueba)
-      try {
-        for (const t of [tex, nor]) if (t) this.r.initTexture(t);
-        A.grupo.visible = true;
-        this.r.compile(this.escena, this.cam);
-      } catch (e) { /* no pasa nada: se compilará al verla */ }
-      A.grupo.visible = false;
+      // (v1.47) sin parar el juego: una textura por fotograma y los shaders en paralelo (compileAsync); antes, todo de
+      // golpe al empezar la persecución: un fotograma de casi medio segundo en el Laboratorio
+      const cuadro = () => new Promise((ok) => requestAnimationFrame(() => ok()));
+      A.prep = (async () => {
+        for (const t of [tex, nor]) {
+          if (!t) continue;
+          await cuadro();
+          try { this.r.initTexture(t); } catch (e) { /* se subirá al verla */ }
+        }
+        await cuadro();
+        try {
+          const vis = A.grupo.visible;
+          A.grupo.visible = true;
+          const p = this.r.compileAsync ? this.r.compileAsync(this.escena, this.cam) : (this.r.compile(this.escena, this.cam), null);
+          A.grupo.visible = vis;
+          if (p) await p;
+        } catch (e) { /* no pasa nada: se compilará al verla */ }
+      })();
       // sus brazos en los bordes de la pantalla (copias de dos brazos, pegadas a la cámara)
       // (v1.36: si ya va dentro de la nave, se queda ahí)
       if (!this.cam.parent) this.escena.add(this.cam);
@@ -429,16 +438,37 @@ export class Libre3D {
     }
   }
 
-  _tex(n, topeEste = null) {
+  _tex(n, topeEste = null, srgb = false) {
     // (v1.41) como mucho K.TEX_MAX de lado: si no, entre todas las salas no caben en la tarjeta (y la imagen se va a negro)
     const tope = topeEste ?? K.TEX_MAX ?? 0;
     const lista = (t) => {
       t.flipY = false;
-      t.colorSpace = THREE.NoColorSpace;
+      t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
       t.anisotropy = 4;
       t.needsUpdate = true;
       return t;
     };
+    // (v1.47, el usuario: «arregla eso», el tirón al precargar y al empezar la persecución) la imagen se descodifica y
+    // se reduce FUERA del hilo del juego (ImageBitmap): subir a la tarjeta un <img> o un lienzo en WebView2 costaba
+    // 40–80 ms por imagen (dos fotogramas perdidos por sala)
+    if (typeof createImageBitmap === 'function') {
+      const op = { colorSpaceConversion: 'none', premultiplyAlpha: 'none' };
+      return fetch(`${DIR}${n}`).then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+        .then((b) => createImageBitmap(b, op))
+        .then((bm) => {
+          if (!tope || (bm.width <= tope && bm.height <= tope)) return bm;
+          const k = tope / Math.max(bm.width, bm.height);
+          return createImageBitmap(bm, { ...op, resizeWidth: Math.round(bm.width * k), resizeHeight: Math.round(bm.height * k),
+            resizeQuality: 'high' }).finally(() => bm.close());
+        })
+        .then((bm) => lista(new THREE.Texture(bm)))
+        .catch(() => this._texImg(n, tope, lista));
+    }
+    return this._texImg(n, tope, lista);
+  }
+
+  /** (la carga de antes, con <img>: si el navegador no tiene ImageBitmap) */
+  _texImg(n, tope, lista) {
     return new Promise((ok) => {
       const im = new Image();
       im.onload = () => {
@@ -503,7 +533,7 @@ export class Libre3D {
       const mat = new THREE.ShaderMaterial({
         vertexShader: VS, fragmentShader: FS,
         uniforms: { uLuz: { value: luz }, uFuego: { value: fuego }, uK: { value: info.K * (info.brillo ?? 1) * (K.BRILLO_ZONA?.[z] ?? 1) },
-          uFlick: (K.CABINA?.ALARMA ?? []).includes(z) ? this.alarma : this.flick },
+          uFlick: (K.CABINA?.ALARMA ?? []).includes(z) ? this.alarma : this.flick, uTinte: { value: new THREE.Vector3() } },
       });
       Z.mat = mat;
       Z.uK0 = info.K * (info.brillo ?? 1) * (K.BRILLO_ZONA?.[z] ?? 1);
@@ -856,6 +886,17 @@ export class Libre3D {
         try { this.r.initTexture(t); } catch (e) { /* (se subirá al verse) */ }
       }
       await respiro(K.PRECARGA_RESPIRO ?? 700);
+    }
+    // (v1.47) y la Aberración y la estación por fuera, también ya (antes se cargaban al empezar la persecución)
+    if (!this.activa || this.R.fin?.sigue !== true || !R2.caza) return;
+    try { await (await this._cargaAb())?.prep; } catch (e) { /* (luego) */ }
+    await respiro(K.PRECARGA_RESPIRO ?? 700);
+    if (this.final4 && this.activa) {
+      try {
+        await this.final4.carga();
+        const t = this.final4.mat?.uniforms?.uLuz?.value;
+        if (t) { await cuadro(); this.r.initTexture(t); }
+      } catch (e) { /* (luego) */ }
     }
   }
 

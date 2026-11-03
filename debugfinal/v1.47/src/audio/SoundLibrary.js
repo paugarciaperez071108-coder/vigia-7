@@ -109,7 +109,8 @@ export class SoundLibrary {
     const p = this.ctx.createStereoPanner();
     p.pan.value = Math.max(-1, Math.min(1, pan));
     node.connect(g).connect(p).connect(bus);
-    src.start(t);
+    // (v1.47) offset: empezar más adelante en el sonido (el rugido de los motores, ya rugiendo)
+    src.start(t, Math.max(0, opts.offset ?? 0));
     if (opts.corta) {
       // v0.79: se corta de golpe (el grito que se apaga a media voz, la señal que se va)
       g.gain.setValueAtTime(g.gain.value, t + opts.corta);
@@ -131,7 +132,17 @@ export class SoundLibrary {
         gain: g.gain,
       };
     }
-    return true;
+    // (v1.47) también los que no van en bucle se pueden parar (el rugido que se corta de golpe al salir al espacio)
+    return {
+      stop: (fundido = 0.02) => {
+        const a = this.ctx.currentTime;
+        g.gain.cancelScheduledValues(a);
+        g.gain.setValueAtTime(g.gain.value, a);
+        g.gain.linearRampToValueAtTime(0, a + fundido);
+        try { src.stop(a + fundido + 0.05); } catch (e) { /* ya parado */ }
+      },
+      gain: g.gain,
+    };
   }
 
   /** Varias pisadas seguidas (cada una, variante distinta). */

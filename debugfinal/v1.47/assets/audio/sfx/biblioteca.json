@@ -563,5 +563,14 @@
  ],
  "final/motor": [
   "assets/audio/sfx/final/motor_1.ogg"
+ ],
+ "final/alarma_corta": [
+  "assets/audio/sfx/final/alarma_corta_1.ogg"
+ ],
+ "final/vibra": [
+  "assets/audio/sfx/final/vibra_1.ogg"
+ ],
+ "final/temblor": [
+  "assets/audio/sfx/final/temblor_1.ogg"
  ]
 }
