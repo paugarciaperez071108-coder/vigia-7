@@ -411,6 +411,12 @@ export function install(g) {
       g._setState('logo');
       setTimeout(() => g._preparaPrologo(), 400);
     },
+    // (v1.55) las noches 2 y 4 en 3D: el recorrido de prueba (toda la estación sin energía, con los asomados)
+    noche3d: (desde) => {
+      g.audio?.init?.();
+      g.saveEnabled = false;
+      g._empiezaNoche3D('noches', desde === 'oficina' ? null : desde);
+    },
     prologo: (desde) => {
       g.audio?.init?.();
       g.saveEnabled = false;
@@ -757,6 +763,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.55 · Noches 2 y 4 en 3D, fase N1 (la base): la estación entera sin energía, solo se ve con la linterna (ESPACIO o F); el C. Este, Comunicaciones y sus pasillos ya en 3D (se da la vuelta entera al anillo); los enemigos asomados con la mecánica de la luz de la 2.5 (luz en la cara hasta que se retiran). Debug aparte: ?n4debug=1&amp;noches3d=1&amp;sinlogo=1, web …/debugnoches3d/ y Vigia7-debug-noches3d.exe</h3>
+        ${b('Desde la oficina', 'noche3d:oficina')}${b('El C. Este', 'noche3d:n_eastHall')}${b('Comunicaciones', 'noche3d:n_comms')}${b('El Hangar', 'noche3d:n_hangar')}
       <h3>v1.54 · Debug solo del prólogo (?n4debug=1&amp;nocheprologo=1&amp;sinlogo=1; web …/debugprologo/ y Vigia7-debug-prologo.exe): entra con el logo y el prólogo como la 1.ª vez y un menú con cada parte</h3>
         ${b('Como la 1.ª vez: el logo y todo el prólogo', 'prologoArranque')}${b('La Criogenia', 'prologo:c_cryo_a')}${b('El pasillo central (sellado)', 'prologo:c_pc')}
       <h3>v1.53 · Prólogo, Fase D: al cruzar la puerta izquierda de la oficina, unos pasos solos, la puerta se cierra detrás y se bloquea, la vista se gira a la consola y se funde con la oficina de la Noche 1 (sin cinta de bienvenida: queda con L). El prólogo sale solo la primera vez que se abre el juego (después del logo) y vuelve a salir si se cierra a mitad</h3>

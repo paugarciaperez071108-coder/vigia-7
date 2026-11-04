@@ -909,7 +909,7 @@ export function install(g) {
   // v0.75 (pedido del usuario: «una versión debug de la noche 6»): con
   // ?noche6=1 empieza en la noche 6 (los conductos) con el menú abierto
   const qs = new URLSearchParams(location.search);
-  const entrada = qs.has('noches3d') ? 'noches3d' : qs.has('nocheprologo') ? 'prologo' : qs.has('nochefinal') ? 'final' : qs.has('noche7') ? 7 : qs.has('noche6') ? 6 : qs.has('noche4') ? 4 : 0;
+  const entrada = (qs.has('noches3d') || qs.has('nochenoches3d')) ? 'noches3d' : qs.has('nocheprologo') ? 'prologo' : qs.has('nochefinal') ? 'final' : qs.has('noche7') ? 7 : qs.has('noche6') ? 6 : qs.has('noche4') ? 4 : 0;
   if (entrada) {
     const espera = setInterval(() => {
       if (g.state !== 'menu') return;
