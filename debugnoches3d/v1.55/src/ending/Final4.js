@@ -1,0 +1,1460 @@
+// =============================================================
+// Final4.js — (v1.36, Fase 4 del final) Los 4 finales, desde la cabina de la nave de escape (con Libre3D y Cabina3D).
+// Tras el despegue, la nave se aleja y se da la vuelta: por el parabrisas, la VIGIA-7 entera sobre el planeta, ardiendo
+// (tools/3d/final/vigia_fuera.py → tr/hornear_fuera.py → assets/final/tr/vigia_fuera.*; cada pieza se mueve por su
+// cuenta en el shader). Cuál toca: Slaimi (vivo/muerto) y El Errante en tu cabeza (src/core/Finales.js).
+//   1 (vivo, no): explosiones en cadena por el casco, el reactor estalla en blanco, la onda y los trozos ardiendo.
+//     Slaimi mira contigo (su brillo, con la explosión). En silencio: la cabina y tu respiración, que se calma. Slaimi
+//     te mira y brilla; su último sonido, tranquilo. Fundido, «VIGIA-7».
+//   2 (vivo, sí): como el 1 hasta antes de la explosión; la imagen se tuerce, un susurro y, en el reflejo del
+//     parabrisas, en vez de tu cara, la suya; su cara llena la pantalla; la nave da media vuelta sola (A/D no
+//     responden: luchas y pierdes); Slaimi se asusta, brilla y te empuja; aceleras hacia la VIGIA-7 justo cuando
+//     explota: el fogonazo, el cristal y negro en seco. En negro, las respiraciones de varias voces y la tuya.
+//   3 (muerto, no): el 1 con el asiento vacío; entre los restos, un brillo azul diminuto que se apaga.
+//   4 (muerto, sí): el 2 sin Slaimi.
+// Valores en NIGHT7.FINAL.LIBRE.FINAL4.
+// =============================================================
+
+import * as THREE from '../lib/three/three.module.min.js';
+import { GLTFLoader } from '../lib/three/addons/GLTFLoader.js';
+import { NIGHT7 } from '../night/night7.js';
+import { CONFIG } from '../config.js';
+import { Finales } from '../core/Finales.js';
+
+const K = NIGHT7.FINAL.LIBRE;
+const KF = K.FINAL4;
+const W = CONFIG.WIDTH;
+const H = CONFIG.HEIGHT;
+const DIR = 'assets/final/tr/';
+const b2t = (x, y, z) => new THREE.Vector3(x, z, -y);
+const suave = (a, b, t) => {
+  const k = Math.max(0, Math.min(1, (t - a) / (b - a)));
+  return k * k * (3 - 2 * k);
+};
+const angulo = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+
+// la estación en piezas: cada vértice lee su pieza (centro, velocidad, giro, calor) de una textura
+const VS_PIEZAS = `
+attribute float _pieza;
+uniform sampler2D uPiezas;
+uniform float uT;
+varying vec2 vUv;
+varying float vCalor;
+varying float vDt;
+varying vec3 vW;
+varying float vApaga;
+vec3 gira(vec3 v, vec3 e, float a) {
+  float c = cos(a), s = sin(a);
+  return v * c + cross(e, v) * s + e * dot(e, v) * (1.0 - c);
+}
+void main() {
+  vUv = uv;
+  int i = int(_pieza + 0.5);
+  vec4 a = texelFetch(uPiezas, ivec2(i, 0), 0);   // centro, t0
+  vec4 b = texelFetch(uPiezas, ivec2(i, 1), 0);   // velocidad, giro
+  vec4 c = texelFetch(uPiezas, ivec2(i, 2), 0);   // eje, calor
+  vec4 d = texelFetch(uPiezas, ivec2(i, 3), 0);   // (v1.47) cuándo se apaga su sección
+  vApaga = smoothstep(d.x, d.x + 0.45, uT);
+  float dt = max(0.0, uT - a.w);
+  vec3 p = position;
+  if (dt > 0.0) {
+    p = a.xyz + gira(position - a.xyz, normalize(c.xyz), b.w * dt) + b.xyz * dt + vec3(0.0, -0.6, 0.0) * dt * dt;
+  }
+  // (v1.40) al rojo vivo al saltar y se enfría (cada pieza a su ritmo)
+  vCalor = dt > 0.0 ? c.w * exp(-dt / (0.9 + 1.6 * fract(c.w * 7.31))) * min(1.0, dt * 10.0) : 0.0;
+  vDt = dt > 0.0 ? dt : -1.0;
+  vec4 w = modelMatrix * vec4(p, 1.0);
+  vW = w.xyz;
+  gl_Position = projectionMatrix * viewMatrix * w;
+}`;
+const FS_PIEZAS = `
+uniform sampler2D uLuz;
+uniform float uK;
+uniform vec3 uFlash;
+uniform float uT;
+uniform vec4 uLuzP[8];   // (v1.40) las explosiones que alumbran el casco: sitio, cuándo
+uniform vec4 uLuzD[8];   //   radio, fuerza, cuánto dura
+varying vec2 vUv;
+varying float vCalor;
+varying float vDt;
+varying vec3 vW;
+varying float vApaga;
+void main() {
+  vec3 base = pow(texture2D(uLuz, vUv).rgb, vec3(2.2)) * uK;
+  // (v1.47, el usuario: «las luces de la nave se van apagando por secciones») su sección, a oscuras (ventanas incluidas)
+  base *= mix(1.0, 0.32, vApaga);
+  // rota: el metal quemado (más oscuro cuanto más tiempo lleva suelta; v1.47: menos, que se vea su forma)
+  if (vDt > 0.0) base *= mix(1.0, 0.3, smoothstep(0.0, 2.5, vDt));
+  // el calor: blanco amarillo -> naranja -> rojo oscuro -> nada (con un parpadeo)
+  float h = vCalor * (0.9 + 0.1 * sin(uT * 31.0 + vW.x * 0.7));
+  vec3 calor = mix(vec3(0.7, 0.06, 0.01), vec3(2.2, 0.75, 0.18), smoothstep(0.25, 0.7, h));
+  calor = mix(calor, vec3(3.2, 2.4, 1.4), smoothstep(0.8, 1.3, h));
+  vec3 c = base + calor * h;
+  // la luz de las explosiones cercanas (decae con la distancia y con el tiempo)
+  vec3 luz = vec3(0.0);
+  for (int k = 0; k < 8; k++) {
+    float e = uT - uLuzP[k].w;
+    if (e < 0.0 || e > uLuzD[k].z * 4.0) continue;
+    float d = length(vW - uLuzP[k].xyz) / uLuzD[k].x;
+    float f = max(0.0, 1.0 - d);
+    luz += vec3(1.0, 0.55, 0.22) * uLuzD[k].y * f * f * exp(-e / uLuzD[k].z) * min(1.0, e * 12.0);
+  }
+  c += (base * 3.0 + 0.02) * luz;
+  c += uFlash * (0.25 + base);
+  gl_FragColor = vec4(c, 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}`;
+// el fuego de las explosiones: planos hacia la cámara con el atlas de la llama (llama_flipbook.py), que crecen
+const VS_BOLA = `
+attribute vec3 iPos;
+attribute vec3 iDat;    // tamaño final, t0, vida
+uniform float uT;
+varying vec2 vUv;
+varying float vEdad;
+varying float vF;
+void main() {
+  float e = (uT - iDat.y) / iDat.z;
+  vEdad = e;
+  float ec = clamp(e, 0.0, 1.0);
+  float tam = iDat.x * (0.3 + 0.9 * sqrt(min(1.0, ec * 2.5))) * (1.0 - 0.45 * ec * ec);
+  vec3 der = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+  vec3 arr = vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]);
+  vec3 p = iPos + (der * position.x + arr * position.y) * tam;
+  vUv = position.xy + 0.5;
+  vF = floor(clamp(e, 0.0, 0.999) * 24.0);
+  if (e < 0.0 || e > 1.0) p = vec3(0.0, -1e6, 0.0);
+  gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+}`;
+const FS_BOLA = `
+uniform sampler2D uAtlas;
+uniform sampler2D uMancha;
+varying vec2 vUv;
+varying float vEdad;
+varying float vF;
+void main() {
+  float col = mod(vF, 6.0), fila = floor(vF / 6.0);
+  vec2 uv = vec2((col + vUv.x) / 6.0, (fila + 1.0 - vUv.y) / 4.0);
+  vec3 c = texture2D(uAtlas, uv).rgb;
+  // (v1.44, el usuario: «fuego que se apaga en el vacío… nada de círculos»): sin el disco de luz del centro; la bola se
+  // recorta con una mancha irregular (la de humo, girada en cada una) y pasa de blanco a naranja y a rojo oscuro
+  float a = vF * 0.37;
+  vec2 q = mat2(cos(a), -sin(a), sin(a), cos(a)) * (vUv - 0.5) + 0.5;
+  float m = texture2D(uMancha, q).r;
+  vec3 tinte = mix(vec3(1.25, 1.1, 0.9), mix(vec3(1.0, 0.55, 0.2), vec3(0.45, 0.08, 0.02), smoothstep(0.35, 0.9, vEdad)), smoothstep(0.0, 0.3, vEdad));
+  float vive = pow(1.0 - vEdad, 1.7);
+  gl_FragColor = vec4(c * tinte * m * vive * 2.0, 1.0);
+}`;
+// (v1.40) el humo de las explosiones: bocanadas oscuras que se abren y se quedan flotando (con el fuego dentro al nacer)
+const VS_HUMO = `
+attribute vec3 iPos;
+attribute vec3 iDat;    // tamaño final, t0, vida
+attribute vec3 iVel;
+uniform float uT;
+varying vec2 vUv;
+varying float vEdad;
+void main() {
+  float s = uT - iDat.y;
+  float e = s / iDat.z;
+  vEdad = e;
+  float tam = iDat.x * (0.3 + 0.7 * sqrt(clamp(e, 0.0, 1.0)));
+  vec3 der = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+  vec3 arr = vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]);
+  float a = iDat.y * 3.7 + s * 0.15;
+  vec2 q = mat2(cos(a), -sin(a), sin(a), cos(a)) * position.xy;
+  vec3 p = iPos + iVel * s * (1.0 - 0.35 * clamp(e, 0.0, 1.0)) + (der * q.x + arr * q.y) * tam;
+  vUv = position.xy + 0.5;
+  if (e < 0.0 || e > 1.0) p = vec3(0.0, -1e6, 0.0);
+  gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+}`;
+const FS_HUMO = `
+uniform sampler2D uMapa;
+uniform float uA;
+varying vec2 vUv;
+varying float vEdad;
+void main() {
+  float m = min(1.0, texture2D(uMapa, vUv).r);
+  // (v1.47, el usuario: «el humo en el espacio se disipa rápido en nubes finas»): tenue, y se va
+  float a = m * smoothstep(0.0, 0.06, vEdad) * pow(1.0 - vEdad, 2.2) * uA;
+  // (v1.44) con volumen: la cara hacia la luz (arriba a un lado) más clara, la otra más oscura
+  float lado = clamp(0.5 + 0.9 * dot(vUv - 0.5, normalize(vec2(-0.6, 0.8))), 0.0, 1.0);
+  vec3 c = mix(vec3(0.05, 0.05, 0.055), vec3(0.3, 0.3, 0.32), lado * m);
+  c = mix(c, vec3(1.6, 0.55, 0.12), exp(-vEdad * 14.0) * m);
+  gl_FragColor = vec4(c, a);
+}`;
+// (v1.40) la onda del reactor, esférica: solo se ve el borde (como una burbuja de luz)
+const VS_ESFERA = `
+varying vec3 vN;
+varying vec3 vV;
+void main() {
+  vec4 w = modelMatrix * vec4(position, 1.0);
+  vN = normalize(mat3(modelMatrix) * normal);
+  vV = normalize(cameraPosition - w.xyz);
+  gl_Position = projectionMatrix * viewMatrix * w;
+}`;
+const FS_ESFERA = `
+uniform float uA;
+varying vec3 vN;
+varying vec3 vV;
+void main() {
+  float r = 1.0 - abs(dot(normalize(vN), normalize(vV)));
+  gl_FragColor = vec4(vec3(0.55, 0.78, 1.0) * pow(r, 4.0) * uA * 1.6, 1.0);
+}`;
+
+// el planeta: un fondo (sin profundidad) con nubes, océanos, la luz del sol y el borde de la atmósfera
+const VS_PLANETA = `
+varying vec3 vN;
+varying vec3 vP;
+varying vec3 vVista;
+void main() {
+  vN = normalize(normal);
+  vP = position;
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vVista = normalize(cameraPosition - (modelMatrix * vec4(position, 1.0)).xyz);
+  gl_Position = projectionMatrix * mv;
+}`;
+const FS_PLANETA = `
+uniform vec3 uSol;
+uniform float uNubes;
+varying vec3 vN;
+varying vec3 vP;
+varying vec3 vVista;
+float h(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+float ruido(vec3 p) {
+  vec3 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(h(i), h(i + vec3(1, 0, 0)), f.x), mix(h(i + vec3(0, 1, 0)), h(i + vec3(1, 1, 0)), f.x), f.y),
+             mix(mix(h(i + vec3(0, 0, 1)), h(i + vec3(1, 0, 1)), f.x), mix(h(i + vec3(0, 1, 1)), h(i + vec3(1, 1, 1)), f.x), f.y), f.z);
+}
+float fbm(vec3 p) { float s = 0.0, a = 0.5; for (int k = 0; k < 6; k++) { s += a * ruido(p); p *= 2.03; a *= 0.5; } return s; }
+void main() {
+  vec3 n = normalize(vN);
+  vec3 q = normalize(vP) * uNubes;
+  float tierra = smoothstep(0.52, 0.58, fbm(q * 0.9));
+  float nube = smoothstep(0.5, 0.75, fbm(q * 1.7 + vec3(3.1)));
+  vec3 col = mix(vec3(0.01, 0.04, 0.12), vec3(0.06, 0.09, 0.07), tierra);
+  col = mix(col, vec3(0.75, 0.8, 0.86), nube * 0.85);
+  float luz = max(0.0, dot(n, normalize(uSol)));
+  col *= 0.05 + 1.3 * luz;
+  float borde = pow(1.0 - max(0.0, dot(n, normalize(vVista))), 3.0);
+  col += vec3(0.25, 0.5, 1.0) * borde * (0.25 + 1.4 * luz);
+  gl_FragColor = vec4(col, 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}`;
+
+let MANO = null;                    // (v1.37) tu mano en el cristal (final 3): tools/3d/final/mano_cristal.py
+function mano() {
+  if (!MANO) {
+    MANO = new Image();
+    MANO.src = 'assets/final/tr/mano_cristal.webp';
+  }
+  return MANO.complete && MANO.naturalWidth ? MANO : null;
+}
+
+let CARA = null;                    // la cara de El Errante (su render: assets/n4/mira/mira_cara.jpg)
+function cara() {
+  if (!CARA) {
+    CARA = new Image();
+    CARA.src = 'assets/n4/mira/mira_cara.jpg';
+  }
+  return CARA.complete && CARA.naturalWidth ? CARA : null;
+}
+
+export class Final4 {
+  constructor(libre) {
+    this.L = libre;
+    this.activo = false;
+  }
+
+  _son(clave, o = {}) {
+    return this.L._son(clave, o);
+  }
+
+  /** Cargar la estación por fuera (en cuanto empieza la persecución, para no esperar después). */
+  carga(archivo = 'vigia_fuera') {
+    if (this.prom) return this.prom;
+    // (v1.51, el prólogo: 'vigia_fuera_intacta', la misma estación el día que llegas, con todas las luces y sin fuego)
+    this.archivo = archivo;
+    this.prom = Promise.all([
+      new Promise((ok, mal) => new GLTFLoader().load(`${DIR}${archivo}.glb`, ok, undefined, mal)),
+      fetch(`${DIR}${archivo}.json`).then((r) => r.json()),
+      // (v1.47) con la carga de Libre3D (fuera del hilo del juego), a su tamaño entero
+      this.L._tex(`${archivo}_luz.webp`, 8192),
+    ]).then(([gltf, info, luz]) => {
+      this.info = info;
+      const n = info.piezas.length;
+      this.datos = new Float32Array(n * 4 * 4);
+      this.texPiezas = new THREE.DataTexture(this.datos, n, 4, THREE.RGBAFormat, THREE.FloatType);
+      this.texPiezas.needsUpdate = true;
+      this.uT = { value: 0 };
+      this.uFlash = { value: new THREE.Vector3() };
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: VS_PIEZAS, fragmentShader: FS_PIEZAS,
+        uniforms: { uLuz: { value: luz }, uK: { value: info.K * KF.BRILLO }, uPiezas: { value: this.texPiezas }, uT: this.uT, uFlash: this.uFlash,
+          uLuzP: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, 0, -99)) },
+          uLuzD: { value: Array.from({ length: 8 }, () => new THREE.Vector4(1, 0, 1, 0)) } },
+      });
+      this.mat = mat;
+      this.grupo = new THREE.Group();
+      gltf.scene.traverse((o) => {
+        if (o.isMesh) {
+          o.material = mat;
+          o.frustumCulled = false;
+        }
+      });
+      this.grupo.add(gltf.scene);
+      this.grupo.visible = false;
+      this.L.escena.add(this.grupo);
+      this._fondo();
+      return this;
+    }).catch((e) => {
+      console.warn('Final4: sin la estación por fuera', e);
+      return null;
+    });
+    return this.prom;
+  }
+
+  /** El planeta, las estrellas, el sol; las bolas de fuego, la onda y los trozos que caen ardiendo. */
+  _fondo() {
+    const L = this.L;
+    this.cielo = new THREE.Group();
+    this.cielo.visible = false;
+    const sol = new THREE.Vector3(...KF.SOL).normalize();
+    this.planeta = new THREE.Mesh(new THREE.SphereGeometry(KF.PLANETA_R, 96, 64),
+      new THREE.ShaderMaterial({ vertexShader: VS_PLANETA, fragmentShader: FS_PLANETA, uniforms: { uSol: { value: sol }, uNubes: { value: KF.NUBES } },
+        depthWrite: false, depthTest: false }));
+    this.planeta.renderOrder = -10;
+    this.cielo.add(this.planeta);
+    const n = 2500, pos = new Float32Array(n * 3);
+    for (let k = 0; k < n; k++) {
+      const v = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize().multiplyScalar(KF.CIELO);
+      pos.set([v.x, v.y, v.z], k * 3);
+    }
+    const ge = new THREE.BufferGeometry();
+    ge.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    this.estrellas = new THREE.Points(ge, new THREE.PointsMaterial({ color: 0xdfe6ff, size: 1.5, sizeAttenuation: false,
+      toneMapped: false, depthWrite: false }));
+    this.estrellas.renderOrder = -11;
+    this.cielo.add(this.estrellas);
+    L.escena.add(this.cielo);
+    // las bolas de fuego
+    const N = KF.BOLAS;
+    const base = new THREE.PlaneGeometry(1, 1);
+    const g = new THREE.InstancedBufferGeometry();
+    g.index = base.index;
+    g.attributes.position = base.attributes.position;
+    this.aBolaP = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
+    this.aBolaD = new THREE.InstancedBufferAttribute(new Float32Array(N * 3).fill(-99), 3);
+    g.setAttribute('iPos', this.aBolaP);
+    g.setAttribute('iDat', this.aBolaD);
+    g.instanceCount = N;
+    this.bolas = new THREE.Mesh(g, new THREE.ShaderMaterial({
+      vertexShader: VS_BOLA, fragmentShader: FS_BOLA, uniforms: { uAtlas: { value: L.texLlama }, uT: { value: 0 }, uMancha: { value: null } },
+      blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false }));
+    this.bolas.frustumCulled = false;
+    this.bolas.visible = false;
+    this.nBolas = 0;
+    L.escena.add(this.bolas);
+    // (v1.40) el humo
+    const NH = KF.HUMOS ?? 220;
+    const gh = new THREE.InstancedBufferGeometry();
+    gh.index = base.index;
+    gh.attributes.position = base.attributes.position;
+    this.aHumoP = new THREE.InstancedBufferAttribute(new Float32Array(NH * 3), 3);
+    this.aHumoD = new THREE.InstancedBufferAttribute(new Float32Array(NH * 3).fill(-99), 3);
+    this.aHumoV = new THREE.InstancedBufferAttribute(new Float32Array(NH * 3), 3);
+    gh.setAttribute('iPos', this.aHumoP);
+    gh.setAttribute('iDat', this.aHumoD);
+    gh.setAttribute('iVel', this.aHumoV);
+    gh.instanceCount = NH;
+    this.texMancha = this.texMancha ?? this._texHumo();
+    this.bolas.material.uniforms.uMancha.value = this.texMancha;
+    this.humo = new THREE.Mesh(gh, new THREE.ShaderMaterial({
+      vertexShader: VS_HUMO, fragmentShader: FS_HUMO, uniforms: { uMapa: { value: this.texMancha }, uT: { value: 0 }, uA: { value: KF.HUMO_A ?? 0.3 } },
+      depthWrite: false, transparent: true, toneMapped: false }));
+    this.humo.frustumCulled = false;
+    this.humo.visible = false;
+    this.nHumos = 0;
+    L.escena.add(this.humo);
+    // (v1.40) las chispas: rayas de metal fundido que salen disparadas (cada una, un segmento)
+    const NC = KF.CHISPAS ?? 1600;
+    this.chP = new Float32Array(NC * 3);
+    this.chV = new Float32Array(NC * 3);
+    this.chT = new Float32Array(NC * 2).fill(-99);
+    const gc = new THREE.BufferGeometry();
+    this.aChPos = new THREE.BufferAttribute(new Float32Array(NC * 6), 3);
+    this.aChCol = new THREE.BufferAttribute(new Float32Array(NC * 6), 3);
+    gc.setAttribute('position', this.aChPos);
+    gc.setAttribute('color', this.aChCol);
+    this.chispas = new THREE.LineSegments(gc, new THREE.LineBasicMaterial({ vertexColors: true, blending: THREE.AdditiveBlending,
+      depthWrite: false, transparent: true, toneMapped: false }));
+    this.chispas.frustumCulled = false;
+    this.chispas.visible = false;
+    this.nChispas = 0;
+    L.escena.add(this.chispas);
+    // (v1.40) la onda esférica
+    this.esfera = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), new THREE.ShaderMaterial({
+      vertexShader: VS_ESFERA, fragmentShader: FS_ESFERA, uniforms: { uA: { value: 0 } },
+      blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, side: THREE.DoubleSide }));
+    this.esfera.visible = false;
+    L.escena.add(this.esfera);
+    this.nLuces = 0;     // (v1.40) las luces de las explosiones sobre el casco (8 a la vez)
+    // (v1.47, el usuario: «polvo y cristales brillantes») puntos que destellan al girar, y los restos que caen al planeta
+    // y arden al entrar en la atmósfera, como estrellas fugaces (rayas)
+    const NCr = KF.CRISTALES ?? 900;
+    this.crP = new Float32Array(NCr * 3);
+    this.crV = new Float32Array(NCr * 3);
+    const gcr = new THREE.BufferGeometry();
+    this.aCrPos = new THREE.BufferAttribute(new Float32Array(NCr * 3), 3);
+    this.aCrCol = new THREE.BufferAttribute(new Float32Array(NCr * 3), 3);
+    gcr.setAttribute('position', this.aCrPos);
+    gcr.setAttribute('color', this.aCrCol);
+    this.cristales = new THREE.Points(gcr, new THREE.PointsMaterial({ size: 2.2, sizeAttenuation: false, vertexColors: true,
+      blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false }));
+    this.cristales.frustumCulled = false;
+    this.cristales.visible = false;
+    L.escena.add(this.cristales);
+    const NF = KF.FUGACES ?? 26;
+    this.fu = [];
+    const gf = new THREE.BufferGeometry();
+    this.aFuPos = new THREE.BufferAttribute(new Float32Array(NF * 6), 3);
+    this.aFuCol = new THREE.BufferAttribute(new Float32Array(NF * 6), 3);
+    gf.setAttribute('position', this.aFuPos);
+    gf.setAttribute('color', this.aFuCol);
+    this.fugaces = new THREE.LineSegments(gf, new THREE.LineBasicMaterial({ vertexColors: true, blending: THREE.AdditiveBlending,
+      depthWrite: false, transparent: true, toneMapped: false }));
+    this.fugaces.frustumCulled = false;
+    this.fugaces.visible = false;
+    L.escena.add(this.fugaces);
+    // la onda del reactor (un anillo que crece) y el fogonazo
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 256;
+    const c = cv.getContext('2d');
+    // (v1.47, el usuario: «una onda expansiva en anillo que se abre en el vacío»): un anillo fino
+    const gr = c.createRadialGradient(128, 128, 100, 128, 128, 128);
+    gr.addColorStop(0, 'rgba(120,180,255,0)');
+    gr.addColorStop(0.55, 'rgba(160,200,255,0.25)');
+    gr.addColorStop(0.82, 'rgba(235,245,255,1)');
+    gr.addColorStop(0.9, 'rgba(180,215,255,0.5)');
+    gr.addColorStop(1, 'rgba(120,180,255,0)');
+    c.fillStyle = gr;
+    c.fillRect(0, 0, 256, 256);
+    this.onda = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv),
+      blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false, side: THREE.DoubleSide, opacity: 0 }));
+    this.onda.rotation.x = -Math.PI / 2;
+    this.onda.visible = false;
+    L.escena.add(this.onda);
+    const cv2 = document.createElement('canvas');
+    cv2.width = cv2.height = 128;
+    const c2 = cv2.getContext('2d');
+    const g2 = c2.createRadialGradient(64, 64, 2, 64, 64, 64);
+    g2.addColorStop(0, 'rgba(255,255,255,1)');
+    g2.addColorStop(0.25, 'rgba(200,230,255,0.6)');
+    g2.addColorStop(1, 'rgba(120,180,255,0)');
+    c2.fillStyle = g2;
+    c2.fillRect(0, 0, 128, 128);
+    this.texBrillo = new THREE.CanvasTexture(cv2);
+    this.brillo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texBrillo, blending: THREE.AdditiveBlending, depthWrite: false,
+      transparent: true, toneMapped: false, opacity: 0 }));
+    this.brillo.visible = false;
+    L.escena.add(this.brillo);
+    // el brillo azul diminuto entre los restos (final 3) y las balizas que parpadean
+    this.azul = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texBrillo, color: 0x8fc8ff, blending: THREE.AdditiveBlending,
+      depthWrite: false, transparent: true, toneMapped: false, opacity: 0 }));
+    this.azul.visible = false;
+    L.escena.add(this.azul);
+    this.balizas = Object.entries(this.info.marcas).filter(([k]) => k.startsWith('baliza')).map(([nombre, p], k) => {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texBrillo, color: k % 3 ? 0xff3020 : 0xffffff,
+        blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false }));
+      s.position.copy(b2t(...p));
+      s.scale.setScalar(4);
+      s.userData.fase = Math.random() * 6;
+      // (v1.47) de qué módulo es (marca_baliza_<módulo>_<k>): se apaga con su sección
+      s.userData.m = nombre.split('_').slice(1, -1).join('_') || null;
+      s.visible = false;
+      L.escena.add(s);
+      return s;
+    });
+  }
+
+  /** (v1.40) La textura de una bocanada de humo (manchas blandas dentro de un círculo). */
+  _texHumo() {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 128;
+    const c = cv.getContext('2d');
+    const im = c.createImageData(128, 128);
+    // (v1.44, el usuario: «humo con forma… nada de círculos grises»): grumos de tamaños distintos y un ruido por capas que
+    // la come por dentro y por el borde (antes, unas manchas redondas)
+    const r = [];
+    for (let k = 0; k < 22; k++) {
+      const a = Math.random() * Math.PI * 2, d = Math.random() * 34;
+      r.push([64 + Math.cos(a) * d, 64 + Math.sin(a) * d, 8 + Math.random() * 20]);
+    }
+    const rnd = new Float32Array(33 * 33).map(() => Math.random());
+    const ruido = (x, y, f) => {
+      const u = x / 128 * f, v = y / 128 * f, i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j;
+      const g = (a, b) => rnd[((a % 32) + 32) % 32 * 33 + ((b % 32) + 32) % 32];
+      const s1 = fu * fu * (3 - 2 * fu), s2 = fv * fv * (3 - 2 * fv);
+      return (g(i, j) * (1 - s1) + g(i + 1, j) * s1) * (1 - s2) + (g(i, j + 1) * (1 - s1) + g(i + 1, j + 1) * s1) * s2;
+    };
+    for (let y = 0; y < 128; y++) for (let x = 0; x < 128; x++) {
+      let v = 0;
+      for (const [cx, cy, rr] of r) v += Math.max(0, 1 - Math.hypot(x - cx, y - cy) / rr) ** 1.5;
+      const d = Math.max(0, 1 - Math.hypot(x - 64, y - 64) / 64);
+      const n = 0.55 * ruido(x, y, 4) + 0.3 * ruido(x, y, 9) + 0.15 * ruido(x, y, 19);
+      const a = Math.max(0, Math.min(1, v * 0.9) * Math.min(1, d * 2.6) - (1 - n) * 0.55) * 1.6;
+      const i = (y * 128 + x) * 4;
+      im.data[i] = im.data[i + 1] = im.data[i + 2] = Math.round(a * 255);
+      im.data[i + 3] = 255;
+    }
+    c.putImageData(im, 0, 0);
+    return new THREE.CanvasTexture(cv);
+  }
+
+  _humoEn(p, tam, t0, vida, v) {
+    const i = this.nHumos++ % this.aHumoD.count;
+    this.aHumoP.setXYZ(i, p.x, p.y, p.z);
+    this.aHumoD.setXYZ(i, tam, t0, vida);
+    this.aHumoV.setXYZ(i, v.x, v.y, v.z);
+    this.aHumoP.needsUpdate = this.aHumoD.needsUpdate = this.aHumoV.needsUpdate = true;
+  }
+
+  /** (v1.40) n chispas desde p, a unos vel m/s, que duran unos s. */
+  /** (v1.46, pendiente de la v1.45: «los restos de la explosión se ven planos», porque las chapas del casco son finas)
+   *  trozos macizos e irregulares (vigas, bloques, cascotes del módulo del reactor) que salen al rojo y se enfrían y se
+   *  ennegrecen mientras giran a la deriva. Con luz de verdad (el sol y las explosiones les dan volumen). */
+  _trozosEn(p, n, t0) {
+    const L = this.L;
+    if (!this.trozosVol) {
+      // una piedra irregular (icosaedro con los vértices movidos) que cada trozo estira a su manera
+      const geo = new THREE.IcosahedronGeometry(1, 1);
+      const pos = geo.attributes.position;
+      const vista = new Map();
+      for (let i = 0; i < pos.count; i++) {
+        const k = `${pos.getX(i).toFixed(3)},${pos.getY(i).toFixed(3)},${pos.getZ(i).toFixed(3)}`;
+        if (!vista.has(k)) vista.set(k, 0.62 + Math.random() * 0.6);
+        const f = vista.get(k);
+        pos.setXYZ(i, pos.getX(i) * f, pos.getY(i) * f, pos.getZ(i) * f);
+      }
+      geo.computeVertexNormals();
+      const mat = new THREE.MeshStandardMaterial({ color: 0x5a5c60, roughness: 0.62, metalness: 0.55, flatShading: true });
+      // (el color de cada trozo es su calor: brilla con él, no lo tiñe)
+      // (con un atributo propio, aCalor: three no activa el color por instancia en este caso)
+      mat.onBeforeCompile = (sh) => {
+        sh.vertexShader = 'attribute vec3 aCalor;\nvarying vec3 vCalor;\n' + sh.vertexShader
+          .replace('#include <begin_vertex>', '#include <begin_vertex>\nvCalor = aCalor;');
+        sh.fragmentShader = 'varying vec3 vCalor;\n' + sh.fragmentShader
+          .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\nfloat rim_ = pow(1.0 - abs(dot(normal, normalize(vViewPosition))), 2.0);\ntotalEmissiveRadiance += vCalor * (0.15 + 1.8 * rim_);');
+      };
+      // (v1.47: el calor, en los bordes: «bordes al rojo que se enfrían», no caras rojas)
+      mat.customProgramCacheKey = () => 'trozosVol_v147';
+      const N = KF.TROZOS_VOL ?? 220;
+      const calor = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
+      calor.setUsage(THREE.DynamicDrawUsage);
+      geo.setAttribute('aCalor', calor);
+      const m = this.trozosVol = new THREE.InstancedMesh(geo, mat, N);
+      m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      m.frustumCulled = false;
+      m.count = 0;
+      this.trozosDat = [];
+      L.escena.add(m);
+    }
+    const m = this.trozosVol;
+    this.trozosDat.length = 0;
+    for (let i = 0; i < Math.min(n, m.instanceMatrix.count); i++) {
+      const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.7, Math.random() - 0.5).normalize();
+      const grande = Math.random() < 0.12;
+      const lado = grande ? 4 + Math.random() * 6 : 0.8 + Math.pow(Math.random(), 2) * 3.4;
+      this.trozosDat.push({
+        p: p.clone().addScaledVector(d, 4 + Math.random() * 26),
+        v: d.multiplyScalar((grande ? 4 : 9) + Math.random() * (grande ? 8 : 24)),
+        esc: new THREE.Vector3(lado * (0.5 + Math.random()), lado * (0.25 + Math.random() * 0.6), lado * (0.4 + Math.random() * 0.9)),
+        q: new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.random() * 6.3, Math.random() * 6.3, Math.random() * 6.3)),
+        eje: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
+        giro: (Math.random() - 0.5) * (grande ? 0.4 : 1.4),
+        calor: 0.35 + Math.random() * 0.5,
+        enfria: 0.8 + Math.random() * 1.8,
+        t0: t0 + Math.random() * 0.25,
+      });
+    }
+    m.count = this.trozosDat.length;
+  }
+
+  _updateTrozos(t, dt) {
+    const m = this.trozosVol;
+    if (!m || !this.trozosDat?.length) return;
+    const M = new THREE.Matrix4(), dq = new THREE.Quaternion(), aC = m.geometry.attributes.aCalor, c = aC.array;
+    this.trozosDat.forEach((r, i) => {
+      const e = t - r.t0;
+      if (e < 0) {
+        M.makeScale(0, 0, 0);
+        m.setMatrixAt(i, M);
+        return;
+      }
+      r.p.addScaledVector(r.v, dt);
+      r.v.multiplyScalar(1 - dt * 0.05);
+      r.q.multiply(dq.setFromAxisAngle(r.eje, r.giro * dt));
+      M.compose(r.p, r.q, r.esc);
+      m.setMatrixAt(i, M);
+      // al blanco → naranja → rojo oscuro → apagado (más lento los grandes, que guardan el calor)
+      const k = Math.max(0, r.calor * Math.exp(-e / r.enfria));
+      c[i * 3] = Math.min(1.4, k * 1.05);
+      c[i * 3 + 1] = Math.min(0.8, k * k * 0.32);
+      c[i * 3 + 2] = Math.min(0.4, k * k * k * 0.07);
+    });
+    m.instanceMatrix.needsUpdate = true;
+    aC.needsUpdate = true;
+  }
+
+  _chispasEn(p, n, vel, t0, vida = 1.6) {
+    const N = this.chT.length / 2;
+    for (let k = 0; k < n; k++) {
+      const i = this.nChispas++ % N;
+      const d = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+      const s = vel * (0.3 + Math.random() * 0.9);
+      this.chP.set([p.x, p.y, p.z], i * 3);
+      this.chV.set([d.x * s, d.y * s, d.z * s], i * 3);
+      this.chT[i * 2] = t0 + Math.random() * 0.15;
+      this.chT[i * 2 + 1] = vida * (0.4 + Math.random() * 0.8);
+    }
+  }
+
+  _chispasUpdate(t) {
+    const N = this.chT.length / 2, P = this.aChPos.array, C = this.aChCol.array;
+    for (let i = 0; i < N; i++) {
+      const s = t - this.chT[i * 2], vida = this.chT[i * 2 + 1];
+      const j = i * 6;
+      if (s < 0 || s > vida) {
+        for (let k = 0; k < 6; k++) P[j + k] = C[j + k] = 0;
+        continue;
+      }
+      const e = s / vida;
+      const vx = this.chV[i * 3], vy = this.chV[i * 3 + 1], vz = this.chV[i * 3 + 2];
+      const x = this.chP[i * 3] + vx * s, y = this.chP[i * 3 + 1] + vy * s, z = this.chP[i * 3 + 2] + vz * s;
+      const l = 0.05 + 0.05 * (1 - e);         // (la raya: lo que recorre en este rato)
+      P[j] = x; P[j + 1] = y; P[j + 2] = z;
+      P[j + 3] = x - vx * l; P[j + 4] = y - vy * l; P[j + 5] = z - vz * l;
+      const b = (1 - e) * (1 - e);
+      C[j] = 3.0 * b; C[j + 1] = (2.2 - 1.6 * e) * b; C[j + 2] = (1.2 - 1.15 * e) * b;
+      C[j + 3] = 1.2 * b; C[j + 4] = 0.35 * b; C[j + 5] = 0.05 * b;
+    }
+    this.aChPos.needsUpdate = this.aChCol.needsUpdate = true;
+  }
+
+  /** (v1.40) Una luz de explosión que alumbra el casco de alrededor. */
+  _luzEn(p, radio, fuerza, dura, t0) {
+    const U = this.mat.uniforms, i = this.nLuces++ % 8;
+    U.uLuzP.value[i].set(p.x, p.y, p.z, t0);
+    U.uLuzD.value[i].set(radio, fuerza, dura, 0);
+  }
+
+  /** (v1.40) Un módulo que revienta: el fogonazo, varias bolas seguidas, chispas, humo y su luz. */
+  _revientaModulo(q, t) {
+    const pieza = () => b2t(...q.ps[Math.floor(Math.random() * q.ps.length)].c);
+    this._luzEn(q.c, 55, 2.2, 0.9, t);
+    this._luzEn(pieza(), 30, 2.0, 0.6, t + 0.35 + Math.random() * 0.3);
+    // (v1.47, el usuario: «pequeñas explosiones recorren el casco… fuego que se apaga enseguida (no hay oxígeno)»)
+    this._bola(q.c, 14 + Math.random() * 6, t, 0.35);                      // (el fogonazo: corto)
+    for (let k = 0; k < 5; k++) {
+      const p = pieza();
+      this._bola(p, 5 + Math.random() * 8, t + k * 0.1 + Math.random() * 0.2, 0.35 + Math.random() * 0.4);
+      this._chispasEn(p, 12, 24, t + k * 0.1);
+    }
+    for (let k = 0; k < 3; k++) {
+      const p = pieza();
+      const v = p.clone().sub(q.c).normalize().multiplyScalar(4 + Math.random() * 5);
+      this._humoEn(p, 10 + Math.random() * 10, t + 0.1 + Math.random() * 0.3, 1.6 + Math.random() * 1.0, v);
+    }
+  }
+
+  _bola(p, tam, t0, vida) {
+    const i = this.nBolas++ % KF.BOLAS;
+    this.aBolaP.setXYZ(i, p.x, p.y, p.z);
+    this.aBolaD.setXYZ(i, tam, t0, vida);
+    this.aBolaP.needsUpdate = this.aBolaD.needsUpdate = true;
+  }
+
+  /** Las explosiones: en cadena por los módulos (desde el Hangar) y después el reactor, que se lo lleva todo. */
+  _plan(tCadena, tReactor) {
+    const P = this.info.piezas, D = this.datos, n = P.length;
+    const nuc = this.info.marcas.nucleo ?? [30, -30, 25];
+    const cN = b2t(...nuc);
+    this.nucleo = cN;
+    const h0 = b2t(0, 0, 4);
+    const mods = {};
+    for (const p of P) (mods[p.m] ??= []).push(p);
+    // cada módulo, su hora en la cadena (más lejos del Hangar, más tarde); el reactor va el último
+    this.cadena = [];
+    for (const [m, ps] of Object.entries(mods)) {
+      const c = ps.reduce((a, p) => a.add(b2t(...p.c)), new THREE.Vector3()).multiplyScalar(1 / ps.length);
+      const t = m === 'reactor' ? tReactor - 0.4 : tCadena + c.distanceTo(h0) / 30 * KF.CADENA_S;
+      // (los pasillos y la viga, con el módulo más cercano de la cadena: van después, abajo)
+      this.cadena.push({ m, c, t, hecha: false, ps });
+    }
+    this.cadena.sort((a, b) => a.t - b.t);
+    // (v1.44, el usuario: «restos con volumen: paneles del casco, módulos, paneles solares rotos»): las placas vecinas del
+    // mismo módulo forman un trozo (rejilla de TROZO m), que salta entero; solo una parte salta suelta
+    const T = KF.TROZO ?? 0;
+    const trozos = {};
+    const deTrozo = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const p = P[i];
+      // (v1.47, el usuario: «la cúpula de la oficina girando»): la cúpula entera, un trozo
+      const cupula = /^office__(cupula|anillo_cupula|luz_anillo)/.test(p.n ?? '');
+      if (!cupula && (!T || Math.random() < (KF.TROZO_SUELTAS ?? 0.25))) continue;
+      const k = cupula ? 'cupula' : `${p.m}|${Math.floor(p.c[0] / T)}|${Math.floor(p.c[1] / T)}|${Math.floor(p.c[2] / T)}`;
+      const t_ = (trozos[k] ??= { suma: new THREE.Vector3(), n: 0, azar: Math.random() });
+      t_.suma.add(b2t(...p.c));
+      t_.n++;
+      deTrozo[i] = t_;
+    }
+    for (const [k_, t_] of Object.entries(trozos)) {
+      t_.c = t_.suma.multiplyScalar(1 / t_.n);
+      t_.e = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+      t_.giro = (Math.random() - 0.5) * 1.2 / Math.sqrt(t_.n);
+      if (k_ === 'cupula') {
+        t_.giro = 0.55;
+        t_.e.set(0.3, 1, 0.2).normalize();
+      }
+    }
+    for (let i = 0; i < n; i++) {
+      const p = P[i];
+      const c = b2t(...p.c);
+      const mod = this.cadena.find((q) => q.m === p.m);
+      // en la cadena salta una parte de las placas de cada módulo; el resto, con el reactor
+      // (un trozo entero salta en la cadena o con el reactor, no cada placa por su lado)
+      const enCadena = mod.t < tReactor - 0.5 && (deTrozo[i] ? deTrozo[i].azar : Math.random()) < KF.CADENA_PARTE;
+      let t0, v;
+      if (enCadena) {
+        t0 = mod.t + Math.random() * 0.7;
+        v = c.clone().sub(mod.c).normalize().multiplyScalar(4 + Math.random() * 12).add(new THREE.Vector3((Math.random() - 0.5) * 3, Math.random() * 3, (Math.random() - 0.5) * 3));
+      } else {
+        const d = c.distanceTo(cN);
+        t0 = tReactor + d / KF.ONDA_VEL;
+        // (v1.40) las piezas grandes, más lentas; y una parte del casco lejos del núcleo se queda: rota, a la deriva
+        const tam = Math.max(...(p.t ?? [1, 1, 1]));
+        const resto = d > (KF.RESTOS_LEJOS ?? 45) && Math.random() < (KF.RESTOS ?? 0.3);
+        const k = resto ? 0.05 + Math.random() * 0.08 : (0.5 + Math.random()) / (1 + tam / 8);
+        v = c.clone().sub(cN).normalize().multiplyScalar((KF.VEL_REACTOR * (60 / (40 + d)) + 8) * k)
+          .add(new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).multiplyScalar(resto ? 1 : 6));
+      }
+      const e = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+      // (v1.40) el calor de cada pieza, muy distinto: unas al blanco, otras casi apagadas
+      // (v1.47: menos: los trozos al rojo por los bordes, no placas naranjas)
+      const calor = enCadena ? 0.3 + Math.random() * 0.45 : Math.pow(Math.random(), 2.2) * 0.85;
+      // (v1.47) cuándo se apaga su sección: con su explosión de la cadena (o con el reactor)
+      const apaga = mod.m === 'reactor' || !this.cadena.some((q) => q.m === mod.m) ? tReactor - 0.6 : Math.min(mod.t + 0.15, tReactor - 0.6);
+      D.set([apaga, 0, 0, 0], (3 * n + i) * 4);
+      // (un trozo: todas sus placas a la vez, con la velocidad y el giro del trozo, alrededor de su centro)
+      const tr = deTrozo[i];
+      if (tr) {
+        if (!tr.hecho || tr.hecho.cadena !== enCadena) tr.hecho = { t0, v: v.clone().multiplyScalar(0.8), cadena: enCadena };
+        D.set([tr.c.x, tr.c.y, tr.c.z, tr.hecho.t0], i * 4);
+        D.set([tr.hecho.v.x, tr.hecho.v.y, tr.hecho.v.z, tr.giro], (n + i) * 4);
+        D.set([tr.e.x, tr.e.y, tr.e.z, calor], (2 * n + i) * 4);
+        continue;
+      }
+      D.set([c.x, c.y, c.z, t0], i * 4);
+      D.set([v.x, v.y, v.z, (Math.random() - 0.5) * 2.4], (n + i) * 4);
+      D.set([e.x, e.y, e.z, calor], (2 * n + i) * 4);
+    }
+    this.texPiezas.needsUpdate = true;
+  }
+
+  /** Empieza el final n (1–4). (v1.47) o.v: la nave sale del tubo de lanzamiento a esa velocidad y sigue desde ahí,
+   *  sin cortes (S7: los motores; S8: el silencio, se gira y aparece la estación); sin o.v, como antes (lejos). */
+  empieza(n, o = {}) {
+    const L = this.L, C = L.cabina;
+    this.n = n;
+    this.sigue = o.v ? o.v.clone() : null;
+    this.errante = n === 2 || n === 4;
+    // (v1.44) en los finales 3 y 4 Slaimi no está (aunque el debug fuerce el final con él vivo)
+    if (n === 3 || n === 4) this.L.slaimi = false;
+    this.activo = true;
+    this.t = 0;
+    this.hechos = new Set();
+    if (this.trozosVol) { this.trozosVol.count = 0; this.trozosDat.length = 0; }   // (v1.46: si se repite el final)
+    if (!this.grupo) {
+      // (aún cargando: espera en negro)
+      this.espera = true;
+      this.carga().then(() => {
+        this.espera = false;
+        this._monta();
+      });
+      return;
+    }
+    this._monta();
+  }
+
+  _monta() {
+    const L = this.L, C = L.cabina;
+    // fuera todo lo de dentro de la estación: solo la nave
+    for (const [z, Z] of Object.entries(L.zonas)) if (Z.malla) Z.malla.visible = [...K.CABINA.NAVE, L.R.fin?.nave?.zona].includes(z);
+    if (L.mLlamas) L.mLlamas.visible = false;
+    if (L.mHumo) L.mHumo.visible = false;
+    if (C.fuera) C.fuera.visible = false;
+    if (L.ab) L.ab.grupo.visible = false;
+    this.grupo.visible = this.cielo.visible = this.bolas.visible = this.humo.visible = this.chispas.visible = true;
+    this.cristales.visible = this.fugaces.visible = true;
+    this.esfera.visible = false;
+    this.crT0 = null;
+    this.fu.length = 0;
+    this.aHumoD.array.fill(-99);
+    this.aHumoD.needsUpdate = true;
+    this.chT.fill(-99);
+    for (const v of this.mat.uniforms.uLuzP.value) v.w = -99;
+    this.tOnda = 0;
+    for (const b of this.balizas) b.visible = true;
+    this.bolas.material.uniforms.uAtlas.value = L.texLlama;
+    this.uT.value = -1;
+    this.uFlash.value.set(0, 0, 0);
+    // la nave: lejos, al este y algo por debajo, con el morro hacia la estación (y la estación arriba en el parabrisas)
+    const T = b2t(...KF.MIRA);
+    const g = C.naveG;
+    if (this.sigue) {
+      // (v1.47) sigue donde está: saliendo del tubo, con el morro al norte
+      this.v = this.sigue.clone();
+      this.rot0 = { y: g.rotation.y, x: g.rotation.x };
+    } else {
+      const P = b2t(...KF.DESDE);
+      const d = T.clone().sub(P).normalize();
+      g.position.copy(P);
+      g.rotation.set(Math.asin(d.y) - KF.MORRO_BAJO, Math.atan2(-d.x, -d.z), 0, 'YXZ');
+      this.v = d.clone().multiplyScalar(-KF.DERIVA);
+      this.rot0 = null;
+    }
+    g.rotation.z = 0;
+    this.yaw0 = g.rotation.y;
+    this.pitch0 = g.rotation.x;
+    L.pitch = KF.MIRA_ARRIBA;
+    L.yaw = Math.PI / 2;
+    L.lente = 1;
+    L.cam.far = KF.LEJOS;
+    L.cam.updateProjectionMatrix();
+    const tR = this.errante ? KF.ERRANTE.REACTOR : KF.REACTOR;
+    this._plan(this.errante ? KF.ERRANTE.CADENA : KF.CADENA, tR);
+    this.tReactor = tR;
+    // el zumbido de la cabina sigue (bajo): en el espacio no se oye nada más (el rugido lo corta update, al apagarse)
+    if (!C.zumbido) C.zumbido = L.g.audio?.lib?.play('final/cabina', { loop: true, volume: K.CABINA.ZUMBIDO * 0.7, pitchVar: 0, volVar: 0 }) || null;
+    this.respIn = 1.0;
+    // (v1.43) Slaimi junto a la ventanilla, de espaldas, mirando fuera
+    C.final4Activo = true;
+    C.enVentana = !!L.slaimi;
+    C.slaimiGiro = L.slaimi ? 0 : null;
+  }
+
+  /** (v1.51, el prólogo «La llegada») La estación intacta por la ventanilla: quieta (sin explosión), con el planeta y las
+   *  estrellas y las balizas parpadeando. ver: si se ve (fuera del tubo) o no. */
+  llegada(dt, ver = true) {
+    if (!this.grupo) return;
+    const L = this.L;
+    this.grupo.visible = this.cielo.visible = ver;
+    for (const b of this.balizas) b.visible = ver;
+    this.bolas.visible = this.humo.visible = this.chispas.visible = false;
+    if (this.cristales) this.cristales.visible = this.fugaces.visible = false;
+    if (!ver) return;
+    this.tL = (this.tL ?? 0) + dt;
+    this.uT.value = -1;
+    for (const v of this.mat.uniforms.uLuzP.value) v.w = -99;
+    this.uFlash.value.set(0, 0, 0);
+    const cp = L.cam.getWorldPosition(new THREE.Vector3());
+    this.cielo.position.copy(cp);
+    this.planeta.position.set(0, -KF.PLANETA_R / Math.cos(KF.HORIZONTE), 0);
+    for (const b of this.balizas) b.material.opacity = Math.sin(this.tL * 3 + b.userData.fase) > 0.55 ? 1 : 0.08;
+    if (L.cam.far < KF.LEJOS) {
+      L.cam.far = KF.LEJOS;
+      L.cam.updateProjectionMatrix();
+    }
+  }
+
+  /** Cada fotograma (la cabina le cede todo). */
+  update(dt) {
+    if (!this.activo || this.espera) return;
+    const L = this.L, C = L.cabina;
+    this.t += dt;
+    const t = this.t;
+    const una = (k, f) => {
+      if (t >= k && !this.hechos.has(k)) {
+        this.hechos.add(k);
+        f();
+      }
+    };
+    this.uT.value = t;
+    this.bolas.material.uniforms.uT.value = t;
+    this.humo.material.uniforms.uT.value = t;
+    this._chispasUpdate(t);
+    const g = C.naveG;
+    // el cielo sigue a la cámara (el planeta y las estrellas están «en el infinito»)
+    const cp = L.cam.getWorldPosition(new THREE.Vector3());
+    this.cielo.position.copy(cp);
+    this.planeta.position.set(0, -KF.PLANETA_R / Math.cos(KF.HORIZONTE), 0);
+    for (const b of this.balizas) b.material.opacity = t < this.tReactor && Math.sin(t * 3 + b.userData.fase) > 0.55 ? 1 : 0.05;
+    // (v1.47) el reactor, rojo en el centro desde el principio (late despacio)
+    if (t < this.tReactor - (KF.REACTOR_LATE ?? 1)) {
+      this.brillo.visible = true;
+      this.brillo.position.copy(this.nucleo);
+      this.brillo.material.color.setRGB(1.0, 0.16, 0.06);
+      const pl = 0.5 + 0.5 * Math.sin(t * 2.6);
+      this.brillo.scale.setScalar(16 + 4 * pl);
+      this.brillo.material.opacity = 0.55 + 0.3 * pl;
+    }
+    // las explosiones de la cadena: pequeñas, por los módulos (sin sonido: es el espacio)
+    for (const q of this.cadena) {
+      if (!q.hecha && t >= q.t && q.m !== 'reactor') {
+        q.hecha = true;
+        this._revientaModulo(q, t);
+      }
+    }
+    for (const b of this.balizas) {
+      // (se apagan con su sección; las demás, con el reactor)
+      const q = b.userData.m ? this.cadena.find((c_) => c_.m === b.userData.m) : null;
+      const off = q && q.m !== 'reactor' ? q.t + 0.15 : this.tReactor - 0.6;
+      if (t >= off) b.material.opacity = 0;
+    }
+    this._vuelo(dt, t);
+    // (v1.44, el usuario: «reactor brillando antes de estallar») unos segundos antes late en azul, cada vez más
+    const late = 0;   // (v1.47: sin el latido azul de antes: ahora de rojo a blanco, abajo)
+    const pre = KF.REACTOR_LATE ?? 1.0;
+    if (late && t >= this.tReactor - late && t < this.tReactor - pre) {
+      const k = (t - (this.tReactor - late)) / (late - pre);
+      const pulso = 0.5 + 0.5 * Math.sin(t * (3 + 14 * k * k));
+      this.brillo.visible = true;
+      this.brillo.position.copy(this.nucleo);
+      this.brillo.material.color.setRGB(0.5, 0.75, 1.0);
+      this.brillo.scale.setScalar(14 + 22 * k + 10 * pulso * k);
+      this.brillo.material.opacity = (0.25 + 0.55 * k) * (0.6 + 0.4 * pulso);
+      this._luzLate = this._luzLate ?? 0;
+      if (t - this._luzLate > 0.35) {
+        this._luzLate = t;
+        this._luzEn(this.nucleo, 70, 0.6 + 1.6 * k * pulso, 0.25, t);
+      }
+    }
+    if (t >= this.tReactor - pre && t < this.tReactor) {
+      // (v1.47, el usuario: «el núcleo brilla cada vez más, hasta blanco») de rojo a blanco, cada vez más grande
+      const k = (t - (this.tReactor - pre)) / pre;
+      this.brillo.visible = true;
+      this.brillo.position.copy(this.nucleo);
+      this.brillo.material.color.setRGB(1.0, 0.16 + 0.84 * k * k, 0.06 + 0.94 * k * k);
+      this.brillo.scale.setScalar(20 + 46 * k * k);
+      this.brillo.material.opacity = 0.85 + 0.15 * k;
+      if (Math.random() < dt * 8) this._luzEn(this.nucleo, 70, 0.6 + 1.6 * k, 0.25, t);
+    }
+    // el reactor: el fogonazo blanco, la onda y todo se va
+    una(this.tReactor, () => {
+      // (v1.47, el usuario: «un fogonazo blanco que llena la ventanilla y deslumbra (la imagen se quema y vuelve poco a
+      // poco); una onda en anillo; la nave se parte en trozos grandes»)
+      this.flash = 1;
+      this.tFlash = t;
+      this.brillo.visible = this.onda.visible = true;
+      this.esfera.visible = false;
+      this.brillo.material.color.setRGB(1, 1, 1);
+      this._luzEn(this.nucleo, 230, 2.2, 1.2, t);
+      for (let k = 0; k < 14; k++) {
+        const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.6, Math.random() - 0.5).normalize();
+        const p = this.nucleo.clone().addScaledVector(d, 8 + Math.random() * 40);
+        this._bola(p, 24 + Math.random() * 30, t + Math.random() * 0.4, 0.6 + Math.random() * 0.6);
+      }
+      this._chispasEn(this.nucleo, 260, 90, t, 1.6);
+      this._trozosEn(this.nucleo, KF.TROZOS_VOL ?? 150, t);
+      this._cristalesEn(this.nucleo, t);
+      // el humo: nubes finas que se abren deprisa y se van
+      for (let k = 0; k < 30; k++) {
+        const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.7, Math.random() - 0.5).normalize();
+        const p = this.nucleo.clone().addScaledVector(d, 10 + Math.random() * 40);
+        this._humoEn(p, 30 + Math.random() * 40, t + 0.2 + Math.random() * 1.0, 2.0 + Math.random() * 1.5, d.multiplyScalar(14 + Math.random() * 14));
+      }
+      // (lo único que se nota: el temblor grave que llega por el casco un segundo después; la explosión no se oye)
+      this.tOnda = t + (KF.TEMBLOR ?? 1.0);
+      if (L.slaimi && !this.errante) C.slaimiLuz && (C.slaimiLuz.material.opacity = 1.6);
+    });
+    this._updateTrozos(t, dt);
+    if (t >= this.tReactor) {
+      const e = t - this.tReactor;
+      this.brillo.position.copy(this.nucleo);
+      this.brillo.scale.setScalar(70 + 120 * (1 - Math.exp(-e * 3.0)));
+      this.brillo.material.opacity = Math.max(0, 1.1 * Math.exp(-e / 0.35));
+      this.onda.position.copy(this.nucleo);
+      const r = KF.ONDA_VEL * e;
+      this.onda.scale.setScalar(Math.max(1, r));
+      this.onda.material.opacity = Math.max(0, 1 - e / 2.6) * 0.7;
+      // (el anillo, algo vuelto hacia ti: que se vea abrirse, no de canto)
+      const aCam = L.cam.getWorldPosition(new THREE.Vector3()).sub(this.nucleo).normalize();
+      const nrm = new THREE.Vector3(0, 1, 0).multiplyScalar(0.82).addScaledVector(aCam, 0.18).normalize();
+      this.onda.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), nrm);
+      this.uFlash.value.setScalar(Math.max(0, 1.4 * Math.exp(-e / 0.5)));
+      // (v1.40) los trozos que aún arden se rompen otra vez, de vez en cuando (pequeñas explosiones entre los restos)
+      if (e > 0.8 && e < 5 && Math.random() < dt * 1.2) {
+        const p = this.nucleo.clone().add(new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.5, Math.random() - 0.5)
+          .multiplyScalar(2 * (30 + e * 12)));
+        this._bola(p, 4 + Math.random() * 5, t, 0.3 + Math.random() * 0.3);
+        this._chispasEn(p, 8, 16, t, 1.0);
+        this._luzEn(p, 25, 1.2, 0.4, t);
+      }
+      // (v1.47) los que caen hacia el planeta y arden al entrar en la atmósfera (estrellas fugaces)
+      if (e > 1.6 && e < 13 && this.fu.length < (KF.FUGACES ?? 26) && Math.random() < dt * 3) {
+        const d = new THREE.Vector3((Math.random() - 0.5) * 0.8, -1, (Math.random() - 0.5) * 0.8).normalize();
+        this.fu.push({ p: this.nucleo.clone().add(new THREE.Vector3((Math.random() - 0.5) * 120, -60 - Math.random() * 60, (Math.random() - 0.5) * 120)),
+          v: d.multiplyScalar(70 + Math.random() * 60), t0: t, arde: 0.4 + Math.random() * 1.2 });
+      }
+    }
+    // (v1.47) la imagen quemada: blanca un instante y vuelve poco a poco
+    if (this.tFlash !== undefined) {
+      const e = t - this.tFlash;
+      this.flash = e < 0.15 ? 1 : Math.exp(-(e - 0.15) / ((KF.FOGONAZO_S ?? 2.2) / 3));
+    }
+    this._cristalesUpdate(t, dt);
+    this._fugacesUpdate(t, dt);
+    if (this.tOnda && t >= this.tOnda && !this.hechos.has('onda')) {
+      this.hechos.add('onda');
+      L.sacude = Math.max(L.sacude ?? 0, KF.SACUDIDA_ONDA ?? 0.9);
+      this._son('final/temblor', { volume: 1.0 });
+    }
+    if (!this.errante) L.sacude = Math.max(0, (L.sacude ?? 0) - dt * 0.45);
+    if (this.errante) this._errante(dt);
+    else this._calma(dt);
+    this._slaimiVentana(t);
+    this._guia(dt, t);
+    C._slaimi(dt);
+    C._pantallas(dt);
+  }
+
+  /** (v1.43) Slaimi junto a la ventanilla: le ilumina la explosión (blanco del reactor, naranja de la cadena) y, ya en
+   *  calma, se da la vuelta hacia ti y brilla unos segundos. */
+  _slaimiVentana(t) {
+    const C = this.L.cabina;
+    if (!this.L.slaimi || !C) return;
+    const ex = t > this.tReactor ? Math.exp(-(t - this.tReactor) / 2.5) : 0;
+    const cadena = this.cadena.reduce((a, q) => (q.hecha && t - q.t < 1.5 ? Math.max(a, 1 - (t - q.t) / 1.5) : a), 0);
+    const k = KF.SLAIMI_LUZ ?? 1.6;
+    // (en los finales del Errante se vuelve hacia ti al asustarse, justo antes de empujarte)
+    const giro = this.errante ? suave(KF.ERRANTE.SLAIMI - 0.7, KF.ERRANTE.SLAIMI - 0.1, t)
+      : suave(KF.SLAIMI_GIRA, KF.SLAIMI_GIRA + KF.SLAIMI_GIRA_S, t);
+    const brilla = this.errante ? 0 : (t > KF.SLAIMI_GIRA ? Math.min(1, (t - KF.SLAIMI_GIRA) / 0.6) * (t < KF.SLAIMI_GIRA + KF.SLAIMI_BRILLA_S ? 1 : Math.max(0, 1 - (t - KF.SLAIMI_GIRA - KF.SLAIMI_BRILLA_S) / 2)) : 0);
+    // su luz: la de la cabina (que se le vea siempre), la explosión y, al girarse, la suya
+    const base = 0.72;
+    C.slaimiLuzExt = [base + k * (ex * 1.0 + cadena * 0.9) + brilla * 0.25, base + k * (ex * 1.0 + cadena * 0.55) + brilla * 0.32, base + k * (ex * 1.05 + cadena * 0.3) + brilla * 0.45];
+    C.slaimiGiro = giro * 8;
+    this.brillaSlaimi = brilla;
+  }
+
+  /** (v1.43) La vista vuelve sola hacia el parabrisas en los momentos clave (no se queda mirando paredes). */
+  _guia(dt, t) {
+    const G = KF.GUIA, L = this.L;
+    if (!G || t < G.DESDE || t > G.HASTA) return;
+    if (this.errante && t > KF.ERRANTE.GIRA) return;
+    if (!this.errante && t > KF.SLAIMI_TE_MIRA) return;      // (luego te giras hacia Slaimi)
+    const obj = Math.PI / 2 + G.YAW;
+    const d = angulo(L.yaw - obj);
+    if (Math.abs(d) > G.MAX) L.yaw = obj + Math.sign(d) * G.MAX;
+    else if (Math.abs(d) > G.LIBRE) L.yaw -= (d - Math.sign(d) * G.LIBRE) * Math.min(1, dt * G.FUERZA);
+    const dp = L.pitch - KF.MIRA_ARRIBA;
+    if (Math.abs(dp) > G.MAX) L.pitch = KF.MIRA_ARRIBA + Math.sign(dp) * G.MAX;
+    else if (Math.abs(dp) > G.LIBRE) L.pitch -= (dp - Math.sign(dp) * G.LIBRE) * Math.min(1, dt * G.FUERZA);
+  }
+
+  /** (v1.47) El vuelo de la nave, sin cortes desde el tubo: S7 los motores la sacan (el rugido se corta de golpe al
+   *  apagarse), S8 se gira despacio hacia la estación y, desde ahí, la mira siempre de frente (la ventanilla, recta)
+   *  y se aleja (o, en los finales del Errante, acelera recta hacia ella). */
+  _vuelo(dt, t) {
+    const L = this.L, C = L.cabina, g = C.naveG, S = KF.SALIDA ?? {};
+    const T = b2t(...KF.MIRA);
+    const sigue = !!this.sigue;
+    // los motores (S7): empujan hacia el morro y frenan la caída
+    if (sigue && t < (S.DURA ?? 0)) {
+      const adelante = new THREE.Vector3(0, 0, -1).applyEuler(g.rotation);
+      this.v.addScaledVector(adelante, (S.EMPUJE ?? 40) * dt);
+      this.v.y *= Math.exp(-dt * 1.4);
+      L.sacude = Math.max(L.sacude ?? 0, 0.5);
+    }
+    if (sigue && t >= (S.DURA ?? 0) && !this.hechos.has('corte')) {
+      // (el usuario: «al salir al espacio, el rugido se corta de golpe»)
+      this.hechos.add('corte');
+      C._paraMotor?.(0.03);
+      this._son('n7/respira', { volume: 0.75, pitch: 1.15, when: 0.5 });
+    }
+    // adónde mira: la estación (sin girarse sobre sí misma nunca)
+    const d = T.clone().sub(g.position).normalize();
+    // (el morro, algo por debajo de la estación: así sale en el parabrisas, por encima de la consola)
+    const objY = Math.atan2(-d.x, -d.z) + (this.lucha ?? 0), objP = Math.asin(d.y) - (KF.MORRO ?? 0.18);
+    const gira = sigue ? suave(S.GIRA?.[0] ?? 1.4, S.GIRA?.[1] ?? 3.8, t) : 1;
+    const y0 = this.rot0?.y ?? objY, p0 = this.rot0?.x ?? objP;
+    g.rotation.y = y0 + angulo(objY - y0) * gira;
+    g.rotation.x = p0 + (objP - p0) * gira;
+    g.rotation.z = 0;
+    // la velocidad: tras los motores, hacia atrás (te alejas despacio); en los del Errante, hacia ella
+    // (alejándote y subiendo hasta verla algo desde arriba, con el planeta debajo: ALTURA rad sobre su horizonte)
+    const rel = g.position.clone().sub(T);
+    const hz = Math.hypot(rel.x, rel.z);
+    const huye = new THREE.Vector3(rel.x / hz, 0, rel.z / hz).multiplyScalar(KF.DERIVA);
+    huye.y = Math.max(-30, Math.min(30, (T.y + hz * Math.tan(KF.ALTURA ?? 0.2) - g.position.y) / 1.6));
+    if (!sigue || t >= (S.DURA ?? 0)) {
+      if (this.errante && t > KF.ERRANTE.GIRA) {
+        this.v.addScaledVector(d, KF.ERRANTE.EMPUJE * dt);
+      } else {
+        this.v.lerp(huye, 1 - Math.exp(-dt / (S.FRENA ?? 1.3)));
+      }
+    }
+    g.position.addScaledVector(this.v, dt);
+    // (v1.47) al girarse hacia la estación te incorporas en el asiento: la consola tapa menos el parabrisas
+    const as_ = C._m?.asiento;
+    if (as_) {
+      const k = sigue ? suave(S.GIRA?.[0] ?? 1.4, S.GIRA?.[1] ?? 3.8, t) : 1;
+      const [ax, ay, az] = KF.INCORPORA ?? [0, 0.05, 0.15];
+      L.x = as_[0] + ax * k;
+      L.y = as_[1] + ay * k;
+      L.ojosZ = as_[2] + az * k;
+    }
+  }
+
+  /** (v1.47) Polvo y cristales que brillan, saliendo con los restos (destellan al girar). */
+  _cristalesEn(p, t) {
+    const N = this.crP.length / 3;
+    for (let i = 0; i < N; i++) {
+      const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.8, Math.random() - 0.5).normalize();
+      const s = 6 + Math.random() * 34;
+      this.crP.set([p.x + d.x * 6, p.y + d.y * 6, p.z + d.z * 6], i * 3);
+      this.crV.set([d.x * s, d.y * s, d.z * s], i * 3);
+    }
+    this.crT0 = t;
+    this.crFase = new Float32Array(N).map(() => Math.random() * 6.3);
+    this.crVel = new Float32Array(N).map(() => 2 + Math.random() * 9);
+  }
+
+  _cristalesUpdate(t, dt) {
+    if (this.crT0 === null || this.crT0 === undefined) return;
+    const e = t - this.crT0, N = this.crP.length / 3, P = this.aCrPos.array, C = this.aCrCol.array;
+    const vive = Math.max(0, 1 - Math.max(0, e - 9) / 6);
+    for (let i = 0; i < N; i++) {
+      for (let k = 0; k < 3; k++) {
+        this.crP[i * 3 + k] += this.crV[i * 3 + k] * dt;
+        this.crV[i * 3 + k] *= 1 - dt * 0.03;
+        P[i * 3 + k] = this.crP[i * 3 + k];
+      }
+      // (cada uno destella cuando le da el sol: un pico corto de vez en cuando)
+      const f = Math.pow(Math.max(0, Math.sin(t * this.crVel[i] + this.crFase[i])), 12);
+      const b = (0.12 + 1.6 * f) * vive * Math.min(1, e * 2);
+      C[i * 3] = b * 0.9; C[i * 3 + 1] = b * 0.95; C[i * 3 + 2] = b;
+    }
+    this.aCrPos.needsUpdate = this.aCrCol.needsUpdate = true;
+  }
+
+  /** (v1.47) Los restos que caen hacia el planeta: al entrar en la atmósfera arden (una raya naranja que se apaga). */
+  _fugacesUpdate(t, dt) {
+    const P = this.aFuPos.array, C = this.aFuCol.array;
+    P.fill(0);
+    C.fill(0);
+    this.fu.forEach((f, i) => {
+      f.p.addScaledVector(f.v, dt);
+      const e = t - f.t0;
+      const arde = Math.max(0, Math.min(1, (e - f.arde) / 0.5)) * Math.max(0, 1 - (e - f.arde - 1.5) / 1.5);
+      if (arde <= 0) return;
+      const cola = f.v.clone().multiplyScalar(-0.45 * (0.6 + arde));
+      const j = i * 6;
+      P[j] = f.p.x; P[j + 1] = f.p.y; P[j + 2] = f.p.z;
+      P[j + 3] = f.p.x + cola.x; P[j + 4] = f.p.y + cola.y; P[j + 5] = f.p.z + cola.z;
+      C[j] = 3.0 * arde; C[j + 1] = 1.9 * arde; C[j + 2] = 0.9 * arde;
+      C[j + 3] = 0.9 * arde; C[j + 4] = 0.2 * arde; C[j + 5] = 0.02 * arde;
+    });
+    this.aFuPos.needsUpdate = this.aFuCol.needsUpdate = true;
+  }
+
+  /** Finales 1 y 3: en silencio; la respiración se calma; Slaimi brilla (1) o el brillo azul se apaga (3). */
+  _calma(dt) {
+    const L = this.L, C = L.cabina, t = this.t;
+    // la respiración: cada vez más lenta y suave
+    this.respIn -= dt;
+    if (this.respIn <= 0 && t < KF.FIN - 3) {
+      const k = Math.min(1, t / (KF.FIN - 6));
+      this.respIn = 2.4 + 3.5 * k;
+      this._son('n7/respira', { volume: 0.55 - 0.35 * k, pitch: 1.15 - 0.3 * k });
+    }
+    // Slaimi brilla con la explosión
+    if (C.slaimiLuz && L.slaimi) {
+      const ex = t > this.tReactor ? Math.exp(-(t - this.tReactor) / 3) : 0;
+      C.slaimiLuz.material.opacity = 0.35 + 0.9 * ex + 1.1 * (this.brillaSlaimi ?? 0) * (0.85 + 0.15 * Math.sin(t * 6))
+        + (t > KF.SLAIMI_TE_MIRA ? 0.3 * suave(KF.SLAIMI_TE_MIRA, KF.SLAIMI_TE_MIRA + 1, t) : 0);
+      C.slaimiLuz.scale.setScalar(0.55 * (1 + 0.8 * (this.brillaSlaimi ?? 0)));
+    }
+    if (L.slaimi) {
+      // al final te giras hacia él: te mira, brilla y su último sonido, tranquilo
+      const h = C.sitioSlaimi();
+      if (t > KF.SLAIMI_TE_MIRA && h) {
+        const objY = Math.atan2(h[1] - L.y, h[0] - L.x);
+        const objP = Math.atan2(h[2] + NIGHT7.FINAL.LIBRE.CABINA.SLAIMI_ALTO * 0.4 - L.ojosZ, Math.hypot(h[0] - L.x, h[1] - L.y));
+        L.yaw += angulo(objY - L.yaw) * Math.min(1, dt * 1.5);
+        L.pitch += (objP - L.pitch) * Math.min(1, dt * 1.5);
+      }
+      if (t > Math.min(KF.SLAIMI_TE_MIRA, KF.SLAIMI_GIRA + 1.0) && !this.hechos.has('calma')) {
+        this.hechos.add('calma');
+        this._son('slaimi/calma', { volume: 0.8, pitch: 0.9 });
+      }
+    } else if (t > this.tReactor + 3) {
+      // (3) entre los restos, un brillo azul diminuto que se apaga
+      const e = t - (this.tReactor + 3);
+      this.azul.visible = true;
+      // (v1.47: a la vista, entre los restos, por encima de la consola)
+      this.azul.position.copy(this.nucleo).add(new THREE.Vector3(18 + e * 2.5, 14 + e * 1.2, 0));
+      this.azul.scale.setScalar(5 + Math.sin(e * 4) * 0.8);
+      this.azul.material.opacity = e < 3 ? 0.9 * (0.6 + 0.4 * Math.sin(e * 5)) : Math.max(0, 0.9 * (1 - (e - 3) / 3));
+    }
+    if (t >= KF.FIN) this._acaba();
+  }
+
+  /** Finales 2 y 4: El Errante en tu cabeza. */
+  _errante(dt) {
+    const L = this.L, C = L.cabina, t = this.t, E = KF.ERRANTE;
+    const una = (k, f) => {
+      if (t >= k && !this.hechos.has(k)) {
+        this.hechos.add(k);
+        f();
+      }
+    };
+    una(E.TUERCE, () => this._son('final/susurro', { volume: 0.9 }));
+    una(E.REFLEJO + 1.0, () => this._son('final/susurro', { volume: 1.0, pitch: 0.85 }));
+    una(E.CARA, () => {
+      this._son('final/susurro', { volume: 1.0, pitch: 0.7 });
+      this._son('ambiente/interferencia', { volume: 0.8 });
+    });
+    una(E.GIRA, () => {
+      L.sacude = Math.max(L.sacude, 0.8);
+      this._son('final/motor', { volume: 1.0, pitch: 0.85 });
+      this._son('n7/alarma', { volume: 0.5 });
+    });
+    if (L.slaimi) {
+      una(E.SLAIMI, () => {
+        this._son('slaimi/gemido', { volume: 1.0, pitch: 1.35 });
+        C.slaimiLuz && (C.slaimiLuz.material.opacity = 1.4);
+        this.empuja = 0;
+      });
+    }
+    una(E.NEGRO, () => {
+      this._son('metal/cristal', { volume: 1.0 });
+      this._son('n7/explosion', { volume: 1.0, pitch: 0.7 });
+      C.zumbido?.stop?.(0.02);
+      C.zumbido = null;
+      for (let k = 0; k < 3; k++) this._son('aberracion/respiraciones', { volume: 0.7, when: 1.5 + k * 1.6, muffle: 0.3 });
+      this._son('n7/respira', { volume: 0.8, when: 7.0, pitch: 0.95 });
+    });
+    // (v1.47) la nave acelera sola, recta, hacia la estación (sin inclinarse); A/D casi no hacen nada (y al revés)
+    if (t > E.GIRA && t < E.NEGRO) {
+      this.lucha = ((L.teclas.has('KeyA') ? 1 : 0) - (L.teclas.has('KeyD') ? 1 : 0)) * -E.LUCHA;
+      L.sacude = Math.max(L.sacude, 0.35);
+    }
+    L.sacude = Math.max(0, L.sacude - dt * 0.5);
+    if (this.empuja !== undefined) this.empuja = Math.min(1, this.empuja + dt / 1.2);
+    if (t >= E.FIN) this._acaba();
+  }
+
+  _acaba() {
+    if (this.acabado) return;
+    this.acabado = true;
+    const L = this.L;
+    Finales.marcar(this.n);
+    L.finalVisto = this.n;
+    L.acabada = true;
+    L.stop();
+    L.cabina?.zumbido?.stop?.(0.3);
+    L.g._finLibre?.(L.nombre);
+  }
+
+  /** Encima, en 2D: el fogonazo, la imagen torcida, el reflejo y la cara de El Errante, el cristal y los fundidos. */
+  draw(ctx) {
+    if (!this.activo) return;
+    const t = this.t;
+    if (this.espera) {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, W, H);
+      return;
+    }
+    // el fogonazo del reactor (v1.47: llena la ventanilla, deslumbra y la imagen quemada vuelve poco a poco)
+    if (this.flash > 0.003) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = `rgba(235,245,255,${Math.min(1, Math.pow(this.flash, 1.3)).toFixed(3)})`;
+      ctx.fillRect(0, 0, W, H);
+      // la mancha que se queda en la vista (donde estaba el reactor), cálida, y se apaga más despacio
+      const q = this.nucleo.clone().project(this.L.cam);
+      if (q.z < 1) {
+        const x = (q.x + 1) / 2 * W, y = (1 - q.y) / 2 * H, a = Math.min(0.8, Math.sqrt(this.flash) * 0.8);
+        const gr = ctx.createRadialGradient(x, y, 4, x, y, H * 0.45);
+        gr.addColorStop(0, `rgba(255,235,200,${a.toFixed(3)})`);
+        gr.addColorStop(0.35, `rgba(255,170,90,${(a * 0.4).toFixed(3)})`);
+        gr.addColorStop(1, 'rgba(255,140,60,0)');
+        ctx.fillStyle = gr;
+        ctx.fillRect(0, 0, W, H);
+      }
+      ctx.restore();
+    }
+    if (this.errante) this._drawErrante(ctx);
+    else if (!this.L.slaimi) this._drawMano(ctx);
+    // fundidos: de entrada y de salida (con «VIGIA-7» en los finales 1 y 3)
+    let negro = this.sigue ? 0 : 1 - suave(0, KF.ENTRA_S, t);
+    if (!this.errante) {
+      // (v1.47, el usuario: «fundido lento a negro, título VIGIA-7 y créditos»)
+      negro = Math.max(negro, suave(KF.FIN - 5.2, KF.FIN - 2.2, t));
+      if (t > KF.FIN - 2.2) {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, W, H);
+        const a = suave(KF.FIN - 2.1, KF.FIN - 1.3, t) * (1 - suave(KF.FIN - 0.3, KF.FIN, t));
+        ctx.save();
+        ctx.globalAlpha = a;
+        ctx.fillStyle = '#e8eef5';
+        ctx.font = 'bold 96px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('VIGIA-7', W / 2, H / 2 + 30);
+        ctx.restore();
+        return;
+      }
+    }
+    if (negro > 0) {
+      ctx.fillStyle = `rgba(0,0,0,${negro.toFixed(3)})`;
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  _drawErrante(ctx) {
+    const t = this.t, E = KF.ERRANTE;
+    if (t >= E.NEGRO) {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, W, H);
+      // el cristal, un instante, antes del negro
+      if (t < E.NEGRO + 0.12) this._grietas(ctx);
+      return;
+    }
+    // la imagen se tuerce: copias desplazadas en rojo y azul, y la vista se inclina
+    const tu = suave(E.TUERCE, E.TUERCE + 1.5, t) * (t < E.CARA + 1.5 ? 1 : 0.6);
+    if (tu > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = 0.18 * tu;
+      const dx = Math.sin(t * 13) * 10 * tu;
+      ctx.drawImage(ctx.canvas, dx, 0, W, H, 0, 0, W, H);
+      ctx.drawImage(ctx.canvas, -dx, 0, W, H, 0, 0, W, H);
+      ctx.restore();
+    }
+    // su cara en el reflejo del parabrisas (arriba, donde está el cristal), cada vez más clara
+    const cr = cara();
+    if (cr && t > E.REFLEJO && t < E.CARA + 1.6) {
+      const ref = suave(E.REFLEJO, E.REFLEJO + 2.5, t);
+      const lleno = suave(E.CARA, E.CARA + 0.6, t);
+      const sale = 1 - suave(E.CARA + 1.1, E.CARA + 1.6, t);
+      const ww = W * (0.32 + 0.9 * lleno), hh = ww * 9 / 16;
+      const cx = W / 2 + (Math.random() - 0.5) * 18 * lleno, cy = H * (0.28 + 0.24 * lleno) + (Math.random() - 0.5) * 12 * lleno;
+      ctx.save();
+      ctx.globalCompositeOperation = lleno > 0.5 ? 'source-over' : 'screen';
+      ctx.globalAlpha = Math.min(1, (0.08 + 0.3 * ref) * (1 - lleno) + lleno) * sale;
+      ctx.drawImage(cr, cx - ww / 2, cy - hh / 2, ww, hh);
+      if (lleno > 0) {
+        // estática encima
+        for (let k = 0; k < 40; k++) {
+          ctx.fillStyle = `rgba(255,255,255,${(Math.random() * 0.12).toFixed(3)})`;
+          ctx.fillRect(0, Math.random() * H, W, 1 + Math.random() * 3);
+        }
+      }
+      ctx.restore();
+    }
+    // Slaimi te empuja: su luz llena la pantalla
+    if (this.empuja !== undefined && this.L.slaimi) {
+      const e = this.empuja;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      const gr = ctx.createRadialGradient(W * 0.6, H * 0.85, 10, W * 0.6, H * 0.85, H * (0.3 + 0.9 * e));
+      gr.addColorStop(0, `rgba(190,225,255,${(0.75 * (1 - e * 0.6)).toFixed(3)})`);
+      gr.addColorStop(1, 'rgba(190,225,255,0)');
+      ctx.fillStyle = gr;
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
+  }
+
+  /** (final 3) Tu mano en el cristal: sube despacio y se queda, con el vaho en el cristal alrededor de los dedos. */
+  _drawMano(ctx) {
+    const m = mano();
+    const t0 = this.tReactor + KF.MANO_TRAS;
+    if (!m || this.t < t0) {
+      mano();
+      return;
+    }
+    const k = suave(t0, t0 + 2.2, this.t);
+    const y = (1 - k) * H * 0.35 + Math.sin(this.t * 0.8) * 3;
+    ctx.save();
+    // el vaho: una mancha clara en el cristal donde apoya la mano (crece y respira)
+    const vx = W * 0.615, vy = H * 0.3 + y;
+    const r = H * (0.12 + 0.03 * Math.sin(this.t * 1.1)) * k;
+    if (r > 1) {
+      const gr = ctx.createRadialGradient(vx, vy, 1, vx, vy, r * 1.6);
+      gr.addColorStop(0, `rgba(200,220,240,${(0.16 * k).toFixed(3)})`);
+      gr.addColorStop(1, 'rgba(200,220,240,0)');
+      ctx.fillStyle = gr;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.globalAlpha = Math.min(1, k * 1.2);
+    ctx.drawImage(m, 0, y, W, H);
+    ctx.restore();
+  }
+
+  /** El parabrisas que se raja (un instante). */
+  _grietas(ctx) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(20,20,20,0.9)';
+    ctx.lineWidth = 2;
+    const r = (s) => {
+      const x = Math.sin(s * 91.7) * 43758.5;
+      return x - Math.floor(x);
+    };
+    const cx = W * 0.55, cy = H * 0.4;
+    for (let k = 0; k < 18; k++) {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      let x = cx, y = cy;
+      const a = k / 18 * Math.PI * 2 + r(k) * 0.3;
+      for (let j = 0; j < 6; j++) {
+        x += Math.cos(a + (r(k * 7 + j) - 0.5) * 0.6) * (60 + r(k + j) * 120);
+        y += Math.sin(a + (r(k * 7 + j) - 0.5) * 0.6) * (60 + r(k + j) * 120);
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  reset() {
+    this.activo = false;
+    const C = this.L?.cabina;
+    if (C) {
+      C.final4Activo = false;
+      C.enVentana = false;
+      C.slaimiGiro = null;
+      C.slaimiLuzExt = null;
+    }
+    this.acabado = false;
+    this.espera = false;
+    this.empuja = undefined;
+    this.vel = 0;
+    if (this.grupo) this.grupo.visible = false;
+    if (this.cielo) this.cielo.visible = false;
+    if (this.bolas) {
+      this.bolas.visible = false;
+      this.aBolaD.array.fill(-99);
+      this.aBolaD.needsUpdate = true;
+    }
+    if (this.onda) this.onda.visible = false;
+    if (this.esfera) this.esfera.visible = false;
+    if (this.cristales) this.cristales.visible = false;
+    if (this.fugaces) this.fugaces.visible = false;
+    this.crT0 = null;
+    this.tFlash = undefined;
+    this.flash = 0;
+    this.lucha = 0;
+    this.sigue = null;
+    if (this.humo) this.humo.visible = false;
+    if (this.chispas) this.chispas.visible = false;
+    this.tOnda = 0;
+    if (this.brillo) this.brillo.visible = false;
+    if (this.azul) this.azul.visible = false;
+    for (const b of this.balizas ?? []) b.visible = false;
+  }
+}

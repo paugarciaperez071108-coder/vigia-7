@@ -1,0 +1,23 @@
+{
+ "pasillo": {
+  "p0": 3,
+  "p1": 3,
+  "p2": 3,
+  "p3": 3,
+  "p4": 3,
+  "p5": 3
+ },
+ "reactor": 8,
+ "puerta_left": 2,
+ "puerta_right": 2,
+ "sala_comms": 2,
+ "sala_cryo": 2,
+ "sala_eastHall": 2,
+ "sala_greenhouse": 2,
+ "sala_hangar": 2,
+ "sala_lab": 2,
+ "sala_medbay": 2,
+ "sala_mess": 2,
+ "sala_reactor": 2,
+ "sala_westHall": 2
+}
