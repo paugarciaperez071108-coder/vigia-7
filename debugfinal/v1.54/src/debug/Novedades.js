@@ -757,6 +757,8 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
+      <h3>v1.54 · Debug solo del prólogo (?n4debug=1&amp;nocheprologo=1&amp;sinlogo=1; web …/debugprologo/ y Vigia7-debug-prologo.exe): entra con el logo y el prólogo como la 1.ª vez y un menú con cada parte</h3>
+        ${b('Como la 1.ª vez: el logo y todo el prólogo', 'prologoArranque')}${b('La Criogenia', 'prologo:c_cryo_a')}${b('El pasillo central (sellado)', 'prologo:c_pc')}
       <h3>v1.53 · Prólogo, Fase D: al cruzar la puerta izquierda de la oficina, unos pasos solos, la puerta se cierra detrás y se bloquea, la vista se gira a la consola y se funde con la oficina de la Noche 1 (sin cinta de bienvenida: queda con L). El prólogo sale solo la primera vez que se abre el juego (después del logo) y vuelve a salir si se cierra a mitad</h3>
         ${b('Como la 1.ª vez: el logo y todo el prólogo', 'prologoArranque')}${b('La puerta de la oficina (la Noche 1)', 'prologo:c_pas_wo')}
       <h3>v1.52 · Prólogo, Fase C: el camino a pie del Hangar a la oficina por la estación en calma (sin enemigos, no se muere): la puerta de la Enfermería se abre con E, el golpe en la pared sellada del Laboratorio, alguien congelado en la Criogenia (el camino vuelve por el Laboratorio), la puerta del pasillo central sellada, el Invernadero a oscuras con la linterna (F), la compuerta de Comunicaciones atascada y la puerta izquierda de la oficina</h3>

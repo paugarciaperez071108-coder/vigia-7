@@ -847,6 +847,8 @@ export class Libre3D {
     Promise.all([...todas.map(carga), this.texLlama ?? this._tex(K.LLAMA_ARCHIVO ?? 'llama.webp', 4096)]).then((res) => {
       this.texLlama = res[res.length - 1];
       for (const [z, Z] of Object.entries(this.zonas)) if (Z.malla) Z.malla.visible = this.activas.includes(z);
+      // (v1.55, las noches 2 y 4: sin energía) la luz horneada de todas las salas, a R.brillo (la linterna la multiplica)
+      for (const Z of Object.values(this.zonas)) if (Z.mat) Z.mat.uniforms.uK.value = Z.uK0 * (R.brillo ?? 1);
       if (R.fin?.nave) this.zonas[R.fin.nave.zona].malla.visible = false;
       this._solidos();
       // las salidas bloqueadas: sólidas aunque lo que las tapa (el fuego) no lo sea
@@ -892,6 +894,11 @@ export class Libre3D {
         this.llegada.empieza();
       }
       if (aFinal) this.cabina.alEspacio();
+      // (v1.55) lo propio de cada noche (Noches3D.js): los asomados, la consola, el panel…
+      this.mod?.stop?.();
+      this.sinLinterna = false;
+      this.parpadeo = 0;
+      this.mod = R.mod ? R.mod(this, desde) : null;
       this.listo = true;
       this.continua = null;
       // (v1.41) mientras dura la huida, se van cargando (sin verse) las zonas de la persecución, para seguir sin cortes
@@ -992,6 +999,8 @@ export class Libre3D {
   }
 
   stop() {
+    this.mod?.stop?.();     // (v1.55: lo de cada noche 2 y 4 en 3D)
+    this.mod = null;
     this.activa = false;
     this.teclas.clear();
     this.cabina?.zumbido?.stop?.(0.3);
@@ -1009,9 +1018,11 @@ export class Libre3D {
     if (code === 'Space' && this.cabina?.activa && this.cabina.pulsa()) return;
     if ((code === 'KeyW' || code === 'ArrowUp') && !this.teclas.has(code)) this.empujaW = true;
     this.teclas.add(code);
+    if (this.mod?.tecla?.(code)) return;     // (v1.55: la noche se queda la tecla: la consola, el panel…)
     if (code === 'KeyC') this.agachado = !this.agachado;
     if (code === 'KeyE') this._abrePuertaE();
-    if (code === (this.R?.linterna?.TECLA ?? 'KeyF') && this.R?.linterna) {
+    // (v1.55: en las noches 2 y 4, ESPACIO y F: TECLA puede ser una lista; sinLinterna: aún no se ha cogido)
+    if ([].concat(this.R?.linterna?.TECLA ?? 'KeyF').includes(code) && this.R?.linterna && !this.sinLinterna) {
       this.linternaOn = !this.linternaOn;
       this._son('final/boton', { volume: 0.35, pitch: 1.6 });
       this._son('metal/panel', { volume: 0.25, pitch: 2.2 });
@@ -1040,6 +1051,7 @@ export class Libre3D {
         return;
       }
     }
+    if (this.mod?.click?.()) return;     // (v1.55: coger la linterna, la consola, el panel…)
     if (document.pointerLockElement === this.g.canvas && this._abrePuertaE()) return;
     if (document.pointerLockElement !== this.g.canvas) this.g.canvas.requestPointerLock?.();
   }
@@ -1894,6 +1906,8 @@ export class Libre3D {
     this.empujaW = false;
     this._eventos(dt);
     this._updateCaza(dt);
+    this.parpadeo = Math.max(0, (this.parpadeo ?? 0) - dt);
+    if (this.mod?.update?.(dt) === 'para') return;   // (v1.55: la noche acaba, o un susto)
     // el final del recorrido (la puerta del Laboratorio)
     if (this.R.fin && enCaja(this.R.fin.caja, this.x, this.y)) {
       this.fin = { t: 0, nave: this.R.fin.nave ?? null, golpes: 0 };
@@ -1950,7 +1964,9 @@ export class Libre3D {
     this._flickR = (this._flickR ?? 0) + ((Math.random() - 0.5) * 0.35 - (this._flickR ?? 0)) * 0.25;
     // (v1.51) la linterna: desde los ojos, hacia donde miras
     const LI = this.R?.linterna;
-    if (LI && this.linternaOn) {
+    // (v1.55) tras retirarse un enemigo, la linterna parpadea un momento
+    const parpadea = this.parpadeo > 0 && Math.sin(this.t * 41) + Math.sin(this.t * 17.3) > 0.4;
+    if (LI && this.linternaOn && !parpadea) {
       const cp = this.cam.getWorldPosition(new THREE.Vector3());
       const fw = new THREE.Vector3(0, 0, -1).applyQuaternion(this.cam.getWorldQuaternion(new THREE.Quaternion()));
       this.uLint.value.set(cp.x, cp.y - 0.15, cp.z, LI.FUERZA ?? 9);
@@ -1964,6 +1980,7 @@ export class Libre3D {
       this.cam.fov = fov;
       this.cam.updateProjectionMatrix();
     }
+    this.mod?.coloca?.();
     this.r.render(this.escena, this.cam);
     ctx.drawImage(this.r.domElement, 0, 0, W, H);
     // (v1.41) el fogonazo de una explosión cercana (la pared, la puerta de evacuación)
@@ -2015,6 +2032,7 @@ export class Libre3D {
     }
     this.cabina?.draw(ctx);
     this.llegada?.draw(ctx);
+    this.mod?.draw?.(ctx);
     if (negro > 0) {
       ctx.fillStyle = `rgba(0,0,0,${negro.toFixed(3)})`;
       ctx.fillRect(0, 0, W, H);
