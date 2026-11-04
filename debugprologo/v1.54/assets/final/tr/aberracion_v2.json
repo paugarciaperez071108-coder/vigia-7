@@ -1,0 +1,294 @@
+{
+ "piezas": {
+  "ab_ab3_brazo_g_L": {
+   "tipo": "brazo",
+   "largo": 4.146
+  },
+  "ab_ab3_brazo_g_R": {
+   "tipo": "brazo",
+   "largo": 4.273
+  },
+  "ab_ab3_brazo_0_L": {
+   "tipo": "brazo",
+   "largo": 2.94
+  },
+  "ab_ab3_brazo_0_R": {
+   "tipo": "brazo",
+   "largo": 2.358
+  },
+  "ab_ab3_brazo_1_L": {
+   "tipo": "brazo",
+   "largo": 4.296
+  },
+  "ab_ab3_brazo_1_R": {
+   "tipo": "brazo",
+   "largo": 1.461
+  },
+  "ab_ab3_brazo_2_L": {
+   "tipo": "brazo",
+   "largo": 2.8
+  },
+  "ab_ab3_brazo_2_R": {
+   "tipo": "brazo",
+   "largo": 3.121
+  },
+  "ab_ab3_brazo_3_L": {
+   "tipo": "brazo",
+   "largo": 2.963
+  },
+  "ab_ab3_brazo_3_R": {
+   "tipo": "brazo",
+   "largo": 1.912
+  },
+  "ab_ab3_brazo_4_L": {
+   "tipo": "brazo",
+   "largo": 3.557
+  },
+  "ab_ab3_brazo_4_R": {
+   "tipo": "brazo",
+   "largo": 0.975
+  },
+  "ab_ab3_brazo_5_L": {
+   "tipo": "brazo",
+   "largo": 2.15
+  },
+  "ab_ab3_brazo_5_R": {
+   "tipo": "brazo",
+   "largo": 2.932
+  },
+  "ab_ab3_brazo_6_L": {
+   "tipo": "brazo",
+   "largo": 4.58
+  },
+  "ab_ab3_brazo_6_R": {
+   "tipo": "brazo",
+   "largo": 2.812
+  },
+  "ab_ab3_brazo_7_L": {
+   "tipo": "brazo",
+   "largo": 2.606
+  },
+  "ab_ab3_brazo_7_R": {
+   "tipo": "brazo",
+   "largo": 1.716
+  },
+  "ab_ab3_brazo_8_L": {
+   "tipo": "brazo",
+   "largo": 3.67
+  },
+  "ab_ab3_brazo_8_R": {
+   "tipo": "brazo",
+   "largo": 2.333
+  },
+  "ab_ab3_brazo_copia_0": {
+   "tipo": "brazo",
+   "largo": 3.553
+  },
+  "ab_ab3_brazo_copia_1": {
+   "tipo": "brazo",
+   "largo": 2.299
+  },
+  "ab_ab3_brazo_copia_2": {
+   "tipo": "brazo",
+   "largo": 2.957
+  },
+  "ab_ab3_brazo_copia_3": {
+   "tipo": "brazo",
+   "largo": 1.645
+  },
+  "ab_ab3_brazo_copia_4": {
+   "tipo": "brazo",
+   "largo": 2.207
+  },
+  "ab_ab3_brazo_copia_5": {
+   "tipo": "brazo",
+   "largo": 3.976
+  },
+  "ab_ab3_brazo_copia_6": {
+   "tipo": "brazo",
+   "largo": 3.103
+  },
+  "ab_ab3_brazo_copia_7": {
+   "tipo": "brazo",
+   "largo": 2.773
+  },
+  "ab_ab3_brazo_copia_8": {
+   "tipo": "brazo",
+   "largo": 2.316
+  },
+  "ab_ab3_brazo_copia_9": {
+   "tipo": "brazo",
+   "largo": 1.645
+  },
+  "ab_ab3_brazo_copia_10": {
+   "tipo": "brazo",
+   "largo": 3.038
+  },
+  "ab_ab3_brazo_copia_11": {
+   "tipo": "brazo",
+   "largo": 2.828
+  },
+  "ab_ab3_mano_0": {
+   "tipo": "brazo",
+   "largo": 0.449
+  },
+  "ab_ab3_mano_1": {
+   "tipo": "brazo",
+   "largo": 0.626
+  },
+  "ab_ab3_mano_2": {
+   "tipo": "brazo",
+   "largo": 0.498
+  },
+  "ab_ab3_mano_3": {
+   "tipo": "brazo",
+   "largo": 0.303
+  },
+  "ab_ab3_mano_4": {
+   "tipo": "brazo",
+   "largo": 0.452
+  },
+  "ab_ab3_mano_5": {
+   "tipo": "brazo",
+   "largo": 0.588
+  },
+  "ab_ab3_mano_6": {
+   "tipo": "brazo",
+   "largo": 0.51
+  },
+  "ab_ab3_mano_7": {
+   "tipo": "brazo",
+   "largo": 0.479
+  },
+  "ab_ab3_munon_0": {
+   "tipo": "brazo",
+   "largo": 1.571
+  },
+  "ab_ab3_munon_1": {
+   "tipo": "brazo",
+   "largo": 1.756
+  },
+  "ab_ab3_munon_2": {
+   "tipo": "brazo",
+   "largo": 1.114
+  },
+  "ab_ab3_munon_3": {
+   "tipo": "brazo",
+   "largo": 1.068
+  },
+  "ab_ab3_munon_4": {
+   "tipo": "brazo",
+   "largo": 1.32
+  },
+  "ab_ab3_munon_5": {
+   "tipo": "brazo",
+   "largo": 0.801
+  },
+  "ab_ab3_munon_6": {
+   "tipo": "brazo",
+   "largo": 1.178
+  },
+  "ab_ab3_munon_7": {
+   "tipo": "brazo",
+   "largo": 1.226
+  },
+  "ab_ab3_munon_8": {
+   "tipo": "brazo",
+   "largo": 1.091
+  },
+  "ab_ab3_munon_9": {
+   "tipo": "brazo",
+   "largo": 0.895
+  },
+  "ab_ab3_munon_10": {
+   "tipo": "brazo",
+   "largo": 1.07
+  },
+  "ab_ab3_munon_11": {
+   "tipo": "brazo",
+   "largo": 0.674
+  },
+  "ab_ab3_munon_12": {
+   "tipo": "brazo",
+   "largo": 0.942
+  },
+  "ab_ab3_munon_13": {
+   "tipo": "brazo",
+   "largo": 0.967
+  },
+  "ab_ab3_munon_14": {
+   "tipo": "brazo",
+   "largo": 1.644
+  },
+  "ab_ab3_munon_15": {
+   "tipo": "brazo",
+   "largo": 1.134
+  },
+  "ab_ab3_munon_16": {
+   "tipo": "brazo",
+   "largo": 1.057
+  },
+  "ab_ab3_munon_17": {
+   "tipo": "brazo",
+   "largo": 1.008
+  },
+  "ab_ab3_munon_18": {
+   "tipo": "brazo",
+   "largo": 1.292
+  },
+  "ab_ab3_munon_19": {
+   "tipo": "brazo",
+   "largo": 0.898
+  },
+  "ab_ab3_munon_20": {
+   "tipo": "brazo",
+   "largo": 1.202
+  },
+  "ab_ab3_munon_21": {
+   "tipo": "brazo",
+   "largo": 0.877
+  },
+  "ab_ab3_munon_22": {
+   "tipo": "brazo",
+   "largo": 0.941
+  },
+  "ab_ab3_munon_23": {
+   "tipo": "brazo",
+   "largo": 0.731
+  },
+  "ab_ab3_munon_24": {
+   "tipo": "brazo",
+   "largo": 0.937
+  },
+  "ab_ab3_munon_25": {
+   "tipo": "brazo",
+   "largo": 1.337
+  },
+  "ab_ab3_munon_26": {
+   "tipo": "brazo",
+   "largo": 1.072
+  },
+  "ab_ab3_munon_27": {
+   "tipo": "brazo",
+   "largo": 1.043
+  },
+  "ab_ab3_munon_28": {
+   "tipo": "brazo",
+   "largo": 0.865
+  },
+  "ab_ab3_munon_29": {
+   "tipo": "brazo",
+   "largo": 0.828
+  },
+  "ab_ab3_munon_30": {
+   "tipo": "brazo",
+   "largo": 1.017
+  },
+  "ab_ab3_munon_31": {
+   "tipo": "brazo",
+   "largo": 1.02
+  }
+ },
+ "frente": -2.943,
+ "relieve": true
+}

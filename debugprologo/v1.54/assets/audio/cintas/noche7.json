@@ -1,0 +1,284 @@
+{
+ "duration": 92.99,
+ "subtitles": [
+  {
+   "start": 2.0,
+   "end": 3.45,
+   "text": "Vale… vale."
+  },
+  {
+   "start": 3.4,
+   "end": 4.0,
+   "text": "Sigo aquí."
+  },
+  {
+   "start": 5.65,
+   "end": 7.8,
+   "text": "No sé cuántas horas llevo sin dormir."
+  },
+  {
+   "start": 7.75,
+   "end": 10.02,
+   "text": "Ya no distingo si las cosas se mueven… o si soy yo."
+  },
+  {
+   "start": 11.57,
+   "end": 13.26,
+   "text": "Se han matado entre ellos."
+  },
+  {
+   "start": 13.21,
+   "end": 14.74,
+   "text": "Lo vi por las cámaras."
+  },
+  {
+   "start": 14.74,
+   "end": 16.64,
+   "text": "Y luego… con lo que quedó… hicieron eso."
+  },
+  {
+   "start": 17.29,
+   "end": 18.92,
+   "text": "La cosa del laboratorio."
+  },
+  {
+   "start": 18.87,
+   "end": 20.42,
+   "text": "No sé cómo llamarla."
+  },
+  {
+   "start": 20.42,
+   "end": 21.96,
+   "text": "Está hecha de ellos."
+  },
+  {
+   "start": 21.96,
+   "end": 22.72,
+   "text": "De los cadáveres."
+  },
+  {
+   "start": 22.87,
+   "end": 24.18,
+   "text": "Y de alguien más."
+  },
+  {
+   "start": 24.13,
+   "end": 26.51,
+   "text": "Juraría que una de las caras… me miró como si me conociera."
+  },
+  {
+   "start": 28.26,
+   "end": 29.24,
+   "text": "Es rápida."
+  },
+  {
+   "start": 29.19,
+   "end": 30.57,
+   "text": "Demasiado rápida."
+  },
+  {
+   "start": 30.57,
+   "end": 32.94,
+   "text": "Cuando la oigo en el pasillo ya casi está en la puerta."
+  },
+  {
+   "start": 32.94,
+   "end": 34.51,
+   "text": "Apenas me da tiempo a cerrar."
+  },
+  {
+   "start": 34.51,
+   "end": 37.19,
+   "text": "Si oyes arrastrarse algo grande por el pasillo, no mires."
+  },
+  {
+   "start": 37.19,
+   "end": 37.55,
+   "text": "Cierra."
+  },
+  {
+   "start": 38.8,
+   "end": 40.49,
+   "text": "Y el Errante… otra vez."
+  },
+  {
+   "start": 40.44,
+   "end": 42.74,
+   "text": "Cada vez que lo miro, se me va una cámara."
+  },
+  {
+   "start": 42.74,
+   "end": 44.62,
+   "text": "Ese cabrón no me deja estar cuerdo."
+  },
+  {
+   "start": 44.62,
+   "end": 47.3,
+   "text": "Y el del conducto… lo oigo arrastrarse por encima de mí."
+  },
+  {
+   "start": 47.3,
+   "end": 48.48,
+   "text": "Todo el rato."
+  },
+  {
+   "start": 48.48,
+   "end": 49.29,
+   "text": "Todo el puto rato."
+  },
+  {
+   "start": 51.64,
+   "end": 53.55,
+   "text": "Pero me he dado cuenta de una cosa."
+  },
+  {
+   "start": 53.5,
+   "end": 55.44,
+   "text": "Esa cosa no viene solo a por mí."
+  },
+  {
+   "start": 55.44,
+   "end": 56.96,
+   "text": "Va a por el reactor."
+  },
+  {
+   "start": 56.96,
+   "end": 58.42,
+   "text": "Lo golpea, lo intenta romper."
+  },
+  {
+   "start": 59.27,
+   "end": 61.66,
+   "text": "Y si lo quiere romper… yo le voy a ayudar."
+  },
+  {
+   "start": 61.61,
+   "end": 63.24,
+   "text": "Si dejo que se caliente."
+  },
+  {
+   "start": 63.24,
+   "end": 66.2,
+   "text": "Si no lo enfrío… si lo llevo al límite… esto revienta."
+  },
+  {
+   "start": 66.2,
+   "end": 66.92,
+   "text": "Con ellos dentro."
+  },
+  {
+   "start": 69.27,
+   "end": 70.71,
+   "text": "Noventa por ciento."
+  },
+  {
+   "start": 70.66,
+   "end": 72.05,
+   "text": "Le queda un diez."
+  },
+  {
+   "start": 72.05,
+   "end": 73.41,
+   "text": "Solo un diez."
+  },
+  {
+   "start": 73.41,
+   "end": 74.5,
+   "text": "Aguanta."
+  },
+  {
+   "start": 74.5,
+   "end": 75.97,
+   "text": "Aguanta un poco más, joder…"
+  },
+  {
+   "start": 77.82,
+   "end": 79.8,
+   "text": "No, no, no… vienen a la vez."
+  },
+  {
+   "start": 79.75,
+   "end": 81.12,
+   "text": "Vienen los tres a la vez."
+  },
+  {
+   "start": 81.12,
+   "end": 81.96,
+   "text": "La puerta… ¡LA PUERTA—!"
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 0.25,
+   "efecto": "respiracion_pesada"
+  },
+  {
+   "t": 10.17,
+   "efecto": "golpe"
+  },
+  {
+   "t": 10.47,
+   "efecto": "vibra_mesa"
+  },
+  {
+   "t": 26.66,
+   "efecto": "pitido"
+  },
+  {
+   "t": 27.76,
+   "efecto": "teclas"
+  },
+  {
+   "t": 37.7,
+   "efecto": "estatica"
+  },
+  {
+   "t": 67.07,
+   "efecto": "teclas"
+  },
+  {
+   "t": 67.67,
+   "efecto": "pitido_sube"
+  },
+  {
+   "t": 76.12,
+   "efecto": "golpe_puerta"
+  },
+  {
+   "t": 76.87,
+   "efecto": "golpe_conducto"
+  },
+  {
+   "t": 77.37,
+   "efecto": "estatica"
+  },
+  {
+   "t": 82.11,
+   "efecto": "caida_rueda"
+  },
+  {
+   "t": 82.11,
+   "efecto": "rejilla_arrancada"
+  },
+  {
+   "t": 82.56,
+   "efecto": "grito"
+  },
+  {
+   "t": 83.81,
+   "efecto": "golpes_irregulares"
+  },
+  {
+   "t": 87.71,
+   "efecto": "respiraciones_varias"
+  },
+  {
+   "t": 91.91,
+   "efecto": "corte_cinta"
+  }
+ ]
+}
