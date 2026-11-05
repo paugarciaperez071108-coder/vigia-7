@@ -151,10 +151,11 @@ export class Night5 {
     if (!this.active) return;
     // Más agresivo según avanza la noche (LEVEL: 2 AM → 6 AM)
     const dis = this.ai.dislocado;
-    if (dis?.level > 0 && h >= D.FROM_HOUR) {
+    if (dis?.level > 0 && !dis.nivelFijo && h >= D.FROM_HOUR) {
       const k = Math.min(1, (h - D.FROM_HOUR) / (6 - D.FROM_HOUR));
       dis.setLevel(Math.round(D.LEVEL[0] + (D.LEVEL[1] - D.LEVEL[0]) * k));
     }
+    if (!(dis?.level > 0)) return;   // (v1.57: un reto sin El Dislocado: las rejillas siguen intactas)
     if (h === D.FROM_HOUR && !this.done2) this.startEvent(Math.random() < 0.5 ? 'left' : 'right', true);
     // 4 AM: si está asomado (o a punto) por la otra, espera a que se retire
     if (h === 4 && !this.done4) this.pending4 = true;
@@ -226,6 +227,7 @@ export class Night5 {
         this.camsDead = false;
         c.broken.clear();
         c.warnings = false;
+        g._retoCamarasRotas?.();   // (v1.57, reto «Ojos cerrados»: esas siguen rotas)
         c.setEnabled(true);
         g.terminal.print?.('Camaras en linea... OK');
         g.audio.powerUp?.();

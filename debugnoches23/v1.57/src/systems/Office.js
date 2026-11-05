@@ -70,6 +70,12 @@ export class Office {
       this.events.emit('denied', side);
       return;
     }
+    // (v1.57, reto «Gigantes») la compuerta lenta no cierra hasta llegar abajo; volver a pulsar la para
+    if (this.cierreLento && !d.closed) {
+      d.bajando = !d.bajando;
+      this.events.emit('door', { side, closed: d.bajando });
+      return;
+    }
     d.closed = !d.closed;
     this.events.emit('door', { side, closed: d.closed });
   }
@@ -99,8 +105,13 @@ export class Office {
     const step = dt / CONFIG.DOOR_ANIM_TIME;
     for (const s of SIDES) {
       const d = this.doors[s];
-      const target = d.closed ? 1 : 0;
-      d.anim += Math.sign(target - d.anim) * Math.min(step, Math.abs(target - d.anim));
+      const target = d.closed || d.bajando ? 1 : 0;
+      const paso = d.bajando ? dt / this.cierreLento : step;
+      d.anim += Math.sign(target - d.anim) * Math.min(paso, Math.abs(target - d.anim));
+      if (d.bajando && d.anim >= 1) {
+        d.bajando = false;
+        d.closed = true;
+      }
     }
   }
 

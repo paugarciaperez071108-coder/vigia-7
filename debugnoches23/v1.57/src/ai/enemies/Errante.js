@@ -127,6 +127,10 @@ export class Errante extends Enemy {
       const cams = world.cameras;
       const watched = cams.open && cams.fullyOpen && cams.active === this.room && !cams.broken.has(cams.active);
       this.stare = watched ? this.stare + dt : 0;
+      if (this.perderAlMirar && this.stare >= this.perderAlMirar) {   // (v1.57, reto «No lo mires»)
+        world.attack(this);
+        return;
+      }
       if (this.stare >= (this.stareTime ?? E.STARE_TIME)) {
         world.events.emit('erranteCams', { why: 'mirado' });
         this._idle(world, 'mirado demasiado');

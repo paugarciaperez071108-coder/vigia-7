@@ -27,7 +27,7 @@ export function drawHUD(ctx, { clockLabel, night, reactor, warnings = [], hint, 
   ctx.font = 'bold 54px "Courier New", monospace';
   ctx.fillText(clockLabel, 1560, 24);
   ctx.font = '22px "Courier New", monospace';
-  ctx.fillText(`Noche ${night}`, 1560, 84);
+  ctx.fillText(night === 99 ? 'Reto' : `Noche ${night}`, 1560, 84);
 
   // Reactor (abajo a la izquierda): temperatura, barra, qué lo
   // está calentando y enfriamientos que quedan esta noche.

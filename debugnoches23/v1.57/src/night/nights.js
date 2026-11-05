@@ -169,6 +169,11 @@ export const NIGHTS = [
   },
 ];
 
+/** (v1.57) La noche del reto en curso (src/night/retos.js). */
+let nocheDeReto = null;
+export function ponNocheReto(cfg) { nocheDeReto = cfg; }
+
 export function getNight(n) {
+  if (n === 99) return nocheDeReto ?? NIGHTS[4];
   return NIGHTS[Math.min(Math.max(n, 1), NIGHTS.length) - 1];
 }
