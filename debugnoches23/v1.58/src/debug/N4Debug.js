@@ -188,6 +188,17 @@ export function install(g) {
     },
     // (v1.53) que el prólogo vuelva a salir la próxima vez que se abra el juego
     prologoBorra: () => { SaveData.ponPrologoVisto(false); },
+    // (v1.58) el inicio de la noche 4 en 3D: taquilla (la de siempre), oficina, pasillo o delante del panel
+    noche4: (salto) => {
+      g.saveEnabled = false;
+      g.audio?.init?.();
+      g.save = g.save ?? SaveData.fresh();
+      g._startN4({ at: salto === 'panel' ? 'reboot' : null });
+      if (salto === 'taquilla' || salto === 'panel') return;
+      g.n4start.done = true;
+      g._noche4Salto = salto === 'pasillo' ? 'pasillo' : null;
+      g._empiezaNoche3D('noche4');
+    },
     // (v1.56) la 2.5 en 3D, desde una parte (como la de verdad: _startFinal, sin guardar)
     noche2: (salto) => {
       g._noche2Salto = salto === 'inicio' ? null : salto;
@@ -748,6 +759,7 @@ export function install(g) {
       panel.innerHTML = `
       <b style="color:#ffd84a">MODO DEBUG · NOCHES 2 Y 4 EN 3D</b> <span style="opacity:.6">(Ctrl+Shift+F4 · la partida real no se toca)</span>
       <h3>Fase N1 · la base: la estación sin energía, la linterna (ESPACIO / F) y los asomados${l ? ` · ${l.mod?.sala ?? 'pasillo'} · ${l.mod?.asomados?.lista.length ?? 0} enemigo(s)` : ''}</h3>${btn('Desde la oficina', 'noche3d:noches')}${btn('El C. Este', 'noche3d:noches@n_eastHall')}${btn('Comunicaciones', 'noche3d:noches@n_comms')}${btn('El pasillo C. Este → oficina', 'noche3d:noches@n_pas_eo')}${btn('El Hangar', 'noche3d:noches@n_hangar')}${btn('El Invernadero', 'noche3d:noches@n_greenhouse')}${btn('El Reactor', 'noche3d:noches@c_reactor')}<br>${btn('Que salga uno aquí', 'noche3dSale')}
+      <h3>Fase N3 · el inicio de la noche 4 en 3D${l?.mod?.ruta !== undefined ? ` · ruta ${l.mod.ruta ?? '–'} · ${Math.floor(l.mod.reboot ?? 0)} %` : ''}</h3>${btn('La taquilla (salir)', 'noche4:taquilla')}${btn('La oficina', 'noche4:oficina')}${btn('El pasillo central', 'noche4:pasillo')}${btn('Delante del panel (ruta A)', 'noche4:panel')}
       <h3>Fase N2 · la 2.5 en 3D${l?.mod?.fase ? ` · ${l.mod.fase}${l.mod.fase === 'enfria' ? ' ' + Math.round(l.mod.cool * 100) + ' %' : ''}${l.mod.fase === 'huida' ? ' ' + Math.ceil(l.mod.queda) + ' s' : ''}` : ''}</h3>${btn('Desde el principio (la linterna en la mesa)', 'noche2:inicio')}${btn('En el reactor (la consola)', 'noche2:reactor')}${btn('El enfriamiento (2:00)', 'noche2:enfria')}${btn('Al 100 %: la alarma y la huida', 'noche2:huida')}${btn('En la oficina: la escena final', 'noche2:escena')}
       <h3>Velocidad</h3>${[1, 2, 5].map((v) => btn('x' + v, 'vel:' + v, g.speed === v)).join('')}
       ${extrasBtns()}<h3>Otros</h3>${btn('Información', 'hud', dbg.hud)}`;

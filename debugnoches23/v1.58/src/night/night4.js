@@ -49,6 +49,9 @@ export const NIGHT4 = {
     PEEK_EVERY: [7, 12],     // s de botón pulsado entre una visita y la siguiente
     PEEK_TIME: 4.5,          // s asomado (= la animación de tools/3d/largo_pasillo.py) antes de llegar hasta ti
     PEEK_LIGHT: 0.7,         // s de luz encima para que se vaya
+    // (v1.58, en 3D) hay que cerrar el panel y girarse de verdad: lo que tarda en oírse y lo que tienes para alumbrarle
+    PEEK_LLEGA: 1.6,
+    PEEK_TIME_3D: 6.0,
     // Los demás enemigos siguen moviéndose mientras reinicias: al empezar el
     // turno se adelanta su IA el tiempo pasado en el panel (× HEAD_START),
     // sin que nadie llegue a la puerta de la oficina.
