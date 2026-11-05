@@ -1,0 +1,218 @@
+[
+ {
+  "n": 1,
+  "punto": "inicio",
+  "audio": "assets/audio/cintas/conductos_n6/frag_1.ogg",
+  "dur": 12.45,
+  "subtitulos": [
+   {
+    "start": 1.7,
+    "end": 2.93,
+    "text": "Vale."
+   },
+   {
+    "start": 2.88,
+    "end": 4.71,
+    "text": "Los conductos."
+   },
+   {
+    "start": 4.71,
+    "end": 8.98,
+    "text": "Si las cámaras no me dejan salir por los pasillos, saldré por aquí."
+   },
+   {
+    "start": 8.98,
+    "end": 11.7,
+    "text": "Es una tarea un poco tediosa… pero la necesito."
+   }
+  ]
+ },
+ {
+  "n": 2,
+  "punto": "cruce",
+  "audio": "assets/audio/cintas/conductos_n6/frag_2.ogg",
+  "dur": 13.92,
+  "subtitulos": [
+   {
+    "start": 0.7,
+    "end": 2.33,
+    "text": "Primer cruce."
+   },
+   {
+    "start": 2.28,
+    "end": 5.79,
+    "text": "Las flechas de mantenimiento llevan al nudo central."
+   },
+   {
+    "start": 5.79,
+    "end": 6.7,
+    "text": "V4."
+   },
+   {
+    "start": 7.55,
+    "end": 10.64,
+    "text": "Si oyes algo delante… no te quedes quieta."
+   },
+   {
+    "start": 10.59,
+    "end": 12.02,
+    "text": "Alumbra."
+   },
+   {
+    "start": 12.02,
+    "end": 13.17,
+    "text": "Se van con la luz."
+   }
+  ]
+ },
+ {
+  "n": 3,
+  "punto": "enemigo",
+  "audio": "assets/audio/cintas/conductos_n6/frag_3.ogg",
+  "dur": 11.26,
+  "subtitulos": [
+   {
+    "start": 2.0,
+    "end": 4.56,
+    "text": "No estoy sola aquí dentro."
+   },
+   {
+    "start": 4.51,
+    "end": 7.3,
+    "text": "Las pilas de la linterna no duran."
+   },
+   {
+    "start": 7.3,
+    "end": 10.51,
+    "text": "Úsala solo cuando haga falta… solo cuando haga falta."
+   }
+  ]
+ },
+ {
+  "n": 4,
+  "punto": "ciego",
+  "audio": "assets/audio/cintas/conductos_n6/frag_4.ogg",
+  "dur": 9.12,
+  "subtitulos": [
+   {
+    "start": 0.7,
+    "end": 2.07,
+    "text": "Soldado."
+   },
+   {
+    "start": 2.02,
+    "end": 3.45,
+    "text": "Otra vez."
+   },
+   {
+    "start": 3.45,
+    "end": 5.14,
+    "text": "Alguien selló esto desde fuera."
+   },
+   {
+    "start": 6.09,
+    "end": 7.39,
+    "text": "Atrás."
+   },
+   {
+    "start": 7.34,
+    "end": 8.37,
+    "text": "Siempre atrás."
+   }
+  ]
+ },
+ {
+  "n": 5,
+  "punto": "pila",
+  "audio": "assets/audio/cintas/conductos_n6/frag_5.ogg",
+  "dur": 6.36,
+  "subtitulos": [
+   {
+    "start": 0.7,
+    "end": 2.61,
+    "text": "Dejé una aquí."
+   },
+   {
+    "start": 2.56,
+    "end": 3.57,
+    "text": "Por si volvía."
+   },
+   {
+    "start": 4.42,
+    "end": 5.61,
+    "text": "No pensaba volver."
+   }
+  ]
+ },
+ {
+  "n": 6,
+  "punto": "v4",
+  "audio": "assets/audio/cintas/conductos_n6/frag_6.ogg",
+  "dur": 17.07,
+  "subtitulos": [
+   {
+    "start": 1.7,
+    "end": 4.59,
+    "text": "Detrás de esta rejilla hay una fuga."
+   },
+   {
+    "start": 4.54,
+    "end": 6.92,
+    "text": "Escarcha, de Criogenia."
+   },
+   {
+    "start": 6.92,
+    "end": 12.12,
+    "text": "Si no cierro las válvulas, todo esto se congela antes de que encuentre una salida."
+   },
+   {
+    "start": 12.12,
+    "end": 13.99,
+    "text": "Tres válvulas."
+   },
+   {
+    "start": 13.99,
+    "end": 16.32,
+    "text": "Y no dejes de girar… vuelven solas."
+   }
+  ]
+ },
+ {
+  "n": 7,
+  "punto": "valvulas",
+  "audio": "assets/audio/cintas/conductos_n6/frag_7.ogg",
+  "dur": 15.46,
+  "subtitulos": [
+   {
+    "start": 1.5,
+    "end": 2.97,
+    "text": "Las he cerrado."
+   },
+   {
+    "start": 2.92,
+    "end": 4.2,
+    "text": "Las he cerrado todas."
+   },
+   {
+    "start": 6.05,
+    "end": 7.82,
+    "text": "Viene por el conducto."
+   },
+   {
+    "start": 7.77,
+    "end": 9.15,
+    "text": "No voy a llegar a la salida."
+   },
+   {
+    "start": 9.3,
+    "end": 12.24,
+    "text": "Ojalá encuentres algo que te ayude a escapar de aquí."
+   },
+   {
+    "start": 12.19,
+    "end": 14.23,
+    "text": "Yo… no me esperaba que esto terminara así."
+   }
+  ]
+ }
+]
