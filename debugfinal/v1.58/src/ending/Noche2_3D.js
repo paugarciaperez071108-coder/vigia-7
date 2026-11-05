@@ -43,7 +43,7 @@ const FS_P = `uniform sampler2D uMap; uniform float uTex; uniform vec3 uColor; u
       l = cono / (1.0 + L * L * 0.03) * uLint.w * 0.05; }
     gl_FragColor = vec4(col * (uBase + l) + col * uBrillo, 1.0); }`;
 
-function prop(L, { geo, color = [0.3, 0.3, 0.3], lienzo = null, pos, yaw = 0, pitch = 0, brillo = 0 }) {
+export function prop(L, { geo, color = [0.3, 0.3, 0.3], lienzo = null, pos, yaw = 0, pitch = 0, brillo = 0 }) {
   const tex = lienzo ? new THREE.CanvasTexture(lienzo) : null;
   if (tex) tex.colorSpace = THREE.SRGBColorSpace;
   const mat = new THREE.ShaderMaterial({

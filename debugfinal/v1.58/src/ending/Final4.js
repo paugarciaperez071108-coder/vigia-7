@@ -20,6 +20,7 @@ import { GLTFLoader } from '../lib/three/addons/GLTFLoader.js';
 import { NIGHT7 } from '../night/night7.js';
 import { CONFIG } from '../config.js';
 import { Finales } from '../core/Finales.js';
+import { RestosInterior } from './RestosInterior.js';
 
 const K = NIGHT7.FINAL.LIBRE;
 const KF = K.FINAL4;
@@ -85,6 +86,8 @@ void main() {
   base *= mix(1.0, 0.32, vApaga);
   // rota: el metal quemado (más oscuro cuanto más tiempo lleva suelta; v1.47: menos, que se vea su forma)
   if (vDt > 0.0) base *= mix(1.0, 0.3, smoothstep(0.0, 2.5, vDt));
+  // (v1.58) la luz horneada es la del fuego: una vez suelta, ya sin fuego, el casco pasa a metal gris (si no, parecen cajas naranjas)
+  if (vDt > 0.0) base = mix(base, vec3(dot(base, vec3(0.3, 0.6, 0.1))) * vec3(0.92, 0.96, 1.05), 0.85 * smoothstep(0.3, 3.0, vDt));
   // el calor: blanco amarillo -> naranja -> rojo oscuro -> nada (con un parpadeo)
   float h = vCalor * (0.9 + 0.1 * sin(uT * 31.0 + vW.x * 0.7));
   vec3 calor = mix(vec3(0.7, 0.06, 0.01), vec3(2.2, 0.75, 0.18), smoothstep(0.25, 0.7, h));
@@ -307,6 +310,11 @@ export class Final4 {
       this.grupo.visible = false;
       this.L.escena.add(this.grupo);
       this._fondo();
+      // (v1.58) los muebles que salen al vacío (solo en la que estalla; la del prólogo está intacta)
+      if (archivo === 'vigia_fuera') {
+        this.restos = new RestosInterior(this);
+        this.restos.carga();
+      }
       return this;
     }).catch((e) => {
       console.warn('Final4: sin la estación por fuera', e);
@@ -564,8 +572,8 @@ export class Final4 {
     this.trozosDat.length = 0;
     for (let i = 0; i < Math.min(n, m.instanceMatrix.count); i++) {
       const d = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.7, Math.random() - 0.5).normalize();
-      const grande = Math.random() < 0.12;
-      const lado = grande ? 4 + Math.random() * 6 : 0.8 + Math.pow(Math.random(), 2) * 3.4;
+      const grande = Math.random() < 0.04;   // (v1.58: las moles grandes parecían rocas negras; ahora van vigas y paredes)
+      const lado = grande ? 2.5 + Math.random() * 2.5 : 0.8 + Math.pow(Math.random(), 2) * 3.4;
       this.trozosDat.push({
         p: p.clone().addScaledVector(d, 4 + Math.random() * 26),
         v: d.multiplyScalar((grande ? 4 : 9) + Math.random() * (grande ? 8 : 24)),
@@ -835,6 +843,7 @@ export class Final4 {
     const tR = this.errante ? KF.ERRANTE.REACTOR : KF.REACTOR;
     this._plan(this.errante ? KF.ERRANTE.CADENA : KF.CADENA, tR);
     this.tReactor = tR;
+    this.restos?.planea(this.cadena, tR, this.errante, this.nucleo);
     // el zumbido de la cabina sigue (bajo): en el espacio no se oye nada más (el rugido lo corta update, al apagarse)
     if (!C.zumbido) C.zumbido = L.g.audio?.lib?.play('final/cabina', { loop: true, volume: K.CABINA.ZUMBIDO * 0.7, pitchVar: 0, volVar: 0 }) || null;
     this.respIn = 1.0;
@@ -969,6 +978,7 @@ export class Final4 {
       if (L.slaimi && !this.errante) C.slaimiLuz && (C.slaimiLuz.material.opacity = 1.6);
     });
     this._updateTrozos(t, dt);
+    this.restos?.update(t, dt);
     if (t >= this.tReactor) {
       const e = t - this.tReactor;
       this.brillo.position.copy(this.nucleo);
@@ -1455,6 +1465,7 @@ export class Final4 {
     this.tOnda = 0;
     if (this.brillo) this.brillo.visible = false;
     if (this.azul) this.azul.visible = false;
+    this.restos?.limpia();
     for (const b of this.balizas ?? []) b.visible = false;
   }
 }
