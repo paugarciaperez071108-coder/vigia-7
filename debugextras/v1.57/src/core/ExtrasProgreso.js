@@ -54,6 +54,14 @@ export const ExtrasProgreso = {
   extras() { return !!carga().extras; },
   aberracion() { return !!carga().aberracion; },
   n6() { return !!carga().n6 || !!carga().aberracion; },
+  retoHecho(id) { return !!carga().retos[id]; },
+  completaReto(id) { carga().retos[id] = true; guarda(); },
+  nivelesPersonal() {
+    const d = carga();
+    d.personal ??= { frozen: 10, specimen: 10, largo: 10, insecto: 10, errante: 10, dislocado: 10 };
+    return d.personal;
+  },
+  ponNivelPersonal(k, n) { this.nivelesPersonal()[k] = n; guarda(); },
   volSustos() { return carga().volSustos; },
   ponVolSustos(v) { carga().volSustos = v; guarda(); },
   slaimiDebug() { return slaimiDbg; },
@@ -120,7 +128,7 @@ export const ExtrasProgreso = {
   },
   bloquea() {
     const d = carga();
-    Object.assign(d, { extras: false, n6: false, aberracion: false, avisado: false, cintas: {}, sustos: {} });
+    Object.assign(d, { extras: false, n6: false, aberracion: false, avisado: false, cintas: {}, sustos: {}, retos: {} });
     guarda();
   },
   resetea() {

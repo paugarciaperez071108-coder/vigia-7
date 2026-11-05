@@ -35,7 +35,7 @@
       "id": "dislocado", "nombre": "El Dislocado", "alias": "",
       "altura": "0,50 m de alto · 0,90 m de torso", "triangulo": "magenta",
       "noches": [5], "al6": true, "al7": true,
-      "archivo": "TRIPULANTE (NOMBRE ILEGIBLE EN EL UNIFORME). Solo se conserva la mitad superior del cuerpo. Se desplaza por los conductos de ventilación arrastrándose con los brazos. Capaz de romper las rejillas de la oficina. Huye de la luz directa."
+      "archivo": "TRIPULANTE (EN EL UNIFORME SE LEE «TEC. RIVAS»). Solo se conserva la mitad superior del cuerpo. Se desplaza por los conductos de ventilación arrastrándose con los brazos. Capaz de romper las rejillas de la oficina. Huye de la luz directa."
     },
     {
       "id": "slaimi", "nombre": "Slaimi", "alias": "aliado",
@@ -152,5 +152,20 @@
       ]}
     ]
   },
-  "retos": []
+  "estrellas": { "noche5": "#c8d0d8", "noche7": "#ffcc33" },
+  "retos": [
+    {"id": "tranquilo", "nombre": "Turno tranquilo", "niveles": {"frozen": 5, "specimen": 5, "largo": 5, "insecto": 5, "errante": 5, "dislocado": 5}, "extraId": null, "extra": "Ninguno: la noche de calentamiento.", "colorNombre": "Verde menta", "color": "#7fffd4"},
+    {"id": "oscuras", "nombre": "A oscuras", "niveles": {"frozen": 8, "specimen": 8, "largo": 8, "insecto": 8, "errante": 8, "dislocado": 8}, "extraId": "sinLinterna", "extra": "Sin linterna. Solo cámaras y sonido.", "colorNombre": "Azul noche", "color": "#3a64d8"},
+    {"id": "ojos", "nombre": "Ojos cerrados", "niveles": {"frozen": 10, "specimen": 10, "largo": 10, "insecto": 10, "errante": 10, "dislocado": 10}, "extraId": "camarasRotas", "extra": "Las cámaras están rotas desde las 12:00 (como en la Noche 3 a partir de las 3 AM).", "colorNombre": "Gris estática", "color": "#9aa0a6"},
+    {"id": "reactor", "nombre": "Reactor al límite", "niveles": {"frozen": 10, "specimen": 10, "largo": 10, "insecto": 10, "errante": 10, "dislocado": 10}, "extraId": "sinEnfriar", "extra": "Sin enfriamientos del reactor, pero se calienta un 20 % menos.", "colorNombre": "Naranja reactor", "color": "#ff7a1a"},
+    {"id": "plano", "nombre": "Sin plano", "niveles": {"frozen": 10, "specimen": 10, "largo": 10, "insecto": 10, "errante": 10, "dislocado": 10}, "extraId": "sinTriangulos", "extra": "No aparecen los triángulos de alerta. Solo sonido y terminal.", "colorNombre": "Verde terminal", "color": "#33ff66"},
+    {"id": "mires", "nombre": "No lo mires", "niveles": {"frozen": 8, "specimen": 8, "largo": 8, "insecto": 8, "errante": 20, "dislocado": 8}, "extraId": "noMirar", "extra": "Si miras al Errante una sola vez por las cámaras, pierdes.", "colorNombre": "Violeta", "color": "#a05cff"},
+    {"id": "frio", "nombre": "Frío extremo", "niveles": {"frozen": 20, "specimen": 8, "largo": 8, "insecto": 8, "errante": 8, "dislocado": 8}, "extraId": "crioMitad", "extra": "El margen de temperatura de Criogenia es la mitad.", "colorNombre": "Cian hielo", "color": "#3fe6ff"},
+    {"id": "ayudas", "nombre": "Sin ayudas", "niveles": {"frozen": 12, "specimen": 12, "largo": 12, "insecto": 12, "errante": 12, "dislocado": 12}, "extraId": "sinAyudas", "extra": "Audio señuelo e insecticida limitados: 10 audios y 8 soltadas en toda la noche.", "colorNombre": "Amarillo alerta", "color": "#ffd83a"},
+    {"id": "conductos", "nombre": "Por los conductos", "niveles": {"frozen": 0, "specimen": 0, "largo": 0, "insecto": 20, "errante": 0, "dislocado": 20}, "extraId": "rejillasRotas", "extra": "Las dos rejillas de la oficina están rotas desde las 12:00.", "colorNombre": "Magenta", "color": "#ff2fd0"},
+    {"id": "gigantes", "nombre": "Gigantes", "niveles": {"frozen": 0, "specimen": 20, "largo": 20, "insecto": 0, "errante": 5, "dislocado": 0}, "extraId": "puertasLentas", "extra": "Las puertas tardan 1 s en cerrarse.", "colorNombre": "Ámbar", "color": "#ffb020"},
+    {"id": "update", "nombre": "Actualización urgente", "niveles": {"frozen": 10, "specimen": 10, "largo": 10, "insecto": 15, "errante": 10, "dislocado": 10}, "extraId": "updateHoras", "extra": "Cada hora el sistema pide «get-update» y hay 10 s para escribirlo.", "colorNombre": "Verde lima", "color": "#a8ff2a"},
+    {"id": "doble", "nombre": "Turno doble", "niveles": {"frozen": 10, "specimen": 10, "largo": 10, "insecto": 10, "errante": 10, "dislocado": 10}, "extraId": "dobleVelocidad", "extra": "Todo va al doble de velocidad: la noche dura la mitad, pero los enemigos van el doble de rápido.", "colorNombre": "Rojo", "color": "#ff3030"},
+    {"id": "todos", "nombre": "Todos contra ti", "niveles": {"frozen": 20, "specimen": 20, "largo": 20, "insecto": 20, "errante": 20, "dislocado": 20}, "extraId": null, "extra": "Todos al máximo. Sin extra: ya es suficiente.", "colorNombre": "Negro", "color": "#000000"}
+  ]
 }

@@ -1572,7 +1572,7 @@ export class CameraView {
     // v0.63: dentro del plano, y en el de salas solo los que van por las salas
     // (El Insecto y El Dislocado, en el de conductos; El Insecto también aquí
     // al empezar la noche 2, que su triángulo cruza este plano)
-    const leyenda = cameras?.warnings ? Object.keys(NIGHT3.WARNINGS.LEGEND).filter((id) => !POR_CONDUCTOS.includes(id)) : [];
+    const leyenda = cameras?.warnings && !cameras.sinTriangulos ? Object.keys(NIGHT3.WARNINGS.LEGEND).filter((id) => !POR_CONDUCTOS.includes(id)) : [];
     if (scene?.n2intro != null) leyenda.push('insecto');
     if (scene?.n5) leyenda.push('errante');
     if (scene?.slaimi) leyenda.push('slaimi');
@@ -2712,6 +2712,7 @@ export function warnColor(id) {
 
 /** ¿Están en su fase visible los triángulos del plano? (cameras.warnT cuenta desde que se activaron) */
 export function warningsVisible(cameras) {
+  if (cameras.sinTriangulos) return false;   // (v1.57, reto «Sin plano»)
   const { SHOW, HIDE } = NIGHT3.WARNINGS;
   return ((cameras.warnT ?? 0) % (SHOW + HIDE)) < SHOW;
 }

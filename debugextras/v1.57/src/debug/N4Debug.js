@@ -222,6 +222,7 @@ export function install(g) {
     // (v1.56) el menú Extras: todo desbloqueado / todo bloqueado / vacío (en memoria) y abrirlo
     extrasTodo: () => { ExtrasProgreso.todo(CINTAS.map((c) => c.id), SUSTOS.map((x) => x.id)); ExtrasProgreso.ponSlaimiDebug('vivo'); },
     extrasSlaimi: (e) => ExtrasProgreso.ponSlaimiDebug(e),
+    retoFin: () => { if (g.reto && g.state === 'night') g.clock.elapsed = g.clock.total ?? g.clock.elapsed; },
     extrasN6: () => { ExtrasProgreso.desbloquea('n6'); },
     extrasBloquea: () => ExtrasProgreso.bloquea(),
     extrasReset: () => ExtrasProgreso.resetea(),
