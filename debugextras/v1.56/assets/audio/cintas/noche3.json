@@ -1,0 +1,175 @@
+{
+ "duration": 60.84,
+ "subtitles": [
+  {
+   "start": 0.7,
+   "end": 2.05,
+   "text": "Sigo aquí."
+  },
+  {
+   "start": 2.0,
+   "end": 3.93,
+   "text": "No preguntes cómo."
+  },
+  {
+   "start": 3.93,
+   "end": 6.54,
+   "text": "Perdí la grabadora en el reactor y he tenido que buscar otra."
+  },
+  {
+   "start": 6.69,
+   "end": 8.84,
+   "text": "Alguien reinició el reactor."
+  },
+  {
+   "start": 8.79,
+   "end": 11.31,
+   "text": "Se han abierto todas las celdas."
+  },
+  {
+   "start": 11.31,
+   "end": 11.82,
+   "text": "Todas."
+  },
+  {
+   "start": 11.97,
+   "end": 13.35,
+   "text": "Escucha."
+  },
+  {
+   "start": 13.3,
+   "end": 14.64,
+   "text": "El Largo."
+  },
+  {
+   "start": 14.64,
+   "end": 17.11,
+   "text": "Ahora está en todas las cámaras."
+  },
+  {
+   "start": 17.11,
+   "end": 19.71,
+   "text": "No ve bien, se guía por el oído."
+  },
+  {
+   "start": 19.71,
+   "end": 22.2,
+   "text": "Si pones un sonido en una cámara, va hacia allí."
+  },
+  {
+   "start": 22.35,
+   "end": 24.25,
+   "text": "Úsalo para alejarlo."
+  },
+  {
+   "start": 24.2,
+   "end": 26.51,
+   "text": "Cuando está lejos tienes tiempo."
+  },
+  {
+   "start": 26.51,
+   "end": 29.76,
+   "text": "Cuando está cerca, apenas un par de segundos."
+  },
+  {
+   "start": 29.76,
+   "end": 32.06,
+   "text": "Pon el sonido en otra cámara y llévatelo lejos de ti."
+  },
+  {
+   "start": 32.21,
+   "end": 34.45,
+   "text": "Y no solo va por las cámaras."
+  },
+  {
+   "start": 34.4,
+   "end": 37.96,
+   "text": "También puede venir por las puertas, como el espécimen."
+  },
+  {
+   "start": 37.96,
+   "end": 39.82,
+   "text": "Si lo ves en la puerta, ciérrala."
+  },
+  {
+   "start": 39.97,
+   "end": 42.71,
+   "text": "He leído los informes de los experimentos."
+  },
+  {
+   "start": 42.66,
+   "end": 44.68,
+   "text": "No nos cazan por hambre."
+  },
+  {
+   "start": 44.68,
+   "end": 47.31,
+   "text": "Hacen que suframos para que al devorarnos sepamos mejor."
+  },
+  {
+   "start": 47.96,
+   "end": 49.97,
+   "text": "Por eso no tienen prisa."
+  },
+  {
+   "start": 49.92,
+   "end": 51.39,
+   "text": "Por eso juegan con nosotros."
+  },
+  {
+   "start": 51.54,
+   "end": 52.7,
+   "text": "Vale."
+  },
+  {
+   "start": 52.65,
+   "end": 53.88,
+   "text": "Vale."
+  },
+  {
+   "start": 53.88,
+   "end": 55.99,
+   "text": "Vigila el pasillo de atrás."
+  },
+  {
+   "start": 55.99,
+   "end": 57.9,
+   "text": "Ahora está abierto."
+  },
+  {
+   "start": 57.9,
+   "end": 59.14,
+   "text": "Y no dejes que se acerque."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 0.0,
+   "efecto": "alarma_lejana"
+  },
+  {
+   "t": 11.97,
+   "efecto": "paso_enorme"
+  },
+  {
+   "t": 32.56,
+   "efecto": "arrastre_conducto"
+  },
+  {
+   "t": 39.97,
+   "efecto": "respiracion_grave"
+  },
+  {
+   "t": 51.54,
+   "efecto": "caida_rueda"
+  },
+  {
+   "t": 59.29,
+   "efecto": "clic_inicio"
+  }
+ ]
+}

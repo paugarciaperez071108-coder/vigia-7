@@ -1,0 +1,114 @@
+{
+ "duration": 43.08,
+ "subtitles": [
+  {
+   "start": 0.7,
+   "end": 2.08,
+   "text": "Vale."
+  },
+  {
+   "start": 2.03,
+   "end": 3.8,
+   "text": "Estoy bien."
+  },
+  {
+   "start": 3.8,
+   "end": 4.39,
+   "text": "Creo."
+  },
+  {
+   "start": 4.54,
+   "end": 7.12,
+   "text": "Voy a reparar las cámaras."
+  },
+  {
+   "start": 7.07,
+   "end": 10.82,
+   "text": "Sin ellas no sé por dónde vienen, y así no aguanto otra noche."
+  },
+  {
+   "start": 10.97,
+   "end": 15.48,
+   "text": "Cuatro tornillos, la lente de repuesto y otros cuatro tornillos."
+  },
+  {
+   "start": 15.43,
+   "end": 17.54,
+   "text": "Cámara por cámara."
+  },
+  {
+   "start": 17.54,
+   "end": 20.6,
+   "text": "Es una tarea un poco tediosa, pero la necesito."
+  },
+  {
+   "start": 22.25,
+   "end": 23.81,
+   "text": "…Solo era la ventilación."
+  },
+  {
+   "start": 23.96,
+   "end": 27.52,
+   "text": "Ojalá encuentre algo que me ayude a escapar de aquí."
+  },
+  {
+   "start": 27.47,
+   "end": 30.55,
+   "text": "Una nave de rescate, una radio… lo que sea."
+  },
+  {
+   "start": 30.7,
+   "end": 32.99,
+   "text": "No me esperaba que esto terminara así."
+  },
+  {
+   "start": 33.64,
+   "end": 35.66,
+   "text": "Pero las necesito."
+  },
+  {
+   "start": 35.61,
+   "end": 37.49,
+   "text": "Las cámaras."
+  },
+  {
+   "start": 37.49,
+   "end": 39.17,
+   "text": "Si no veo, no salgo."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 0.0,
+   "efecto": "goteo"
+  },
+  {
+   "t": 0.0,
+   "efecto": "ventilacion"
+  },
+  {
+   "t": 0.7,
+   "efecto": "respiracion"
+  },
+  {
+   "t": 10.97,
+   "efecto": "herramientas"
+  },
+  {
+   "t": 20.75,
+   "efecto": "roce"
+  },
+  {
+   "t": 39.32,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 39.62,
+   "efecto": "puerta_abre"
+  }
+ ]
+}

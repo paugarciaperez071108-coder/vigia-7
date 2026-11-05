@@ -1,0 +1,177 @@
+{
+ "duration": 59.57,
+ "subtitles": [
+  {
+   "start": 0.7,
+   "end": 1.89,
+   "text": "Sigues ahí."
+  },
+  {
+   "start": 1.84,
+   "end": 2.88,
+   "text": "Bien."
+  },
+  {
+   "start": 2.88,
+   "end": 3.98,
+   "text": "Yo también, por poco."
+  },
+  {
+   "start": 4.13,
+   "end": 6.13,
+   "text": "Anoche algo entró por el conducto."
+  },
+  {
+   "start": 6.08,
+   "end": 9.48,
+   "text": "Tenía una bombona de gas junto al escritorio, la abrí y le di de lleno."
+  },
+  {
+   "start": 9.48,
+   "end": 11.8,
+   "text": "Gracias a que tenía ese gas me he salvado."
+  },
+  {
+   "start": 11.8,
+   "end": 13.72,
+   "text": "Ya no queda nada, así que no cuentes con eso."
+  },
+  {
+   "start": 13.87,
+   "end": 15.46,
+   "text": "Escucha, esta noche hay dos nuevos."
+  },
+  {
+   "start": 15.61,
+   "end": 16.78,
+   "text": "El primero."
+  },
+  {
+   "start": 16.73,
+   "end": 17.99,
+   "text": "El Insecto."
+  },
+  {
+   "start": 17.99,
+   "end": 21.38,
+   "text": "Va por los conductos y se le oye arrastrarse, cada vez más cerca."
+  },
+  {
+   "start": 21.38,
+   "end": 25.88,
+   "text": "Cuando llegue a uno de los dos conductos de al lado de la oficina, échale insecticida, rápido."
+  },
+  {
+   "start": 25.88,
+   "end": 27.24,
+   "text": "Se va, pero siempre vuelve."
+  },
+  {
+   "start": 27.39,
+   "end": 28.36,
+   "text": "Vale."
+  },
+  {
+   "start": 28.31,
+   "end": 29.57,
+   "text": "El segundo."
+  },
+  {
+   "start": 29.57,
+   "end": 30.68,
+   "text": "El Largo."
+  },
+  {
+   "start": 30.68,
+   "end": 36.26,
+   "text": "A partir de las dos anda por las salas y golpea la entrada del conducto hasta romperla, y si se mete dentro, estás muerto."
+  },
+  {
+   "start": 36.26,
+   "end": 39.93,
+   "text": "Búscalo en las cámaras y haz sonar los golpes metálicos en una sala de al lado."
+  },
+  {
+   "start": 39.93,
+   "end": 41.02,
+   "text": "Se va, pero vuelve."
+  },
+  {
+   "start": 41.17,
+   "end": 42.9,
+   "text": "Y los de anoche siguen ahí."
+  },
+  {
+   "start": 42.85,
+   "end": 45.25,
+   "text": "El muro, la nevera, el reactor."
+  },
+  {
+   "start": 45.25,
+   "end": 47.52,
+   "text": "No te olvides de ninguno, porque ahora son más rápidos."
+  },
+  {
+   "start": 47.67,
+   "end": 49.55,
+   "text": "Los oigo dentro de las paredes."
+  },
+  {
+   "start": 49.5,
+   "end": 50.14,
+   "text": "Toda la noche."
+  },
+  {
+   "start": 50.79,
+   "end": 53.09,
+   "text": "Voy a intentar llegar a la sala del reactor."
+  },
+  {
+   "start": 53.04,
+   "end": 54.6,
+   "text": "Si consigo apagarlo, a lo mejor podemos…"
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 0.2,
+   "efecto": "respiracion"
+  },
+  {
+   "t": 13.87,
+   "efecto": "tuberia"
+  },
+  {
+   "t": 27.39,
+   "efecto": "chillido"
+  },
+  {
+   "t": 41.17,
+   "efecto": "caida_pesada"
+  },
+  {
+   "t": 41.87,
+   "efecto": "golpes_irregulares"
+  },
+  {
+   "t": 47.67,
+   "efecto": "aranazos_pared"
+  },
+  {
+   "t": 54.6,
+   "efecto": "derrumbe"
+  },
+  {
+   "t": 54.95,
+   "efecto": "alarma"
+  },
+  {
+   "t": 58.31,
+   "efecto": "corte_cinta"
+  }
+ ]
+}

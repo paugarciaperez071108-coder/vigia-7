@@ -1,0 +1,168 @@
+{
+ "duration": 61.83,
+ "subtitles": [
+  {
+   "start": 0.7,
+   "end": 2.75,
+   "text": "Vale… vale."
+  },
+  {
+   "start": 2.7,
+   "end": 6.0,
+   "text": "Si oyes esto, has llegado al panel."
+  },
+  {
+   "start": 6.0,
+   "end": 7.4,
+   "text": "Yo también estuve aquí."
+  },
+  {
+   "start": 7.55,
+   "end": 9.51,
+   "text": "Mantén el botón."
+  },
+  {
+   "start": 9.46,
+   "end": 11.52,
+   "text": "No lo sueltes."
+  },
+  {
+   "start": 11.52,
+   "end": 13.28,
+   "text": "Tarda, pero vuelve la luz."
+  },
+  {
+   "start": 14.43,
+   "end": 16.19,
+   "text": "No sé cuánto más voy a resistir."
+  },
+  {
+   "start": 16.34,
+   "end": 19.24,
+   "text": "Cada vez se ponen más agresivos."
+  },
+  {
+   "start": 19.19,
+   "end": 22.28,
+   "text": "Antes se iban si cerraba la puerta."
+  },
+  {
+   "start": 22.28,
+   "end": 24.52,
+   "text": "Ahora se quedan ahí… esperando."
+  },
+  {
+   "start": 24.67,
+   "end": 27.35,
+   "text": "Solo me guío por las alertas."
+  },
+  {
+   "start": 27.3,
+   "end": 29.36,
+   "text": "Los triángulos."
+  },
+  {
+   "start": 29.36,
+   "end": 33.31,
+   "text": "Las cámaras… no sé cuándo van a volver a funcionar."
+  },
+  {
+   "start": 33.31,
+   "end": 34.42,
+   "text": "Si es que vuelven."
+  },
+  {
+   "start": 36.07,
+   "end": 37.07,
+   "text": "Y luego está él."
+  },
+  {
+   "start": 37.22,
+   "end": 40.1,
+   "text": "Ese cabrón no me deja estar cuerdo."
+  },
+  {
+   "start": 40.05,
+   "end": 42.56,
+   "text": "No lo veo en las cámaras."
+  },
+  {
+   "start": 42.56,
+   "end": 45.17,
+   "text": "No sale en las alertas."
+  },
+  {
+   "start": 45.17,
+   "end": 47.33,
+   "text": "Pero sé que está ahí."
+  },
+  {
+   "start": 47.33,
+   "end": 49.46,
+   "text": "Lo oigo cuando cierro los ojos."
+  },
+  {
+   "start": 49.61,
+   "end": 50.35,
+   "text": "…¿Lo has oído?"
+  },
+  {
+   "start": 51.5,
+   "end": 53.08,
+   "text": "Da igual."
+  },
+  {
+   "start": 53.03,
+   "end": 55.27,
+   "text": "Termina con el panel."
+  },
+  {
+   "start": 55.27,
+   "end": 57.31,
+   "text": "Y no te duermas."
+  },
+  {
+   "start": 57.31,
+   "end": 59.9,
+   "text": "Pase lo que pase, no te duermas aquí fuera."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 0.3,
+   "efecto": "chispazos"
+  },
+  {
+   "t": 0.7,
+   "efecto": "suspiro"
+  },
+  {
+   "t": 16.34,
+   "efecto": "golpe"
+  },
+  {
+   "t": 34.57,
+   "efecto": "respiracion_grave"
+  },
+  {
+   "t": 49.61,
+   "efecto": "susurro"
+  },
+  {
+   "t": 49.61,
+   "efecto": "inhala"
+  },
+  {
+   "t": 60.05,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 60.75,
+   "efecto": "corte_cinta"
+  }
+ ]
+}
