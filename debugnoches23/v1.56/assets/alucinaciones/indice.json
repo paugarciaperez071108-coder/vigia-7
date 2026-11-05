@@ -1,0 +1,82 @@
+{
+ "comms": {
+  "archivo": "comms.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "cryo": {
+  "archivo": "cryo.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "eastHall": {
+  "archivo": "eastHall.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "greenhouse": {
+  "archivo": "greenhouse.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "hangar": {
+  "archivo": "hangar.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "lab": {
+  "archivo": "lab.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "medbay": {
+  "archivo": "medbay.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "mess": {
+  "archivo": "mess.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "reactor": {
+  "archivo": "reactor.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ },
+ "westHall": {
+  "archivo": "westHall.webp",
+  "frames": 56,
+  "cols": 7,
+  "w": 640,
+  "h": 360,
+  "fps": 8
+ }
+}
