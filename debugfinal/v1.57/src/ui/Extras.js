@@ -174,7 +174,7 @@ export class Extras {
     }
     if (id === 'sustos') return siNoLista(this.pantallas.sustos, `0/${SUSTOS.length} vistos`);
     if (id === 'beta') return this.pantallas.beta?.cuenta?.() ?? 'EN PREPARACIÓN';
-    if (id === 'retos') return RETOS.length ? `${RETOS.filter((r) => P.datos().retos[r.id]).length}/${RETOS.length}` : 'EN DESARROLLO';
+    if (id === 'retos') return siNoLista(this.pantallas.retos, 'EN DESARROLLO');
     return '';
   }
 
@@ -266,7 +266,7 @@ export class Extras {
       ctx.fillStyle = sel ? TINTA : '#9fd8b4';
       ctx.fillText(`${sel ? '> ' : '  '}${a.nombre}`, r.x + 18, r.y + r.h / 2 + 1);
       ctx.font = `18px ${FUENTE}`;
-      ctx.fillStyle = a.id === 'retos' || a.id === 'beta' && !this.pantallas.beta ? GRIS : VERDE_OSC;
+      ctx.fillStyle = VERDE_OSC;
       ctx.textAlign = 'right';
       ctx.fillText(this._cuenta(a.id), r.x + r.w - 20, r.y + r.h / 2 + 1);
       ctx.textAlign = 'left';
@@ -317,7 +317,7 @@ export class Extras {
       beta: 'DISEÑOS ANTERIORES · ARCHIVO DESCLASIFICADO',
       cintas: 'GRABACIONES RECUPERADAS',
       sustos: 'REGISTROS DE INCIDENTES',
-      retos: 'MÓDULO EN DESARROLLO',
+      retos: 'NOCHES CON UN EXTRA DE DIFICULTAD',
     };
     ctx.fillText(`> ${PIE[id]}`, v.x, v.y + v.h + 28);
   }
@@ -450,13 +450,10 @@ export class Extras {
     ctx.font = `bold 30px ${FUENTE}`;
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(216,255,232,0.8)';
-    ctx.fillText('MÓDULO EN DESARROLLO', cx, cy - 20);
-    const w = 360;
-    ctx.strokeStyle = VERDE_OSC;
-    ctx.strokeRect(cx - w / 2, cy + 20, w, 22);
-    const k = (t * 0.25) % 1;
-    ctx.fillStyle = 'rgba(125,255,176,0.5)';
-    ctx.fillRect(cx - w / 2 + 3, cy + 23, (w - 6) * Math.min(1, k * 1.4), 16);
+    ctx.fillText(this.pantallas.retos?.cuenta?.() ?? '', cx, cy - 20);
+    ctx.font = `18px ${FUENTE}`;
+    ctx.fillStyle = VERDE_OSC;
+    ctx.fillText('Y LA NOCHE PERSONALIZADA', cx, cy + 25);
   }
 
   /** Un apartado que todavía no está hecho. */

@@ -774,7 +774,7 @@ export function install(g) {
     boton.textContent = st.open ? 'NOVEDADES ▲' : 'NOVEDADES ▼';
     const todo = `
       <b style="color:#ffd84a">PRUEBA DE NOVEDADES · solo la versión más nueva</b><br><span style="opacity:.6">La partida guardada no se toca.</span>
-      <h3>v1.56 · El menú Extras (desbloqueado al completar la Noche 5), lleno: Personajes con el modelo para girar, Beta con «Comparar», Cintas y Jumpscares con cámara lenta. Y además: la 2.5 en 3D, la linterna con el ratón, la cinta de la Noche 5 y las grabaciones de los conductos</h3>
+      <h3>v1.57 · Retos: 13 noches con un extra de dificultad, la noche personalizada y las estrellas del menú (en Extras, apartado Retos)</h3>
         ${b('Extras con todo desbloqueado', 'extras')}
       <h3>v1.55 · Noches 2 y 4 en 3D, fase N1 (la base): la estación entera sin energía, solo se ve con la linterna (ESPACIO o F); el C. Este, Comunicaciones y sus pasillos ya en 3D (se da la vuelta entera al anillo); los enemigos asomados con la mecánica de la luz de la 2.5 (luz en la cara hasta que se retiran). Debug aparte: ?n4debug=1&amp;noches3d=1&amp;sinlogo=1, web …/debugnoches3d/ y Vigia7-debug-noches3d.exe</h3>
         ${b('Desde la oficina', 'noche3d:oficina')}${b('El C. Este', 'noche3d:n_eastHall')}${b('Comunicaciones', 'noche3d:n_comms')}${b('El Hangar', 'noche3d:n_hangar')}
