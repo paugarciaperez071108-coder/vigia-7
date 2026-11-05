@@ -1,0 +1,222 @@
+{
+ "duration": 71.92,
+ "subtitles": [
+  {
+   "start": 0.0,
+   "end": 1.35,
+   "text": "Quinta noche."
+  },
+  {
+   "start": 1.3,
+   "end": 2.31,
+   "text": "Creo."
+  },
+  {
+   "start": 2.31,
+   "end": 3.68,
+   "text": "Ya no estoy seguro de los días."
+  },
+  {
+   "start": 4.53,
+   "end": 5.78,
+   "text": "Hace frío."
+  },
+  {
+   "start": 5.73,
+   "end": 7.12,
+   "text": "Mucho frío."
+  },
+  {
+   "start": 7.12,
+   "end": 12.38,
+   "text": "Criogenia lleva toda la noche fallando… si la temperatura se sale de rango, algo ahí dentro se despierta."
+  },
+  {
+   "start": 12.38,
+   "end": 13.57,
+   "text": "No dejes que se descontrole."
+  },
+  {
+   "start": 15.52,
+   "end": 16.72,
+   "text": "¿Lo oyes?"
+  },
+  {
+   "start": 16.67,
+   "end": 18.08,
+   "text": "Eso es nuevo."
+  },
+  {
+   "start": 18.08,
+   "end": 19.76,
+   "text": "Va por los conductos."
+  },
+  {
+   "start": 19.76,
+   "end": 23.71,
+   "text": "Se arrastra… y no tiene piernas, lo he visto por la cámara de ventilación."
+  },
+  {
+   "start": 23.71,
+   "end": 25.69,
+   "text": "Solo medio cuerpo… y lo que le cuelga detrás."
+  },
+  {
+   "start": 26.34,
+   "end": 27.8,
+   "text": "Llevaba el uniforme de la tripulación."
+  },
+  {
+   "start": 29.65,
+   "end": 31.06,
+   "text": "Golpea las rejillas."
+  },
+  {
+   "start": 31.01,
+   "end": 33.46,
+   "text": "Todavía aguantan… pero no van a aguantar toda la noche."
+  },
+  {
+   "start": 33.46,
+   "end": 35.23,
+   "text": "Cuando una se rompa, mírala."
+  },
+  {
+   "start": 35.23,
+   "end": 36.8,
+   "text": "Alúmbrala hasta que se vaya."
+  },
+  {
+   "start": 36.8,
+   "end": 37.49,
+   "text": "Si no lo haces…"
+  },
+  {
+   "start": 39.34,
+   "end": 40.41,
+   "text": "Y el otro."
+  },
+  {
+   "start": 40.36,
+   "end": 41.51,
+   "text": "El que mira."
+  },
+  {
+   "start": 41.51,
+   "end": 44.08,
+   "text": "Cada vez que lo miro por la cámara, se me va la imagen."
+  },
+  {
+   "start": 44.08,
+   "end": 45.84,
+   "text": "Ya no me fío ni de lo que veo."
+  },
+  {
+   "start": 45.84,
+   "end": 47.72,
+   "text": "Me guío por los avisos del plano."
+  },
+  {
+   "start": 47.72,
+   "end": 48.74,
+   "text": "Es lo único que no me miente."
+  },
+  {
+   "start": 51.09,
+   "end": 52.19,
+   "text": "Y tú… sigues aquí."
+  },
+  {
+   "start": 53.04,
+   "end": 55.8,
+   "text": "No sé qué eres, pero eres lo único en esta nave que no quiere matarme."
+  },
+  {
+   "start": 55.95,
+   "end": 57.84,
+   "text": "Con este frío no vas a aguantar."
+  },
+  {
+   "start": 57.79,
+   "end": 60.44,
+   "text": "Si la cosa se pone fea… métete en el armario."
+  },
+  {
+   "start": 60.44,
+   "end": 62.17,
+   "text": "Ahí dentro hace menos frío."
+  },
+  {
+   "start": 62.17,
+   "end": 62.78,
+   "text": "Prométemelo."
+  },
+  {
+   "start": 64.53,
+   "end": 65.41,
+   "text": "Mierda."
+  },
+  {
+   "start": 65.36,
+   "end": 66.16,
+   "text": "Criogenia otra vez."
+  },
+  {
+   "start": 66.31,
+   "end": 68.32,
+   "text": "Si alguien escucha esto… vigila el frío."
+  },
+  {
+   "start": 68.27,
+   "end": 69.63,
+   "text": "Vigila las rejillas."
+  },
+  {
+   "start": 69.63,
+   "end": 70.69,
+   "text": "Y no mires demasiado a nadie."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "goteo"
+  },
+  {
+   "t": 0.0,
+   "efecto": "clic_inicio"
+  },
+  {
+   "t": 13.72,
+   "efecto": "arrastre_lento"
+  },
+  {
+   "t": 27.95,
+   "efecto": "golpe_conducto"
+  },
+  {
+   "t": 28.85,
+   "efecto": "golpe_conducto"
+  },
+  {
+   "t": 38.54,
+   "efecto": "estatica"
+  },
+  {
+   "t": 48.89,
+   "efecto": "slaimi"
+  },
+  {
+   "t": 62.93,
+   "efecto": "hielo"
+  },
+  {
+   "t": 63.63,
+   "efecto": "pitido_sube"
+  },
+  {
+   "t": 70.84,
+   "efecto": "corte_cinta"
+  }
+ ]
+}
