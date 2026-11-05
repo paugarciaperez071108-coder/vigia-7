@@ -1462,6 +1462,11 @@ export class Game {
     this.attacker = null;
     this.deathCause = null;
     this._setState('n4start');
+    // (v1.58, fase N3) el punto de control de la ruta A, delante del panel en 3D
+    if (at === 'reboot' && NOCHES3D.USAR_NOCHE4 && Libre3D.soportado()) {
+      this._noche4Salto = 'panel';
+      this._empiezaNoche3D('noche4');
+    }
   }
 
   /** Deja la oficina y el sistema como al empezar un minijuego (sin cinta ni ambiente). */
