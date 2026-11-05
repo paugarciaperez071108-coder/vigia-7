@@ -82,7 +82,7 @@ import { drawHUD, drawTapeOverlay, drawSkipButton, TAPE_SKIP, TAPE_SUBS, TAPE_PL
 import { drawJumpscare, hasJumpscare, saltosCongelado, duracionSalto, drawSaltoCongelado, nuevoSalto } from '../ui/Jumpscare.js';
 import { Terminal } from '../ui/Terminal.js';
 import { EasterEgg } from '../ui/EasterEgg.js';
-import { getNight, NIGHTS } from '../night/nights.js';
+import { getNight, ponNocheReto, NIGHTS } from '../night/nights.js';
 import { NIGHT2 } from '../night/night2.js';
 import { SaveData, slaimiDe, ponSlaimi } from './SaveData.js';
 import { Menu } from '../ui/Menu.js';
@@ -137,6 +137,8 @@ import { PantallaPersonajes } from '../ui/extras/Personajes.js';
 import { PantallaCintas } from '../ui/extras/Cintas.js';
 import { PantallaSustos } from '../ui/extras/Sustos.js';
 import { PantallaBeta } from '../ui/extras/Beta.js';
+import { PantallaRetos2 } from '../ui/extras/Retos.js';
+import { NOCHE_RETO, nocheDeReto, pasoErrante, EXTRA_RETO } from '../night/retos.js';
 
 const KEYMAP = {
   KeyQ: { type: 'door', side: 'left' },
@@ -341,6 +343,7 @@ export class Game {
     this.debugFinal = this.debug && params.has('final');
 
     this.events.on('hour', (h) => this.ai.onHour(h));
+    this.events.on('hour', () => this._retoUpdate());
     // v0.58: cuando cambia el rango de la criogenia, aviso con sonido (y el
     // panel parpadea: CryoPanel.cambioReciente)
     // v0.66b: El Congelado en su compuerta: pisadas por ese lado y, al final, silencio
@@ -401,7 +404,7 @@ export class Game {
     this.menu = new Menu();
     // (v1.56) el menú Extras (encima del menú) y lo que desbloquea (aparte de la partida)
     this.extras = new Extras(this);
-    this.extras.registra('retos', new PantallaRetos(this));
+    this.extras.registra('retos', new PantallaRetos2(this));
     this.extras.registra('personajes', new PantallaPersonajes(this));
     this.extras.registra('cintas', new PantallaCintas(this, cintasQueHay));
     this.extras.registra('sustos', new PantallaSustos(this));
@@ -434,6 +437,33 @@ export class Game {
   // Transiciones
   // ---------------------------------------------------------------
 
+  /** (v1.57) Un reto o la noche personalizada: una noche aparte, que no toca la partida guardada. Al acabar, vuelve a Retos. */
+  empiezaReto(def) {
+    this._ensureAudio?.();
+    this.extras.cierra();
+    this.reto = def;
+    this.retoGanado = false;
+    ponNocheReto(nocheDeReto(def));
+    this.save = this.save ?? SaveData.fresh();
+    this.startNight(NOCHE_RETO, { save: false, skipStart: true, sinCinta: true });
+  }
+
+  /** (v1.57, reto «Ojos cerrados») las cámaras rotas desde las 12:00, como en la noche 3 desde las 3 AM. */
+  _retoCamarasRotas() {
+    if (this.reto?.extraId !== 'camarasRotas') return;
+    for (const id of NIGHT3.EVENT_3AM.BREAK) this.cameras.broken.add(id);
+    this.cameras.warnings = true;
+  }
+
+  /** (v1.57, reto «Actualización urgente») cada hora, get-update con su cuenta atrás; si no, entra El Insecto. */
+  _retoUpdate() {
+    if (this.reto?.extraId !== 'updateHoras' || this.state !== 'night') return;
+    this.cameras.ventsUnlocked = false;
+    this.n2intro = { t: NIGHT2.ENTRADA.TIME - EXTRA_RETO.UPDATE_TIEMPO, next: 0.3, hit: false, won: false, t2: 0 };
+    this.terminal.print('Actualizacion critica pendiente');
+    this.alerta(`ACTUALIZA EL SISTEMA: ${NIGHT2.UPDATE_COMMAND} (${EXTRA_RETO.UPDATE_TIEMPO} s)`, 'danger');
+  }
+
   startNight(n, { save = true, n4path = null, skipStart = false, n7 = {}, sinCinta = false } = {}) {
     if (n === 7) precargaDevora();   // (v1.48: el susto de la Aberración, listo antes de que haga falta)
     // Noche 4: empieza en la taquilla (se elige el camino); el turno de
@@ -461,6 +491,22 @@ export class Game {
     this.cryo.reset(night.cryo);
     this.blackout.reset(night.blackouts);
     this.ai.setup(night);
+    if (night.reto) {
+      // (v1.57) lo que no usa el nivel de 0 a 20 (src/night/retos.js). Sin El Congelado: sin él ni su panel
+      const N = night.reto.niveles;
+      if (N.frozen <= 0) {
+        this.cryo.enabled = false;
+        this.ai.frozen.state = 'muerto';
+      }
+      this.ai.errante.n6Paso = pasoErrante(Math.max(1, N.errante));
+      this.ai.dislocado.nivelFijo = true;
+      if (night.reto.extraId === 'noMirar') this.ai.errante.perderAlMirar = EXTRA_RETO.MIRAR_ERRANTE;
+    }
+    this.office.cierreLento = night.reto?.extraId === 'puertasLentas' ? EXTRA_RETO.PUERTA_LENTA : 0;
+    this.reactor.pasivoMult = night.reto?.extraId === 'sinEnfriar' ? EXTRA_RETO.PASIVO_REACTOR : 1;
+    this.retoAyudas = night.reto?.extraId === 'sinAyudas' ? { audios: EXTRA_RETO.AUDIOS, soltadas: EXTRA_RETO.SOLTADAS } : null;
+    this.cameras.sinTriangulos = night.reto?.extraId === 'sinTriangulos';
+    this.speed = night.reto?.extraId === 'dobleVelocidad' ? 2 : (night.reto ? 1 : this.speed);
     this.n3.reset(night);
     // Noche 3 (largoMode 'oido'): El Largo empieza al fondo del pasillo central
     if (night.largoMode === 'oido' && this.ai.largo.level > 0) {
@@ -556,14 +602,29 @@ export class Game {
     if (n4path) this._n4Save(n4path === 'A' ? 'n4a' : 'n4turno');
     // Noche 5: Slaimi sigue contigo si lo salvaste (ruta B de la noche 4)
     const n5slaimi = this._n5SlaimiState();
-    if (night.n5 && !night.n6 && !night.n7 && n5slaimi === 'vivo') this.slaimi.active = true;
+    if (night.n5 && !night.n6 && !night.n7 && !night.reto && n5slaimi === 'vivo') this.slaimi.active = true;
     if (night.n6) this.slaimi.active = n6slaimi === 'salvado';
     // Cinta del hombre de la cinta: suena SIEMPRE sola al empezar la noche
     // (aunque ya se haya escuchado); se puede volver a poner con L o el botón.
     // Noche 4: CONFIG.TAPES[4] está preparada, pero aún no hay guion ni audio.
     // Noche 7: si se ha saltado ya desde el debug, no suena
     // (v1.53) Noche 1 justo después del prólogo: sin cinta de bienvenida (queda para ponerla con L o el botón)
-    if (!(night.n7 && n7.saltarCinta)) this.tape.schedule(n, { autoplay: !sinCinta });
+    if (night.reto) {
+      this.tape.stop?.();
+      const ex = night.reto.extraId;
+      if (ex === 'sinLinterna') this.backFlash.taken = false;
+      this._retoCamarasRotas();
+      if (ex === 'rejillasRotas') {
+        for (const s of ['left', 'right']) this.n5.grilles[s].broken = true;
+        this.n5.done2 = this.n5.done4 = true;
+        const dis = this.ai.dislocado;
+        if (dis?.level > 0) {
+          dis.state = 'away';
+          dis.returnIn = 18;
+        }
+      }
+    }
+    else if (!(night.n7 && n7.saltarCinta)) this.tape.schedule(n, { autoplay: !sinCinta });
     this.attacker = null;
     this.deathCause = null;
     if (night.n6 && !skipStart) {
@@ -1204,6 +1265,7 @@ export class Game {
    * que «Continuar» en el menú.
    */
   _retry() {
+    if (this.reto) return this._toMenu();   // (v1.57: de vuelta a Retos)
     this._toMenu();
     if (this.save || this.debugNight || this.debugFinal) this._menuAction('continue');
   }
@@ -1233,6 +1295,15 @@ export class Game {
     if (ExtrasProgreso.tocaAviso()) this.menu.avisoExtras = 4;   // (v1.56) «EXTRAS DESBLOQUEADO»
     this._setState('menu');
     if (this.audio.ctx) this.menuMusic.start(this._nocheGuardada());
+    if (this.reto) {
+      this.speed = 1;
+      // (v1.57) al acabar un reto: otra vez en la lista de Retos
+      const r = this.reto;
+      this.reto = null;
+      this.extras.abre();
+      this.extras._entra(4);
+      this.extras.pantallas.retos.resultado(this.retoGanado, r.nombre);
+    }
   }
 
   _menuAction(action) {
@@ -1968,10 +2039,19 @@ export class Game {
    * cuenta para la fuga.
    */
   _spray() {
+    if (this.retoAyudas?.soltadas === 0) {   // (v1.57, reto «Sin ayudas»: limitadas)
+      this.events.emit('denied', 'center');
+      this.terminal.print('Sin insecticida');
+      return;
+    }
     const cams = this.cameras;
     if (cams.mapMode !== 'vent' || !cams.signal || !NIGHT2.GAS.VENTS.includes(cams.active) || !this.gas.spray()) {
       this.events.emit('denied', 'center');
       return;
+    }
+    if (this.retoAyudas) {
+      this.retoAyudas.soltadas--;
+      this.terminal.print(`Insecticida: quedan ${this.retoAyudas.soltadas}`);
     }
     this.events.emit('gasSpray', { room: cams.active });
     this.cameraView.sprayCloud(cams.active);
@@ -1985,9 +2065,13 @@ export class Game {
    * altavoces siguen funcionando).
    */
   _lure() {
-    if (!this.cameras.hasLure || this.cameras.mapMode !== 'main' || this.lureCooldown > 0) {
+    if (!this.cameras.hasLure || this.cameras.mapMode !== 'main' || this.lureCooldown > 0 || this.retoAyudas?.audios === 0) {
       this.events.emit('denied', 'center');
       return;
+    }
+    if (this.retoAyudas) {
+      this.retoAyudas.audios--;
+      this.terminal.print(`Audio: quedan ${this.retoAyudas.audios}`);
     }
     this.lureCooldown = this.ai.largo.lureCooldown ?? NIGHT2.LARGO.LURE_COOLDOWN;
     this.events.emit('lure', { room: this.cameras.active });
@@ -2019,7 +2103,7 @@ export class Game {
       else this.terminal.print('Error: no hay ningun fallo activo');
       return;
     }
-    if (cmd === NIGHT2.UPDATE_COMMAND && getNight(this.nightNumber).ventsUpdate) {
+    if (cmd === NIGHT2.UPDATE_COMMAND && (getNight(this.nightNumber).ventsUpdate || this.reto?.extraId === 'updateHoras')) {
       if (!this.cameras.hasVents) this.terminal.print('Error: no hay actualizaciones');
       else if (this.cameras.ventsUnlocked) this.terminal.print('Ventilacion ya en linea');
       else {
@@ -2160,6 +2244,15 @@ export class Game {
         }
         this.reactor.update(dt, this.office, this.cameras.open);
         if (this.state !== 'night') return; // el reactor ha explotado
+        if (this.clock.finished && this.reto) {
+          // (v1.57) reto superado: su estrella (la noche personalizada no tiene)
+          if (this.reto.id !== 'personal') ExtrasProgreso.completaReto(this.reto.id);
+          this.retoGanado = true;
+          this.audio.stopAll();
+          this.audio.chime();
+          this._setState('win');
+          break;
+        }
         if (this.clock.finished && getNight(this.nightNumber).lockersEnding) {
           // Noche 3: a las 6 AM hay que esconderse en una taquilla
           // (antes, la cinemática de llegada de los enemigos en el plano)
@@ -2694,7 +2787,7 @@ export class Game {
       night: this.nightNumber,
       clockElapsed: this.clock.elapsed,
       slaimi: this.slaimi.active ? this.slaimi : null,
-      slaimiDead: slaimiDe(this.save?.flags)?.causa === 'n4' && this.nightNumber >= 5,
+      slaimiDead: !this.reto && slaimiDe(this.save?.flags)?.causa === 'n4' && this.nightNumber >= 5,
       hallu: this.hallu.active ? this.hallu : null,
       n5: this.n5.active ? this.n5 : null,
       n6: this.n6.active ? this.n6 : null,

@@ -14,6 +14,8 @@ import { Random } from '../core/Random.js';
 import { NIGHT4 } from '../night/night4.js';
 import { FINALES, Finales } from '../core/Finales.js';
 import { ExtrasProgreso } from '../core/ExtrasProgreso.js';
+import { TEXTOS } from './extras/comun.js';
+import { estrella } from './extras/Retos.js';
 
 const ITEMS = {
   newGame: { x: 120, y: 500, w: 560, h: 60 },
@@ -166,6 +168,23 @@ export class Menu {
     this.selected = orden[(i + (dir < 0 ? orden.length - 1 : 1)) % orden.length];
   }
 
+  /**
+   * (v1.57) Las estrellas, debajo del título. Antes de completar la Noche 5, ninguna. Después: la de la Noche 5, un
+   * hueco por cada reto y, solo al completarla, la de la Noche 7 (ni su hueco, para no destripar que hay más noches).
+   */
+  _drawEstrellas(ctx) {
+    if (!ExtrasProgreso.extras()) return;
+    const E = TEXTOS.estrellas ?? {};
+    const lista = [{ color: E.noche5 ?? '#c8d0d8', si: true }];
+    if (ExtrasProgreso.aberracion()) lista.push({ color: E.noche7 ?? '#ffcc33', si: true });
+    for (const r of TEXTOS.retos ?? []) lista.push({ color: r.color, si: ExtrasProgreso.retoHecho(r.id) });
+    lista.forEach((e, i) => {
+      const x = 142 + i * 40;
+      if (e.si) estrella(ctx, x, 425, 15, e.color, e.color === '#000000' ? '#cfd8d3' : null);
+      else estrella(ctx, x, 425, 15, 'rgba(0,0,0,0)', 'rgba(232,238,245,0.22)');
+    });
+  }
+
   draw(ctx, { save, effects, audioReady, splash = false, musicaMuda = false }) {
     const W = CONFIG.WIDTH;
     const H = CONFIG.HEIGHT;
@@ -237,6 +256,7 @@ export class Menu {
     ctx.font = '26px "Courier New", monospace';
     ctx.fillStyle = 'rgba(232,238,245,0.65)';
     ctx.fillText('Turno de noche — Modulo de Control', 126, 360);
+    this._drawEstrellas(ctx);
 
     // v0.77: antes del primer clic o tecla (el navegador no deja sonar nada
     // hasta entonces), «PULSA CUALQUIER TECLA», con el estilo de la terminal

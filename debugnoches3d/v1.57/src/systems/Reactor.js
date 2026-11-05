@@ -47,8 +47,9 @@ export class Reactor {
   update(dt, office, monitorOpen) {
     if (this.exploded) return;
     const R = CONFIG.REACTOR;
+    const pasivo = R.PASSIVE_RATE * (this.pasivoMult ?? 1);   // (v1.57, reto «Reactor al límite»)
     this.bars = this.computeBars(office, monitorOpen);
-    const rate = this.n7 ? (this.n7.rate + office.doorsClosed * R.DOOR_RATE + office.lightsOn * R.LIGHT_RATE) * R.SPEED : (R.PASSIVE_RATE +
+    const rate = this.n7 ? (this.n7.rate + office.doorsClosed * R.DOOR_RATE + office.lightsOn * R.LIGHT_RATE) * R.SPEED : (pasivo +
         office.doorsClosed * R.DOOR_RATE +
         office.lightsOn * R.LIGHT_RATE +
         (monitorOpen ? R.MONITOR_RATE : 0)) * R.SPEED;
