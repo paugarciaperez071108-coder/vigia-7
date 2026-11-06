@@ -353,10 +353,10 @@ export class CameraView {
         this._drawLabels(ctx, room, { live: false });
       } else if (scene.n5?.camsDead) this._drawInterferencia(ctx, room, effects, scene.n5);   // v0.58: El Errante
       else this._drawBroken(ctx, room, effects);
-      // Los controles de la CAM 04 (enfriar) y la CAM 05 (temperatura) no
-      // dependen de la imagen: siguen visibles y usables encima de la estática
-      if (room === 'cryo') this._drawCryoPanel(ctx, scene.cryo, scene.frozen);
-      if (room === 'reactor') this._drawCoolPanel(ctx, scene.reactor, scene.n7);
+      // Los controles de la CAM 04 (enfriar) y la CAM 05 (temperatura) no dependen de la imagen: siguen visibles
+      // y usables encima de la estática. (v1.63, el usuario) Saboteadas por El Errante, esas dos pantallas no salen
+      if (room === 'cryo' && !scene.n5?.camsDead) this._drawCryoPanel(ctx, scene.cryo, scene.frozen);
+      if (room === 'reactor' && !scene.n5?.camsDead) this._drawCoolPanel(ctx, scene.reactor, scene.n7);
       if (cameras.hasLure) this._drawLurePanel(ctx, room, scene.lureCooldown, scene, true);
       this._drawMinimap(ctx, cameras.active, cameras, scene);
       if (cameras.hasVents) this._drawToggle(ctx, 'main');
@@ -437,9 +437,9 @@ export class CameraView {
     if (room === 'cryo') this._drawLensFrost(ctx, scene.cryo, scene.frozen);
     scene.n5?.drawCamOverlay(ctx);        // noche 5: la cara de El Errante
     this._drawLabels(ctx, room);
-    // Paneles de control (se ven nítidos, encima de la imagen)
-    if (room === 'cryo') this._drawCryoPanel(ctx, scene.cryo, scene.frozen);
-    if (room === 'reactor') this._drawCoolPanel(ctx, scene.reactor, scene.n7);
+    // Paneles de control (se ven nítidos, encima de la imagen; sin ellos si El Errante ha saboteado las cámaras)
+    if (room === 'cryo' && !scene.n5?.camsDead) this._drawCryoPanel(ctx, scene.cryo, scene.frozen);
+    if (room === 'reactor' && !scene.n5?.camsDead) this._drawCoolPanel(ctx, scene.reactor, scene.n7);
     if (cameras.hasLure) this._drawLurePanel(ctx, room, scene.lureCooldown, scene);
     this._drawMinimap(ctx, cameras.active, cameras, scene);
     if (cameras.hasVents) this._drawToggle(ctx, 'main');

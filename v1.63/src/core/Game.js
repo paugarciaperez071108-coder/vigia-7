@@ -615,14 +615,13 @@ export class Game {
       const ex = night.reto.extraId;
       if (ex === 'sinLinterna') this.backFlash.taken = false;
       this._retoCamarasRotas();
-      if (ex === 'rejillasRotas') {
-        for (const s of ['left', 'right']) this.n5.grilles[s].broken = true;
-        this.n5.done2 = this.n5.done4 = true;
-        const dis = this.ai.dislocado;
-        if (dis?.level > 0) {
-          dis.state = 'away';
-          dis.returnIn = 18;
-        }
+      // (v1.63, el usuario) En todas las noches de reto, las rejillas están rotas desde el primer momento
+      for (const s of ['left', 'right']) this.n5.grilles[s].broken = true;
+      this.n5.done2 = this.n5.done4 = true;
+      const dis = this.ai.dislocado;
+      if (dis?.level > 0) {
+        dis.state = 'away';
+        dis.returnIn = 18;
       }
     }
     else if (!(night.n7 && n7.saltarCinta)) this.tape.schedule(n, { autoplay: !sinCinta });
@@ -1133,8 +1132,9 @@ export class Game {
           else if (hit?.type === 'toggle') this._toggleMap();
           else if (hit?.type === 'gas' && this.cameras.fullyOpen) this._spray();
           else if (hit?.type === 'lure' && this.cameras.fullyOpen) this._lure();
-          else if (hit?.type === 'cryo' && this.cameras.fullyOpen) this._adjustCryo(hit.dir);
-          else if (hit?.type === 'cool' && this.cameras.fullyOpen) this._cool();
+          // (v1.63) saboteadas por El Errante, esas dos pantallas no están: el clic ahí no hace nada
+          else if (hit?.type === 'cryo' && this.cameras.fullyOpen && !this.n5?.camsDead) this._adjustCryo(hit.dir);
+          else if (hit?.type === 'cool' && this.cameras.fullyOpen && !this.n5?.camsDead) this._cool();
         } else {
           const action = this.officeView.hitTest(x, y);
           if (action?.type === 'terminal') {

@@ -73,6 +73,7 @@ export const N2END = {
   RETIRE_FLICKER_TIME: 0.8,     // s que dura todo el parpadeo
 
   // --- Reactor ---
+  CONSOLA_E: 0.6,    // (v1.63, el usuario: «como un cofre») s manteniendo E para abrir la consola del reactor
   // (v1.59) lo que hay escrito en la consola del reactor al llegar (se corta a media palabra a propósito)
   CONSOLA_MSG: ['REGISTRO DE TURNO  05:47', 'LA PARED DEL LABORATORIO SUENA OTRA VEZ.', 'SI ALGUIEN LEE ESTO,', 'NO ABRAIS LA SALA DE ATR'],
   COMMAND: '/refresh',          // está escrito en el pósit junto a la consola
