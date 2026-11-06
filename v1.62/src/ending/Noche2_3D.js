@@ -5,7 +5,7 @@
 //              Puede que alguien se asome a una de las dos puertas: salir con él ahí = fallo.
 //   'ida'      libre por la estación hasta el reactor. Al entrar en una sala, a veces uno (al menos uno antes del
 //              reactor); salir de la sala con él ahí = fallo.
-//   'reactor'  la consola (E o clic): /refresh (el pósit amarillo junto a ella, con la linterna); la grabadora del
+//   'reactor'  la consola (clic sobre ella, v1.62): /refresh (el pósit amarillo junto a ella, con la linterna); la grabadora del
 //              hombre en el suelo (PUNTO DE LORE; solo con la linterna).
 //   'enfria'   2:00 dentro del reactor (sus tres salidas, cerradas por la contención) mirando a los tres pasillos;
 //              C: el panel del enfriamiento. Haz más pequeño, sonido más bajo y más agresivos según sube el %.
@@ -220,7 +220,7 @@ export class Noche2 extends NochesBase {
     return Math.acos(Math.max(-1, Math.min(1, (dx * fx + dy * fy + dz * fz) / dist))) < Math.max(ang, Math.atan(0.25 / dist));
   }
 
-  /** Lo que se puede usar ahora mismo con E o clic (para la «E» de la pantalla). */
+  /** Lo que se puede usar ahora mismo con E o clic (la consola, solo con clic: v1.62) y lo que indica la pantalla. */
   _usable() {
     if (this.fase === 'oficina' && this.L.sinLinterna && this._miras(LINTERNA_MESA, 3.2, 0.25)) return 'linterna';
     if ((this.fase === 'reactor' || this.fase === 'ida') && this.salaEn() === 'reactor' && !this.term.focused && this.refreshIn === null) {
@@ -230,9 +230,9 @@ export class Noche2 extends NochesBase {
     return null;
   }
 
-  _usa() {
+  _usa(conTecla = false) {
     const u = this._usable();
-    if (!u) return false;
+    if (!u || (conTecla && u === 'consola')) return false;   // (v1.62) la consola se usa haciéndole clic
     if (u === 'linterna') this._cogeLinterna();
     else if (u === 'consola') { this.term.focus(); this.L.teclas.clear(); }
     else if (u === 'grabadora') {
@@ -246,7 +246,13 @@ export class Noche2 extends NochesBase {
 
   click() {
     if (this.susto || this.fase === 'escena' || this.term.focused) return true;
-    return document.pointerLockElement === this.g.canvas && this._usa();
+    const capturado = document.pointerLockElement === this.g.canvas;
+    // (v1.62) a la consola le vale el primer clic, aunque el ratón esté suelto (y de paso lo captura)
+    if (this._usable() === 'consola') {
+      if (!capturado) this.g.canvas.requestPointerLock?.();
+      return this._usa();
+    }
+    return capturado && this._usa();
   }
 
   tecla(code, e) {
@@ -259,7 +265,7 @@ export class Noche2 extends NochesBase {
       if (cmd !== null && cmd !== undefined) this._comando(cmd);
       return true;
     }
-    if (code === 'KeyE') return this._usa();
+    if (code === 'KeyE') return this._usa(true);
     if (this.fase === 'enfria' && code === 'KeyC') {
       this.panel = !this.panel;
       if (this.panel) this.L.linternaOn = false;
@@ -597,15 +603,17 @@ export class Noche2 extends NochesBase {
     if (this.susto) return;
     const W2 = W / 2;
     // la «E» delante de lo que se puede usar
-    if (this._usable() && !this.term.focused) {
+    const usable = this._usable();
+    if (usable && !this.term.focused) {
+      const texto = usable === 'consola' ? 'CLIC' : 'E', ancho = usable === 'consola' ? 64 : 34;
       ctx.save();
       ctx.globalAlpha = 0.8;
       ctx.textAlign = 'center';
       ctx.font = 'bold 18px monospace';
       ctx.fillStyle = '#9dffb0';
       ctx.strokeStyle = 'rgba(157,255,176,0.7)';
-      ctx.strokeRect(W2 - 17, H / 2 + 38, 34, 30);
-      ctx.fillText('E', W2, H / 2 + 60);
+      ctx.strokeRect(W2 - ancho / 2, H / 2 + 38, ancho, 30);
+      ctx.fillText(texto, W2, H / 2 + 60);
       ctx.restore();
     }
     // la consola del reactor, de cerca (el mismo CRT)
