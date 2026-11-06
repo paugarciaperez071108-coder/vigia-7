@@ -223,9 +223,10 @@ export class Noche2 extends NochesBase {
   /** Lo que se puede usar ahora mismo y lo que indica la pantalla: E o clic; la consola, manteniendo E (v1.63). */
   _usable() {
     if (this.fase === 'oficina' && this.L.sinLinterna && this._miras(LINTERNA_MESA, 3.2, 0.25)) return 'linterna';
-    if ((this.fase === 'reactor' || this.fase === 'ida') && this.salaEn() === 'reactor' && !this.term.focused && this.refreshIn === null) {
+    if (['oficina', 'ida', 'reactor'].includes(this.fase) && this.salaEn() === 'reactor' && !this.term.focused && this.refreshIn === null) {
       if (this.L.linternaOn && this._miras(GRABADORA, 2.6, 0.25) && !this.grabadoraVista) return 'grabadora';
-      if (this._miras(CONSOLA, 3.0, 0.7)) return 'consola';
+      // (v1.65) como un cofre: basta con estar cerca, sin tener que apuntarle
+      if (Math.hypot(CONSOLA[0] - this.L.x, CONSOLA[1] - this.L.y) < N2END.CONSOLA_CERCA) return 'consola';
     }
     return null;
   }
