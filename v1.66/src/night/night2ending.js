@@ -73,6 +73,7 @@ export const N2END = {
   RETIRE_FLICKER_TIME: 0.8,     // s que dura todo el parpadeo
 
   // --- Reactor ---
+  LINTERNA_CERCA: 2.6,  // (v1.66) m hasta la linterna de la mesa para poder cogerla, sin apuntarle
   CONSOLA_CERCA: 3.5,  // (v1.65) m hasta la consola del reactor para poder usarla, sin apuntarle
   CONSOLA_E: 0.6,    // (v1.63, el usuario: «como un cofre») s manteniendo E para abrir la consola del reactor
   // (v1.59) lo que hay escrito en la consola del reactor al llegar (se corta a media palabra a propósito)

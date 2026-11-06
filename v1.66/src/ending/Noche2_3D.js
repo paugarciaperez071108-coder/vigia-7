@@ -1,7 +1,7 @@
 // =============================================================
 // Noche2_3D.js — (v1.56, plan «noches 2 y 4 con movimiento libre», fase N2) LA 2.5 EN 3D: el final de la noche 2
 // con movimiento libre (la misma lógica que src/ending/Night2Ending.js, con los valores de N2END; sin energía):
-//   'oficina'  a oscuras; la linterna en la mesa (E o clic mirándola): empieza la cinta de la mujer y el minijuego.
+//   'oficina'  a oscuras; la linterna en la mesa (ESPACIO o F estando cerca, v1.66: su botón, distinto del de la consola): empieza la cinta de la mujer y el minijuego.
 //              Puede que alguien se asome a una de las dos puertas: salir con él ahí = fallo.
 //   'ida'      libre por la estación hasta el reactor. Al entrar en una sala, a veces uno (al menos uno antes del
 //              reactor); salir de la sala con él ahí = fallo.
@@ -222,7 +222,7 @@ export class Noche2 extends NochesBase {
 
   /** Lo que se puede usar ahora mismo y lo que indica la pantalla: E o clic; la consola, manteniendo E (v1.63). */
   _usable() {
-    if (this.fase === 'oficina' && this.L.sinLinterna && this._miras(LINTERNA_MESA, 3.2, 0.25)) return 'linterna';
+    if (this.fase === 'oficina' && this.L.sinLinterna && Math.hypot(LINTERNA_MESA[0] - this.L.x, LINTERNA_MESA[1] - this.L.y) < N2END.LINTERNA_CERCA) return 'linterna';
     if (['oficina', 'ida', 'reactor'].includes(this.fase) && this.salaEn() === 'reactor' && !this.term.focused && this.refreshIn === null) {
       if (this.L.linternaOn && this._miras(GRABADORA, 2.6, 0.25) && !this.grabadoraVista) return 'grabadora';
       // (v1.65) como un cofre: basta con estar cerca, sin tener que apuntarle
@@ -262,7 +262,12 @@ export class Noche2 extends NochesBase {
       if (cmd !== null && cmd !== undefined) this._comando(cmd);
       return true;
     }
-    if (code === 'KeyE') return this._usable() === 'consola' || this._usa();
+    // (v1.66, el usuario) dos botones: ESPACIO o F para la linterna (cogerla la enciende) y E para la consola
+    if ((code === 'Space' || code === 'KeyF') && this._usable() === 'linterna') { this._cogeLinterna(); return true; }
+    if (code === 'KeyE') {
+      const u = this._usable();
+      return u === 'consola' || u === 'linterna' || this._usa();
+    }
     if (this.fase === 'enfria' && code === 'KeyC') {
       this.panel = !this.panel;
       if (this.panel) this.L.linternaOn = false;
@@ -644,7 +649,7 @@ export class Noche2 extends NochesBase {
       ctx.fillText('MANTÉN', W2, cy + 40);
       ctx.restore();
     } else if (usable && !this.term.focused) {
-      const texto = 'E', ancho = 34;
+      const texto = usable === 'linterna' ? 'ESPACIO / F' : 'E', ancho = usable === 'linterna' ? 130 : 34;
       ctx.save();
       ctx.globalAlpha = 0.8;
       ctx.textAlign = 'center';
