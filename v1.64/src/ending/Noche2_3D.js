@@ -225,7 +225,7 @@ export class Noche2 extends NochesBase {
     if (this.fase === 'oficina' && this.L.sinLinterna && this._miras(LINTERNA_MESA, 3.2, 0.25)) return 'linterna';
     if ((this.fase === 'reactor' || this.fase === 'ida') && this.salaEn() === 'reactor' && !this.term.focused && this.refreshIn === null) {
       if (this.L.linternaOn && this._miras(GRABADORA, 2.6, 0.25) && !this.grabadoraVista) return 'grabadora';
-      if (this._miras(CONSOLA, 3.0, 0.5)) return 'consola';
+      if (this._miras(CONSOLA, 3.0, 0.7)) return 'consola';
     }
     return null;
   }
@@ -390,6 +390,9 @@ export class Noche2 extends NochesBase {
     if (this.term.focused) this.L.teclas.clear();
     // la sala en la que estás (y salir de la oficina con alguien en la puerta = fallo)
     const s = this.salaEn();
+    // (v1.64) al salir de la oficina con la linterna empieza la ida. Faltaba desde la v1.56: jugando de verdad se seguía
+    // en 'oficina', así que la consola no se podía usar nunca ni salían enemigos (el debug saltaba directo a 'ida')
+    if (this.fase === 'oficina' && !this.L.sinLinterna && s !== 'office') this.fase = 'ida';
     if (s !== this.sala) {
       const antes = this.sala;
       this.sala = s;
