@@ -1325,6 +1325,7 @@ export class Game {
         else if (this.debugNight === 6) this._startN6({ save: false }); // (noche 6: empieza en los conductos)
         else if (this.debugNight) this.startNight(this.debugNight, { save: false });
         else if (this.save?.checkpoint === 'n2final') this._startFinal(); // punto de control: 6 AM de la noche 2
+        else if (this.save?.checkpoint === 'n2enfria') this._startFinal({ enfria: true }); // (v1.67) la 2.5: el enfriamiento del reactor
         else if (this.save?.checkpoint === 'n3final') this._startLockers(); // punto de control: 6 AM de la noche 3
         else if (this.save?.checkpoint === 'n4a') this.startNight(4, { n4path: 'A' }); // noche 4, camino A (turno)
         else if (this.save?.checkpoint === 'n4reboot') this._startN4({ at: 'reboot' }); // noche 4, ruta A: delante del panel
@@ -1387,10 +1388,20 @@ export class Game {
    * FINAL DE LA NOCHE 2 (6 AM): se va la luz y empieza la Fase 1. Se
    * guarda el punto de control para que Continue vuelva aquí.
    */
-  _startFinal({ save = true } = {}) {
+  /** (v1.67, el usuario) Punto de control de la 2.5: al empezar el enfriamiento del reactor. */
+  _puntoEnfriamiento() {
+    this.save = { ...this.save, checkpoint: 'n2enfria' };
+    if (this.saveEnabled) SaveData.save(this.save);
+  }
+
+  _startFinal({ save = true, enfria = false } = {}) {
     this.nightNumber = 2;
     this.saveEnabled = save;  // en depuración no se guarda nada
-    this.save = { ...(this.save ?? SaveData.fresh()), night: 2, checkpoint: 'n2final' };
+    this.save = { ...(this.save ?? SaveData.fresh()), night: 2, checkpoint: enfria ? 'n2enfria' : 'n2final' };
+    if (enfria) {
+      this._noche2Salto = 'enfria';
+      this._noche2Desde = 'n_reactor';
+    }
     this.save.flags ??= {};
     this.save.tapesHeard ??= {};
     if (save) SaveData.save(this.save);

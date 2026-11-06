@@ -81,6 +81,7 @@ export const N2END = {
   COMMAND: '/refresh',          // está escrito en el pósit junto a la consola
 
   // --- Fase 2 ---
+  P2_DIRECTO: true,             // (v1.67, el usuario) en el enfriamiento, alumbrar a un enemigo lo hace desaparecer al momento
   COOL_TIME: 120,               // s que tarda el reactor en enfriarse (2:00; el % sube a este ritmo)
   P2_FLASH_SCALE: 0.8,          // tamaño del haz en la Fase 2 (0,8 = 20 % más pequeño)
   P2_FLASH_INTENSITY: 0.8,      // fuerza de la luz en la Fase 2 (1 = como en las Fases 1 y 3; v0.51: antes 0,65)

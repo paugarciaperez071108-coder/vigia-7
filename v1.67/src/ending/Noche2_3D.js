@@ -202,7 +202,10 @@ export class Noche2 extends NochesBase {
     this._cogeLinterna(true);
     if (a === 'reactor') { this.fase = 'ida'; return; }
     this.fase = 'reactor';
-    if (a === 'enfria') return this._enfria();
+    if (a === 'enfria') {
+      this.L.linternaOn = true;      // (v1.67: al volver al punto de control, con la linterna encendida)
+      return this._enfria();
+    }
     if (a === 'huida') { this._enfria(); this.cool = 1; return this._alarma(); }
     if (a === 'escena') { this.fase = 'llegada'; this.llegadaT = 0; this.enPuerta = null; }
   }
@@ -317,7 +320,7 @@ export class Noche2 extends NochesBase {
     if (this.fase === 'enfria') {
       const a = N2END.P2_AGGRO[this.aggro - 1];
       const w = a ? a.WINDOW : 1;
-      return { find: N2END.FIND_TIME_P2 * w, pose: N2END.POSE_WINDOW * w, move: N2END.MOVE_WINDOW * w, retire: N2END.RETIRE_TIME };
+      return { find: N2END.FIND_TIME_P2 * w, pose: N2END.POSE_WINDOW * w, move: N2END.MOVE_WINDOW * w, retire: N2END.RETIRE_TIME, directo: N2END.P2_DIRECTO };
     }
     return { find: N2END.FIND_TIME, pose: N2END.POSE_WINDOW, move: N2END.MOVE_WINDOW, retire: N2END.RETIRE_TIME };
   }
@@ -466,6 +469,7 @@ export class Noche2 extends NochesBase {
 
   _enfria() {
     this.fase = 'enfria';
+    this.g._puntoEnfriamiento?.();   // (v1.67, el usuario) punto de control: al morir, se vuelve aquí
     this.faseT = 0;
     this.cool = 0;
     this.aggro = 0;

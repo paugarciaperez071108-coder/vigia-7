@@ -283,6 +283,7 @@ export class Menu {
     this._item(ctx, ITEMS.newGame, 'NEW GAME', this.selected === 'newGame' && !this.confirming, true);
     const label = save
       ? (save.checkpoint === 'n2final' ? 'CONTINUE – Noche 2 (6 AM)'
+        : save.checkpoint === 'n2enfria' ? 'CONTINUE – Noche 2 (reactor)'
         : save.checkpoint === 'n3final' ? 'CONTINUE – Noche 3 (6 AM)'
         : save.checkpoint === 'n5seis' ? 'CONTINUE – Noche 5 (6 AM)'
         : save.checkpoint === 'n6sala' ? 'CONTINUE – Noche 6 (sala oculta)'

@@ -214,6 +214,7 @@ export class Asomados3D {
     const lit = this._caraLuz(e);
     if (lit) this.L.enCara = performance.now();   // (v1.59: la linterna se cierra sobre su cara)
     const T = e.tuneE ?? (e.facil ? { ...this.tune, ...e.facil } : this.tune);
+    if (lit && T.directo) return this._retira(e);   // (v1.67) con la luz en la cara se va al momento, sin cambiar de sitio
     switch (e.estado) {
       case 'espera':
         if (lit) { e.estado = 'luz'; return null; }
