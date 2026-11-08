@@ -148,5 +148,29 @@ export const NIGHT3 = {
     WARN_TRIANGLE: 1.5,
     BREATH_MAX: 8,           // s que se puede aguantar la respiración
     BREATH_RECOVER: 1.5,     // s de aire recuperados por cada s respirando
+    // (v1.68, el usuario: «el escondite tiene que ser la taquilla de la pared del fondo… la de la izquierda»; las dos
+    // taquillas pintadas delante de la pared se han quitado) La taquilla del escondite: la 1.ª de las tres del render
+    // de la oficina (oficina_v2.py: (150 + k·118, 300, 108, 422), k = 0)
+    LOCKER: { x: 150, y: 300, w: 108, h: 422 },
+    // Rendijas de su puerta (lo que se ve desde dentro: assets/salas/v2/pasillo/taquilla_dentro.webp, la oficina vista
+    // desde la posición de esa taquilla)
+    SLITS: { N: 6, X: 520, Y: 300, W: 560, H: 15, GAP: 46 },
+    // Dónde está El Largo en el pasillo mientras te escondes (fracción de HIDE_TIME → su posición del pasillo)
+    CORRIDOR: [[0, 'p1', 'central1'], [0.4, 'p3', 'central2'], [0.75, 'p5', 'central3']],
+  },
+
+  // --- (v1.68) El pasillo central visto desde la oficina (turno y final de la noche 3) ---
+  // El pasillo está a oscuras: solo se ve lo que ilumina la linterna. El Largo mide 3,75 m en el modelo (la proporción
+  // de 3 m con una puerta de 2,40; la del modelo mide 3,0) y no cabe: va encorvado contra el techo y, en la puerta, la
+  // cabeza se le pierde por encima del dintel.
+  PASILLO: {
+    // Las 6 posiciones de El Largo (cpos 0–5) → su render: 3 posturas (lejos, medio, en la puerta)
+    POSES: ['p0', 'p1', 'p2', 'p3', 'p4', 'p5'],
+    LINTERNA: 0.75,          // tamaño del círculo de la linterna en el pasillo (× el de siempre): le descubre por partes
+    NUCLEO: 0.5,             // parte del círculo que se ve entera (el resto, degradado; la de siempre: 0,28)
+    OSCURIDAD: 0.55,         // oscuridad encima del pasillo, fuera del círculo (el render ya está casi negro)
+    // En la puerta, alumbrar la parte alta del hueco (ZONA_Y px desde el dintel) ESPERA s: se agacha y asoma la cara;
+    // al apartar la luz, SUELTA s después se vuelve a erguir
+    ASOMA: { ZONA_Y: 150, ESPERA: 0.45, SUELTA: 1.4 },
   },
 };

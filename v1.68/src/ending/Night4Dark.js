@@ -1070,6 +1070,8 @@ export class Night4Dark {
     this.flash.draw(ctx, mx, my, null, 0.975);
     // Los enemigos: solo dentro del haz (invisibles hasta que se les alumbra)
     const face = this.look.moving ? null : this.look.face;
+    // (v1.68) el pasillo central, a oscuras: dentro del haz, iluminado por la linterna
+    if (face === 'back') this.flash.reveal(ctx, mx, my, (c) => this.g.backView.drawLit(c));
     const here = this.enemies.filter((e) => e.state !== 'gone' && e.side === face);
     if (here.length) this.flash.reveal(ctx, mx, my, (c) => { for (const e of here) this._drawEnemy(c, e); });
     // La luz de Slaimi por las rendijas de la taquilla (se ve sin linterna)

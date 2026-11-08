@@ -111,7 +111,7 @@ export class Flashlight {
    * Oscuridad encima de la escena, con el agujero del haz en (mx, my).
    * area (opcional): solo esa zona queda a oscuras (el resto se ve).
    */
-  draw(ctx, mx, my, area = null, darkness = N2END.FLASH_DARKNESS) {
+  draw(ctx, mx, my, area = null, darkness = N2END.FLASH_DARKNESS, nucleo = 1 - N2END.FLASH_SOFT) {
     const d = this.dark;
     d.globalCompositeOperation = 'source-over';
     d.clearRect(0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
@@ -122,7 +122,8 @@ export class Flashlight {
       const k = (this.flicker > 0 ? 0.25 + Math.random() * 0.2 : 1) * this.intensity;
       const r = this.radius * (this.flicker > 0 ? 0.9 : 1);
       d.globalCompositeOperation = 'destination-out';
-      const g = d.createRadialGradient(mx, my, r * (1 - N2END.FLASH_SOFT), mx, my, r);
+      // (v1.68) nucleo: la parte del radio que se ve entera (en el pasillo central, más grande)
+      const g = d.createRadialGradient(mx, my, r * nucleo, mx, my, r);
       // (v1.59) sin borde: el centro abierto del todo y un degradado largo; al enfocar, más intenso
       g.addColorStop(0, `rgba(0,0,0,${k})`);
       g.addColorStop(0.45, `rgba(0,0,0,${k * (0.62 + 0.25 * this.foco)})`);
@@ -198,7 +199,7 @@ export class Flashlight {
   }
 
   /** Dibuja con drawFn(ctx) SOLO lo que cae dentro del haz (los enemigos). */
-  reveal(ctx, mx, my, drawFn) {
+  reveal(ctx, mx, my, drawFn, nucleo = 1 - N2END.FLASH_SOFT) {
     if (!this.on || this.blinkOff) return;
     const r = this.rev;
     r.globalCompositeOperation = 'source-over';
@@ -207,7 +208,7 @@ export class Flashlight {
     const R = this.radius;
     const k = (this.flicker > 0 ? 0.3 : 1) * this.intensity;
     r.globalCompositeOperation = 'destination-in';
-    const g = r.createRadialGradient(mx, my, R * (1 - N2END.FLASH_SOFT), mx, my, R);
+    const g = r.createRadialGradient(mx, my, R * nucleo, mx, my, R);
     g.addColorStop(0, `rgba(0,0,0,${k})`);
     g.addColorStop(1, 'rgba(0,0,0,0)');
     r.fillStyle = g;

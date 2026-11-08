@@ -19,7 +19,7 @@
 
 import { NIGHT3 } from '../night/night3.js';
 import { drawCreature } from '../render/CreatureArt.js';
-import { BACK_HATCH } from '../render/BackView.js';
+import { BACK_HATCH, AsomaPuerta, drawLargoPasillo } from '../render/BackView.js';
 import { VENT_IDS } from '../world/StationMap.js';
 
 const rand = ([a, b]) => a + Math.random() * (b - a);
@@ -49,6 +49,7 @@ export class Night3Events {
     this.flash = flash;        // linterna del pasillo central (Flashlight)
     this.sprites = sprites;
     this.active = false;
+    this.asoma = new AsomaPuerta(NIGHT3.PASILLO.ASOMA);   // (v1.68) en la puerta, se agacha si le alumbras arriba
     events.on('hour', (h) => this._onHour(h));
     // El Largo avanza por el pasillo mientras se le alumbra: la linterna se corta
     events.on('largoCorridorFail', ({ dark }) => {
@@ -85,6 +86,16 @@ export class Night3Events {
   /** ¿Se está viendo la cinemática? (Game congela la noche y bloquea los controles) */
   get cineRunning() {
     return !!this.cine;
+  }
+
+  /**
+   * (v1.68) En la puerta (la última posición del pasillo), alumbrarle arriba del hueco hace que se agache y asome la
+   * cara por debajo del dintel. luz: la linterna del pasillo encendida; (mx, my): adónde apunta.
+   */
+  asomaUpdate(dt, luz, mx, my) {
+    const l = this.largo;
+    const enPuerta = !!(this.active && l?.inCorridor && Math.min(l.cpos, 5) === 5);
+    if (this.asoma.update(dt, enPuerta, luz, mx, my)) this.audio.playAt('largo/respiracion', 'central3', 1.1);
   }
 
   /** Cada fotograma (también durante la cinemática). lit: ¿alumbra la linterna el pasillo? */
@@ -213,8 +224,12 @@ export class Night3Events {
     const largo = this.largo;
     if (!largo?.inCorridor) return;
     const n = Math.min(largo.cpos, CORRIDOR_FALLBACK.length - 1);
-    // Pose renderizada para esa posición del pasillo (tools/3d/poses/poses.py,
-    // sala 'pasillo'): imagen a pantalla completa
+    // (v1.68) Su render en la misma escena y cámara que la oficina (tools/3d/salas/pasillo_puerta.py): iluminado por la
+    // linterna, con su sombra y tapado por el marco; en la puerta, asomado si se le alumbra arriba
+    const P = NIGHT3.PASILLO.POSES;
+    const id = this.asoma.on && n === P.length - 1 ? 'asoma' : P[Math.min(n, P.length - 1)];
+    if (drawLargoPasillo(ctx, id)) return;
+    // (antes de la v1.68: tools/3d/poses/poses.py, sala 'pasillo', a pantalla completa)
     if (this.sprites?.draw(ctx, `pose_largo_pasillo_p${n}`, 0, 0, 1600, 900)) return;
     const spot = CORRIDOR_FALLBACK[n];
     ctx.save();

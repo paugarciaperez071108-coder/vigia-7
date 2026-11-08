@@ -335,6 +335,8 @@ export class Night4Sleep {
     });
     b.restore();
     this.flash.draw(b, this.mouse.x, this.mouse.y, null, SL.DARKNESS);
+    // (v1.68) el pasillo central, a oscuras: dentro del haz, iluminado por la linterna
+    if (this.look.face === 'back' && !this.look.moving) this.flash.reveal(b, this.mouse.x, this.mouse.y, (c) => g.backView.drawLit(c));
     // 2. La imagen que se ondula (en otro lienzo) y un único desenfoque
     let src = this.buf;
     const amp = d * SL.WARP;

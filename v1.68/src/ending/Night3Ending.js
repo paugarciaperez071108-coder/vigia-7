@@ -13,11 +13,14 @@
 //               Solo se ve viniendo de la noche: Continuar desde el punto
 //               de control va directo a la fase 1.
 //   1. 'hide'   HIDE_TIME s para girarse hasta la pared de atrás y hacer
-//               clic en una de las dos taquillas (a los lados de la
-//               compuerta). Se le ve acercarse por el pasillo con la luz
-//               roja. Si no te escondes a tiempo, te encuentra.
+//               clic en la taquilla del escondite (v1.68: la 1.ª de las tres
+//               taquillas del render, a la izquierda de la compuerta; antes,
+//               dos taquillas pintadas a los lados). El pasillo está a
+//               oscuras: con la linterna (ESPACIO o F) se le ve acercarse;
+//               en la puerta, si se le alumbra arriba, se agacha y asoma.
+//               Si no te escondes a tiempo, te encuentra.
 //   2. 'inside' Dentro de la taquilla, a oscuras, solo se ve la oficina por
-//               las rendijas. El Largo entra y pasa por delante varias
+//               las rendijas (v1.68: vista desde esa taquilla, en Blender). El Largo entra y pasa por delante varias
 //               veces (PASSES), por un lado y luego por el otro. Antes de
 //               cada pasada sale un triángulo de aviso en el lado por el
 //               que va a entrar y WARN_TRIANGLE s después aparece. Hay que AGUANTAR LA
@@ -33,7 +36,7 @@
 import { CONFIG } from '../config.js';
 import { NIGHT3 } from '../night/night3.js';
 import { drawCreature } from '../render/CreatureArt.js';
-import { BACK_HATCH } from '../render/BackView.js';
+import { BACK_HATCH, AsomaPuerta, drawLargoPasillo, hayLargoPasillo, imagenPasillo } from '../render/BackView.js';
 import { warnColor, drawWarnTriangle } from '../render/CameraView.js';
 import { drawSkipButton, SKIP_BUTTON } from '../ui/HUD.js';
 
@@ -42,18 +45,18 @@ const H = CONFIG.HEIGHT;
 const E = NIGHT3.ENDING;
 const A = NIGHT3.ARRIVAL;
 
-// Las dos taquillas de la pared de atrás, a los lados de la compuerta
-export const LOCKERS = [
-  { x: 300, y: 236, w: 200, h: 540 },
-  { x: 1100, y: 236, w: 200, h: 540 },
-];
+// (v1.68) La taquilla del escondite: la 1.ª de las tres del render de la oficina, en la pared de atrás (antes había dos
+// taquillas pintadas delante de la pared, a los lados de la compuerta: se han quitado)
+export const LOCKER = E.LOCKER;
 // Rendijas de la puerta de la taquilla (vista desde dentro)
-const SLITS = Array.from({ length: 6 }, (_, i) => ({ x: 520, y: 300 + i * 46, w: 560, h: 15 }));
-// Dónde está El Largo en el pasillo según lo que queda para que llegue
-const CORRIDOR = [
-  { at: 0, x: 812, y: 512, h: 120, pose: 'stand', room: 'central1' },
-  { at: 0.4, x: 780, y: 604, h: 250, pose: 'stand', room: 'central2' },
-  { at: 0.75, x: 800, y: BACK_HATCH.y + BACK_HATCH.h + 30, h: 500, pose: 'crouch', room: 'central3' },
+const SLITS = Array.from({ length: E.SLITS.N }, (_, i) => ({ x: E.SLITS.X, y: E.SLITS.Y + i * E.SLITS.GAP, w: E.SLITS.W, h: E.SLITS.H }));
+// Dónde está El Largo en el pasillo según lo que queda para que llegue: [fracción de HIDE_TIME, su render, sala (sonido)]
+const CORRIDOR = E.CORRIDOR.map(([at, id, room]) => ({ at, id, room }));
+// (sin los renders de la v1.68: el dibujo de antes)
+const CORRIDOR_2D = [
+  { x: 812, y: 512, h: 120, pose: 'stand' },
+  { x: 780, y: 604, h: 250, pose: 'stand' },
+  { x: 800, y: BACK_HATCH.y + BACK_HATCH.h + 30, h: 500, pose: 'crouch' },
 ];
 
 const inside = (r, x, y) => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
@@ -118,6 +121,10 @@ export class Night3Ending {
     this.gasp = 0;            // s sin poder aguantar (se ha quedado sin aire)
     this.warned = new Set();
     this.mouse = { x: W / 2, y: H / 2 };
+    // (v1.68) la linterna del pasillo, también aquí (ESPACIO o F): el pasillo está a oscuras
+    this.asoma = new AsomaPuerta(NIGHT3.PASILLO.ASOMA);
+    g.backFlash.reset();
+    g.backFlash.taken = true;
     g.lookBack.reset();
     g.lookBack.enabled = true;
     g.audio.powerDown();
@@ -126,6 +133,12 @@ export class Night3Ending {
 
   get corridorSpot() {
     return CORRIDOR[Math.max(0, this.stage)];
+  }
+
+  /** ¿La linterna alumbra el pasillo ahora mismo (mirando atrás, sin girar)? */
+  get _luz() {
+    const g = this.g;
+    return g.lookBack.facingBack && !g.lookBack.moving && g.backFlash.on && !g.backFlash.blinkOff;
   }
 
   /** Pasada de El Largo por delante de la taquilla en curso: { k 0..1, side } o null. */
@@ -168,6 +181,13 @@ export class Night3Ending {
     if (this.phase === 'hide') {
       g.lookBack.update(dt);
       g.backView.update(dt);
+      g.backFlash.update(dt);
+      if (this.asoma.update(dt, this.stage === CORRIDOR.length - 1, this._luz, this.mouse.x, this.mouse.y)) {
+        g.audio.playAt('largo/respiracion', 'central3', 1.1);
+      }
+      if (this._luz && inside({ x: BACK_HATCH.x - 60, y: BACK_HATCH.y - 40, w: BACK_HATCH.w + 120, h: BACK_HATCH.h + 80 }, this.mouse.x, this.mouse.y)) {
+        g.backFlash.enfoca();     // (v1.59: la linterna se cierra sobre su cara)
+      }
       const k = this.t / E.HIDE_TIME;
       const stage = CORRIDOR.reduce((s, c, i) => (k >= c.at ? i : s), 0);
       if (stage !== this.stage) {
@@ -234,7 +254,7 @@ export class Night3Ending {
     if (this.phase === 'arrival') return inside(SKIP_BUTTON, x, y);
     if (this.phase !== 'hide') return false;
     const strip = this.g.lookBack.hover(x, y);
-    return strip || (this.g.lookBack.facingBack && !this.g.lookBack.moving && LOCKERS.some((r) => inside(r, x, y)));
+    return strip || (this.g.lookBack.facingBack && !this.g.lookBack.moving && inside(LOCKER, x, y));
   }
 
   click(x, y) {
@@ -243,7 +263,7 @@ export class Night3Ending {
       return;
     }
     if (this.phase !== 'hide' || !this.g.lookBack.facingBack || this.g.lookBack.moving) return;
-    if (LOCKERS.some((r) => inside(r, x, y))) this._hide();
+    if (inside(LOCKER, x, y)) this._hide();
   }
 
   key(code) {
@@ -258,6 +278,7 @@ export class Night3Ending {
         look.queue = [];
         look.step(code === 'ArrowLeft' ? -1 : 1);
       } else if ((code === 'KeyE' || code === 'Enter') && look.facingBack && !look.moving) this._hide();
+      else if (code === 'Space' || code === 'KeyF') this.g.backFlash.toggle();   // (v1.68) la linterna
     } else if (code === 'Space') {
       this.holding = true;
     }
@@ -270,6 +291,7 @@ export class Night3Ending {
   _hide() {
     this.phase = 'inside';
     this.t = 0;
+    this.g.backFlash.on = false;
     this.g.audio.door('center', true);
     this.g.audio.setLoop('n3alarm', false);
   }
@@ -330,6 +352,17 @@ export class Night3Ending {
       front: office('front'), left: office('left'), right: office('right'),
       back: (c) => this._drawBack(c),
     });
+    // (v1.68) El pasillo a oscuras: con la linterna, dentro del círculo, el pasillo iluminado y El Largo (y nada más)
+    if (g.lookBack.facingBack && !g.lookBack.moving) {
+      const { x: mx, y: my } = this.mouse;
+      const P = NIGHT3.PASILLO;
+      g.backFlash.scale = P.LINTERNA;
+      g.backFlash.draw(ctx, mx, my, BACK_HATCH, P.OSCURIDAD, P.NUCLEO);
+      g.backFlash.reveal(ctx, mx, my, (c) => {
+        g.backView.drawLit(c);
+        this._drawLargo(c);
+      }, P.NUCLEO);
+    }
     // Luz roja de alarma
     const red = 0.5 + 0.5 * Math.sin(this.t * 5);
     ctx.fillStyle = `rgba(255,20,10,${0.06 + 0.12 * red})`;
@@ -345,7 +378,7 @@ export class Night3Ending {
       ctx.shadowBlur = 10;
       ctx.fillStyle = '#ffd0c8';
       ctx.font = 'bold 30px "Courier New", monospace';
-      ctx.fillText('Taquilla: clic o E', W / 2, 40);
+      ctx.fillText('Taquilla: clic o E   ·   Espacio: linterna', W / 2, 40);
       ctx.restore();
     }
   }
@@ -354,17 +387,36 @@ export class Night3Ending {
     const g = this.g;
     const red = 0.5 + 0.5 * Math.sin(this.t * 5);
     g.backView.draw(ctx, { open: 1, red });
-    // El Largo en el pasillo, recortado contra la luz roja
+    // (v1.68) La taquilla del escondite es la del render (la 1.ª de la izquierda): con el ratón encima, su contorno
+    if (inside(LOCKER, this.mouse.x, this.mouse.y)) this._marcaTaquilla(ctx);
+  }
+
+  /** (v1.68) El Largo en el pasillo, iluminado (se dibuja dentro del haz de la linterna). */
+  _drawLargo(ctx) {
     const s = this.corridorSpot;
-    ctx.save();
+    const ultimo = this.stage === CORRIDOR.length - 1;
+    if (drawLargoPasillo(ctx, ultimo && this.asoma.on ? 'asoma' : s.id)) return;
+    if (hayLargoPasillo()) return;
+    const v = CORRIDOR_2D[Math.max(0, this.stage)];
     const r = BACK_HATCH;
+    ctx.save();
     ctx.beginPath();
     ctx.rect(r.x - 40, r.y, r.w + 80, r.h + 200);
     ctx.clip();
-    ctx.globalAlpha = 0.85;
-    drawCreature(ctx, 'largo', s.x, s.y, s.h, this.t, { pose: s.pose, alpha: 0.8 });
+    drawCreature(ctx, 'largo', v.x, v.y, v.h, this.t, { pose: v.pose, alpha: 0.9 });
     ctx.restore();
-    for (const l of LOCKERS) this._drawLocker(ctx, l, inside(l, this.mouse.x, this.mouse.y));
+  }
+
+  /** (v1.68) El contorno de la taquilla del escondite, al pasar el ratón: una luz suave en el borde de su puerta. */
+  _marcaTaquilla(ctx) {
+    const r = LOCKER;
+    ctx.save();
+    ctx.shadowColor = 'rgba(255,190,170,0.9)';
+    ctx.shadowBlur = 16;
+    ctx.strokeStyle = 'rgba(255,200,185,0.55)';
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(r.x + 3, r.y + 4, r.w - 6, r.h - 6);
+    ctx.restore();
   }
 
   _drawLocker(ctx, r, hover) {
@@ -393,16 +445,21 @@ export class Night3Ending {
     const g = this.g;
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, W, H);
-    // Lo que se ve por las rendijas: la oficina a oscuras (y El Largo)
+    // Lo que se ve por las rendijas: la oficina a oscuras (y El Largo). (v1.68) Vista DESDE esa taquilla (la de la
+    // izquierda de la pared de atrás), renderizada en la misma escena de la oficina; si aún no ha cargado, la de antes
     ctx.save();
     ctx.beginPath();
     for (const s of SLITS) ctx.rect(s.x, s.y, s.w, s.h);
     ctx.clip();
-    g.officeView.draw(ctx, g.office, {
-      face: 'front', blackout: true, noPower: true, locked: true, night: 3, terminal: g.terminal, reactor: g.reactor,
-      doorEnemies: { left: [], right: [] }, cameras: g.cameras,
-    });
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    const dentro = imagenPasillo('taquilla_dentro');
+    if (dentro) ctx.drawImage(dentro, 0, 0, W, H);
+    else {
+      g.officeView.draw(ctx, g.office, {
+        face: 'front', blackout: true, noPower: true, locked: true, night: 3, terminal: g.terminal, reactor: g.reactor,
+        doorEnemies: { left: [], right: [] }, cameras: g.cameras,
+      });
+    }
+    ctx.fillStyle = `rgba(0,0,0,${dentro ? 0.3 : 0.55})`;
     ctx.fillRect(0, 0, W, H);
     // v0.58: una luz que barre la oficina por las rendijas (va y viene)
     const lx = 520 + (0.5 + 0.5 * Math.sin(this.t * 0.9 + Math.sin(this.t * 0.31) * 2)) * 560;

@@ -28,14 +28,91 @@ const W = CONFIG.WIDTH;
 const H = CONFIG.HEIGHT;
 // Hueco de la compuerta (el mismo que en el modelo 3D: tools/3d/salas/nave.py)
 export const BACK_HATCH = { x: 620, y: 242, w: 360, h: 480 };
-// (v1.59, el usuario: «la oscuridad con profundidad») el pasillo de verdad, renderizado desde la oficina (tools/3d/salas/hueco_atras.py)
-let HUECO = null;
-function hueco() {
-  if (!HUECO) {
-    HUECO = new Image();
-    HUECO.src = 'assets/salas/v2/hueco_atras.jpg';
+// (v1.68, el usuario: «el pasillo tiene que verse a través de la puerta como una escena continua… a oscuras… lo que se ve,
+// se ve porque lo ilumina la linterna») El pasillo, renderizado en la MISMA escena y desde la MISMA cámara que la oficina
+// (tools/3d/salas/pasillo_puerta.py → integrar_pasillo_puerta.py → assets/salas/v2/pasillo/): encaja solo con el marco.
+//   oscuro.webp  a oscuras (casi negro: la poca luz que entra por la puerta y un piloto rojo al fondo)
+//   luz.webp     iluminado solo por la linterna (el juego lo enseña dentro del círculo: drawLit)
+//   largo_<id>.webp  El Largo iluminado por la linterna en cada posición, con su sombra y tapado por el marco de verdad
+//                (recuadro PASILLO.rect: dentro del hueco, el pasillo con él; fuera, solo lo que sale por delante del
+//                marco, como sus manos agarradas). Posiciones p0–p5 (las 6 de la noche 3) y 'asoma'.
+// (antes, v1.59: hueco_atras.jpg, otra cámara con un signo cambiado: todo 160 px más arriba y el pasillo iluminado)
+const RUTA = 'assets/salas/v2/pasillo/';
+const IMGS = {};
+function imagen(nombre) {
+  let i = IMGS[nombre];
+  if (!i) {
+    i = IMGS[nombre] = new Image();
+    i.src = `${RUTA}${nombre}.webp`;
   }
-  return HUECO.complete && HUECO.naturalWidth ? HUECO : null;
+  return i.complete && i.naturalWidth ? i : null;
+}
+// (rect: dónde va cada imagen de El Largo; piloto y caras, en px de pantalla; se carga de pasillo.json)
+export const PASILLO = { rect: { x: 520, y: 160, w: 560, h: 640 }, piloto: [859, 420], largo: {} };
+fetch(`${RUTA}pasillo.json`).then((r) => (r.ok ? r.json() : null)).then((d) => {
+  if (!d) return;
+  const [x, y, w, h] = d.rect;
+  PASILLO.rect = { x, y, w, h };
+  if (d.piloto) PASILLO.piloto = d.piloto;
+  PASILLO.largo = d.largo ?? {};
+}).catch(() => {});
+['oscuro', 'luz'].forEach(imagen);
+/** (v1.68) Una imagen de assets/salas/v2/pasillo/ (null mientras carga). */
+export const imagenPasillo = (nombre) => imagen(nombre);
+
+/** ¿Están los renders de El Largo en el pasillo (v1.68)? */
+export const hayLargoPasillo = () => !!imagen('largo_p0');
+
+/**
+ * El Largo en el pasillo central, iluminado (se dibuja dentro del haz de la linterna, con Flashlight.reveal).
+ * id: 'p0'…'p5' o 'asoma'. Devuelve false si su imagen aún no está.
+ */
+export function drawLargoPasillo(ctx, id) {
+  const im = imagen(`largo_${id}`);
+  if (!im) return false;
+  const r = PASILLO.rect;
+  ctx.drawImage(im, r.x, r.y, r.w, r.h);
+  return true;
+}
+
+/** ¿Dónde tiene la cara El Largo en esa posición (px de pantalla)? */
+export const caraLargoPasillo = (id) => PASILLO.largo[id]?.cara ?? null;
+
+/**
+ * (v1.68) En la puerta, El Largo no cabe: la cabeza se le pierde por encima del dintel. Si se le alumbra ahí arriba
+ * (ASOMA.ESPERA s con la linterna en la parte alta del hueco), se agacha y asoma la cara por debajo del marco; al
+ * apartar la luz, SUELTA s después, se vuelve a erguir. Solo se ve: no cambia lo que hace.
+ */
+export class AsomaPuerta {
+  constructor(cfg) {
+    this.cfg = cfg;
+    this.reset();
+  }
+
+  reset() {
+    this.t = 0;
+    this.on = false;
+  }
+
+  /** enPuerta: está en la posición de la puerta; luz: la linterna encendida en (mx, my). Devuelve true al asomarse. */
+  update(dt, enPuerta, luz, mx, my) {
+    const C = this.cfg;
+    if (!enPuerta) {
+      this.reset();
+      return false;
+    }
+    const r = BACK_HATCH;
+    const arriba = luz && mx > r.x - 40 && mx < r.x + r.w + 40 && my < r.y + C.ZONA_Y;
+    const antes = this.on;
+    if (arriba) {
+      this.t = Math.min(C.ESPERA + C.SUELTA, this.t + dt);
+      if (this.t >= C.ESPERA) this.on = true;
+    } else {
+      this.t = Math.max(0, this.t - dt * (this.on ? C.ESPERA / C.SUELTA : 1));
+      if (this.t <= 0) this.on = false;
+    }
+    return this.on && !antes;
+  }
 }
 // (v1.12) La placa de cada noche: recorte del render de la pared de atrás (integrar_oficina.py)
 const PLACA = { x: 1120, y: 272, w: 250, h: 72 };
@@ -49,7 +126,7 @@ function placa(titulo) {
   }
   return i.complete && i.naturalWidth ? i : null;
 }
-const VP = { x: 800, y: 470 };   // punto de fuga del pasillo
+const VP = { x: 800, y: 450 };   // punto de fuga del pasillo (v1.68: el de la cámara de la oficina, ojos a 1,7 m)
 
 export class BackView {
   constructor() {
@@ -158,20 +235,20 @@ export class BackView {
     ctx.beginPath();
     ctx.rect(r.x, r.y, r.w, r.h);
     ctx.clip();
-    // El pasillo central del render: a oscuras de verdad (solo se adivina el primer tramo junto
-    // a la compuerta), se pierde al fondo
-    const fondo = hueco();
+    // (v1.68) El pasillo central a oscuras, de la misma escena y cámara que la oficina: casi negro, solo se adivina el
+    // primer tramo junto a la compuerta y, al fondo, el piloto rojo de emergencia (que late un poco)
+    const fondo = imagen('oscuro');
     if (fondo) ctx.drawImage(fondo, r.x, r.y, r.w, r.h);
     else {
-      ctx.fillStyle = 'rgba(2,2,3,0.95)';
+      ctx.fillStyle = '#020203';
       ctx.fillRect(r.x, r.y, r.w, r.h);
     }
-    // Una luz de emergencia muy lejos, al fondo (un punto, no un resplandor)
-    const g = ctx.createRadialGradient(VP.x, VP.y - 20, 1, VP.x, VP.y - 20, 34);
-    g.addColorStop(0, `rgba(255,50,35,${0.16 * pulse + 0.08 * red})`);
+    const [px, py] = PASILLO.piloto;
+    const g = ctx.createRadialGradient(px, py, 0.5, px, py, 9);
+    g.addColorStop(0, `rgba(255,60,40,${0.22 * pulse + 0.1 * red})`);
     g.addColorStop(1, 'rgba(255,50,35,0)');
     ctx.fillStyle = g;
-    ctx.fillRect(VP.x - 40, VP.y - 60, 80, 80);
+    ctx.fillRect(px - 10, py - 10, 20, 20);
     inCorridor?.(ctx, r, VP);
     // Una silueta cruza el fondo: casi negra contra el rojo (solo se insinúa)
     if (glimpse !== null && glimpse >= 0 && glimpse <= 1) {
@@ -201,6 +278,24 @@ export class BackView {
         ctx.restore();
       }
     }
+    ctx.restore();
+  }
+
+  /**
+   * (v1.68) El pasillo iluminado por la linterna (solo el hueco). Se dibuja dentro del haz (Flashlight.reveal), encima
+   * del oscuro: fuera del círculo, oscuridad con su degradado; dentro, el suelo, las franjas, las paredes…
+   */
+  drawLit(ctx, open = 1) {
+    if (open <= 0) return;
+    const im = imagen('luz');
+    if (!im) return;
+    const r = BACK_HATCH;
+    const shown = r.h * Math.min(1, open);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(r.x, r.y + r.h - shown, r.w, shown);
+    ctx.clip();
+    ctx.drawImage(im, r.x, r.y, r.w, r.h);
     ctx.restore();
   }
 

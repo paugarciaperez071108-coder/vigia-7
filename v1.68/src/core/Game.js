@@ -2270,6 +2270,7 @@ export class Game {
         if (this.lookBack.facingBack && (this.ai?.largo?.lit || this.n7?.ab?.lit)) this.backFlash.enfoca();
         this.n3.update(dt, this.lookBack.facingBack && this.backFlash.on && !this.backFlash.blinkOff
           && inside({ x: BACK_HATCH.x - 120, y: BACK_HATCH.y - 80, w: BACK_HATCH.w + 240, h: BACK_HATCH.h + 200 }, this.mouse.x, this.mouse.y));
+        this.n3.asomaUpdate(dt, this.lookBack.facingBack && this.backFlash.on && !this.backFlash.blinkOff, this.mouse.x, this.mouse.y);
         if (this.n3.cineRunning) break;   // cinemática de las 3 AM: la noche espera
         this.n7.update(dt);
         this.ofv2?.update(dt);
@@ -2683,8 +2684,16 @@ export class Game {
         // El pasillo está a oscuras: solo se ve con la linterna (con la
         // compuerta cerrada no hay hueco que oscurecer: es la plancha)
         const { x: mx, y: my } = this.mouse;
-        this.backFlash.draw(ctx, mx, my, BACK_HATCH, 0.8);   // (v1.59: 0,93 → 0,8: que se adivine el pasillo; los enemigos siguen sin verse sin luz)
-        if (this.drawCorridorEnemies) this.backFlash.reveal(ctx, mx, my, (c) => this.drawCorridorEnemies(c));
+        // (v1.68, el usuario: «el pasillo no tiene que estar iluminado… lo que se ve, se ve porque lo ilumina la
+        // linterna»): el render a oscuras con su degradado y, dentro del círculo, el pasillo iluminado por la linterna y
+        // los enemigos (el círculo, más pequeño: le va descubriendo por partes)
+        const P = NIGHT3.PASILLO;
+        this.backFlash.scale = P.LINTERNA;
+        this.backFlash.draw(ctx, mx, my, BACK_HATCH, P.OSCURIDAD, P.NUCLEO);
+        this.backFlash.reveal(ctx, mx, my, (c) => {
+          this.backView.drawLit(c);
+          this.drawCorridorEnemies?.(c);
+        }, P.NUCLEO);
       }
       this._drawFrio(ctx);
       this.effects.vignette(ctx);

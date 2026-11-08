@@ -896,6 +896,8 @@ export class Night4Repair {
           back: (c) => this.backView.draw(c, { open: 1 }),
         });
         this.flash.draw(ctx, mx, my);
+        // (v1.68) el pasillo central, a oscuras: dentro del haz, iluminado por la linterna
+        if (this.look.face === 'back' && !this.look.moving) this.flash.reveal(ctx, mx, my, (c) => this.backView.drawLit(c));
         this.look.drawStrips(ctx);
         hint = 'ESPACIO: linterna   ·   Clic en una compuerta (o en el pasillo central) para salir   ·   Ratón a un borde: girar';
         break;
