@@ -913,7 +913,9 @@ export function install(g) {
     frames++;
     // v0.77: en las pantallas de fin («FIN DEL TURNO», «6:00 AM») el panel se
     // aparta solo, para no tapar el texto; vuelve al seguir jugando
-    const fin = g.state === 'lose' || g.state === 'win';
+    // (v1.68) salvo en el debug de las noches 2 y 3: la noche 2 sigue sola y te mata enseguida, y el menú
+    // desaparecía justo cuando se quería pulsar un botón (el clic caía en la pantalla de muerte → menú principal)
+    const fin = (g.state === 'lose' || g.state === 'win') && !dbg.soloN23;
     const ver = dbg.open && !fin ? 'block' : 'none';
     if (panel.style.display !== ver) panel.style.display = ver;
     if (now - last >= 500) {
