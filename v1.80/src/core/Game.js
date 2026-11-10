@@ -591,6 +591,12 @@ export class Game {
       }
       this.cameras.hasLure = true;       // (el señuelo: saca a la Aberración del reactor)
     }
+    // (v1.79, el usuario: «bájale un poco la dificultad») la Noche 5, un poco más fácil: El Errante con más margen
+    // (NIGHT5.SUAVE). Solo la 5: la 6, la 7 y los retos lo comparten y siguen igual. (v1.80: El Dislocado, como antes)
+    if (n === 5 && !night.reto) {
+      const S = NIGHT5.SUAVE, err = this.ai.errante;
+      if (err) Object.assign(err, { doorWindow: S.ERRANTE_PUERTA, camGrace: S.ERRANTE_CAM_GRACE, stareTime: S.ERRANTE_MIRAR });
+    }
     this.hallu.reset();
     this.voices.stop();
     this.voices.reset();

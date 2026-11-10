@@ -100,6 +100,17 @@ export const NIGHT5 = {
     NOISE_EVERY: [2.5, 5], // s entre ruidos de arrastre mientras está en los conductos
   },
 
+  // --- (v1.79, el usuario: «bájale un poco la dificultad» a la Noche 5) ---
+  // SOLO la Noche 5: la 6, la 7 y los retos comparten a El Errante (ERRANTE
+  // de arriba) y siguen igual. Se aplica en Game.startNight. Lo de los demás
+  // enemigos, en nights.js (noche 5). (v1.80, el usuario: «el dislocado déjalo
+  // como antes»: El Dislocado, sin cambios.)
+  SUAVE: {
+    ERRANTE_PUERTA: [7, 5.2],   // s de estática en la puerta antes de entrar, 12 AM → 6 AM (antes DOOR_WINDOW [6, 4.2])
+    ERRANTE_CAM_GRACE: 2,       // s para bajar el monitor o cambiar de cámara cuando sale su cara (antes 1,5)
+    ERRANTE_MIRAR: 8.5,         // s mirando su cámara (con él dentro) antes de que las desactive (antes 7)
+  },
+
   // --- Final: fuga de Criogenia (6:00) ---
   LEAK: {
     STATIC_BLIP: 0.45,     // s de la estática de El Errante justo antes de reventar

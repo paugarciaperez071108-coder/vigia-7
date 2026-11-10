@@ -115,10 +115,13 @@ export const NIGHTS = [
     // Criogenia (src/ending/Night5Leak.js). Valores propios en night5.js.
     night: 5,
     ambient: [7, 15],
-    ai: { specimen: 9, insecto: 9, largo: 10, errante: 10, dislocado: 12 },
+    // (v1.79, el usuario: «bájale un poco la dificultad») un nivel menos para El Espécimen, El Insecto y El Largo
+    // (antes 9, 9 y 10) y El Congelado como en la noche 4 (antes cambiaba cada 0,75 h, se desviaba cada 4,5 s y
+    // daba 10 s de alarma). El Errante, con más margen: NIGHT5.SUAVE (night5.js). El Dislocado, como antes (v1.80).
+    ai: { specimen: 8, insecto: 8, largo: 9, errante: 10, dislocado: 12 },
     hourly: { 3: { specimen: 1 }, 4: { largo: 1, insecto: 1 } },
     coolCharges: 2,
-    cryo: { changeEveryHours: 0.75, driftInterval: 4.5, marginMin: 3, marginMax: 4, grace: 10 },
+    cryo: { changeEveryHours: 1, driftInterval: 5, marginMin: 3, marginMax: 4, grace: 12 },
     blackouts: 3,
     vents: true,
     largoMode: 'oido',

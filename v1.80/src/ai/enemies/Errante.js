@@ -59,7 +59,8 @@ export class Errante extends Enemy {
   forceDoor(world, side) {
     this.state = 'door';
     this.doorSide = side;
-    this.t = lerp(E.DOOR_WINDOW[0], E.DOOR_WINDOW[1], this.k(world));
+    const dw = this.doorWindow ?? E.DOOR_WINDOW;   // (v1.79: la Noche 5, NIGHT5.SUAVE)
+    this.t = lerp(dw[0], dw[1], this.k(world));
     this.room = side === 'left' ? 'left_door' : 'right_door';
     world.events.emit('erranteDoor', { side });
   }

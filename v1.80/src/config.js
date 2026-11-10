@@ -7,7 +7,7 @@
 // =============================================================
 
 export const CONFIG = {
-  VERSION: 'v1.78',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v1.80',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // (2026-11-08) La oficina única (src/render/OficinaV2.js, assets/salas/unica/): la misma escena, luz y tono que la
   // oficina 3D. ?oficina=unica / ?oficina=v2 la fuerzan para comparar.

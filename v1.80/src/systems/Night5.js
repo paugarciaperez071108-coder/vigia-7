@@ -674,7 +674,7 @@ export class Night5 {
     }
     drawErrante(ctx, x, y, h * 1.25, { variant: 'frente', dark: E.SEEN_DARK });
     // Cuanto más tiempo se le mira, peor la señal
-    const st = (this.ai.errante.stare ?? 0) / E.STARE_TIME;
+    const st = (this.ai.errante.stare ?? 0) / (this.ai.errante.stareTime ?? E.STARE_TIME);   // (v1.79: la Noche 5 y la 7 lo cambian)
     if (st > 0.3) {
       this.g.effects.static(ctx, 0.1 + 0.35 * (st - 0.3));
       this._marcaInterferencia(ctx, st);
