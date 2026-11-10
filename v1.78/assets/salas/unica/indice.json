@@ -1,0 +1,3211 @@
+{
+ "normal": {
+  "caras": {
+   "front": "salas/unica/normal_front.webp",
+   "left": "salas/unica/normal_left.webp",
+   "right": "salas/unica/normal_right.webp",
+   "back": "salas/unica/normal_back.webp"
+  },
+  "fuegos": [],
+  "unica": true,
+  "textos": {
+   "placa": {
+    "cara": "back",
+    "chapa": [
+     1138,
+     282,
+     210,
+     61
+    ],
+    "tono": "rojo",
+    "textos": [
+     {
+      "texto": "PROTOCOLO 7-B",
+      "x": 1161.0,
+      "y": 290.6,
+      "w": 164.6,
+      "h": 15.3
+     },
+     {
+      "texto": "SOLO PERSONAL AUTORIZADO",
+      "x": 1148.9,
+      "y": 324.0,
+      "w": 187.7,
+      "h": 9.5
+     }
+    ]
+   },
+   "sector_o": {
+    "cara": "left",
+    "chapa": [
+     719,
+     100,
+     162,
+     35
+    ],
+    "tono": "claro",
+    "textos": [
+     {
+      "texto": "SECTOR 3-O",
+      "x": 728.5,
+      "y": 107.2,
+      "w": 142.9,
+      "h": 19.4
+     }
+    ]
+   },
+   "sector_e": {
+    "cara": "right",
+    "chapa": [
+     723,
+     100,
+     154,
+     35
+    ],
+    "tono": "claro",
+    "textos": [
+     {
+      "texto": "SECTOR 3-E",
+      "x": 732.7,
+      "y": 107.2,
+      "w": 134.9,
+      "h": 19.4
+     }
+    ]
+   },
+   "modulo": {
+    "cara": "front",
+    "chapa": [
+     668,
+     54,
+     264,
+     26
+    ],
+    "tono": "claro",
+    "textos": [
+     {
+      "texto": "MODULO DE CONTROL // VIGIA-7",
+      "x": 676.5,
+      "y": 60.6,
+      "w": 248.1,
+      "h": 12.8
+     }
+    ]
+   }
+  },
+  "rejillas": {
+   "left_abierta": {
+    "src": "salas/unica/normal/rejilla_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/normal/rejilla_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/normal/rejilla_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 664,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/normal/rejilla_right_quemada.webp",
+    "x": 818,
+    "y": 5,
+    "w": 782,
+    "h": 849
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/normal/rejilla_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/normal/rejilla_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/normal/rejilla_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/normal/rejilla_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "rejillas_apagon": {
+   "left_abierta": {
+    "src": "salas/unica/normal/rejilla_apagon_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/normal/rejilla_apagon_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/normal/rejilla_apagon_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/normal/rejilla_apagon_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/normal/rejilla_apagon_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/normal/rejilla_apagon_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/normal/rejilla_apagon_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/normal/rejilla_apagon_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  }
+ },
+ "normal_apagon": {
+  "caras": {
+   "front": "salas/unica/normal_apagon_front.webp",
+   "left": "salas/unica/normal_apagon_left.webp",
+   "right": "salas/unica/normal_apagon_right.webp",
+   "back": "salas/unica/normal_apagon_back.webp"
+  },
+  "fuegos": [],
+  "unica": true
+ },
+ "normal_alarma": {
+  "caras": {
+   "front": {
+    "src": "salas/unica/alarma_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/alarma_left.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/alarma_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/alarma_back.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   }
+  },
+  "aditivo": true
+ },
+ "normal_pasillo": {
+  "caras": {
+   "left": {
+    "src": "salas/unica/normal_pasillo_left.webp",
+    "x": 608,
+    "y": 242,
+    "w": 384,
+    "h": 480
+   },
+   "right": {
+    "src": "salas/unica/normal_pasillo_right.webp",
+    "x": 608,
+    "y": 242,
+    "w": 384,
+    "h": 480
+   }
+  },
+  "fuegos": []
+ },
+ "explosion": {
+  "caras": {},
+  "fuegos": [
+   {
+    "id": "arde_left",
+    "cara": "front",
+    "luz": {
+     "n": 32,
+     "x": 0,
+     "y": 0,
+     "w": 1526,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "arde_right",
+    "cara": "front",
+    "luz": {
+     "n": 32,
+     "x": 74,
+     "y": 0,
+     "w": 1526,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "expl_left",
+    "cara": "front",
+    "fuego": {
+     "n": 26,
+     "x": 0,
+     "y": 0,
+     "w": 384,
+     "h": 799
+    },
+    "luz": {
+     "n": 26,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "expl_right",
+    "cara": "front",
+    "fuego": {
+     "n": 26,
+     "x": 1222,
+     "y": 0,
+     "w": 378,
+     "h": 786
+    },
+    "luz": {
+     "n": 26,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "humo_left",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 26,
+     "w": 399,
+     "h": 561
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "humo_right",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 1199,
+     "y": 21,
+     "w": 401,
+     "h": 565
+    },
+    "dir": "salas/v2"
+   }
+  ]
+ },
+ "_tiempos": {
+  "normal": {
+   "normal": {
+    "back": 40.9
+   },
+   "apagon": {
+    "back": 35.1
+   },
+   "alarma": {
+    "back": 40.9
+   }
+  },
+  "4am": {
+   "normal": {
+    "front": 50.4,
+    "left": 55.5,
+    "right": 52.1,
+    "back": 49.3
+   },
+   "apagon": {
+    "front": 32.5,
+    "left": 43.4,
+    "right": 43.7,
+    "back": 42.6
+   }
+  },
+  "430": {
+   "normal": {
+    "front": 50.9,
+    "left": 50.8,
+    "right": 57.2,
+    "back": 57.1
+   },
+   "apagon": {
+    "front": 37.9,
+    "left": 46.3,
+    "right": 46.6,
+    "back": 45.5
+   }
+  },
+  "5am": {
+   "normal": {
+    "front": 50.8,
+    "left": 53.6,
+    "right": 54.3,
+    "back": 54.6
+   },
+   "apagon": {
+    "front": 44.5,
+    "left": 49.8,
+    "right": 50.3,
+    "back": 50.2
+   }
+  },
+  "final": {
+   "normal": {
+    "front": 58.4,
+    "left": 57.9,
+    "right": 65.6,
+    "back": 64.5
+   },
+   "apagon": {
+    "front": 54.9,
+    "left": 56.2,
+    "right": 57.1,
+    "back": 57.3
+   }
+  }
+ },
+ "normal_puerta": {
+  "caras": {
+   "left": {
+    "src": "salas/unica/normal_puerta_left.webp",
+    "x": 608,
+    "y": 242,
+    "w": 384,
+    "h": 480
+   },
+   "right": {
+    "src": "salas/unica/normal_puerta_right.webp",
+    "x": 608,
+    "y": 242,
+    "w": 384,
+    "h": 480
+   },
+   "back": {
+    "src": "salas/unica/normal_puerta_back.webp",
+    "x": 620,
+    "y": 242,
+    "w": 360,
+    "h": 480
+   }
+  },
+  "fuegos": []
+ },
+ "normal_botones": {
+  "caras": {
+   "left_puerta": {
+    "src": "salas/unica/normal_botones_left_puerta.webp",
+    "x": 1032,
+    "y": 322,
+    "w": 102,
+    "h": 102
+   },
+   "left_luz": {
+    "src": "salas/unica/normal_botones_left_luz.webp",
+    "x": 1032,
+    "y": 432,
+    "w": 102,
+    "h": 102
+   },
+   "right_puerta": {
+    "src": "salas/unica/normal_botones_right_puerta.webp",
+    "x": 466,
+    "y": 322,
+    "w": 102,
+    "h": 102
+   },
+   "right_luz": {
+    "src": "salas/unica/normal_botones_right_luz.webp",
+    "x": 466,
+    "y": 432,
+    "w": 102,
+    "h": 102
+   }
+  },
+  "fuegos": []
+ },
+ "normal_sellada": {
+  "caras": {
+   "back": {
+    "src": "salas/unica/normal_sellada_back.webp",
+    "x": 560,
+    "y": 202,
+    "w": 480,
+    "h": 520
+   }
+  },
+  "fuegos": []
+ },
+ "4am": {
+  "capas": {
+   "front": {
+    "src": "salas/unica/4am/capa_front.webp",
+    "x": 80,
+    "y": 0,
+    "w": 1459,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/4am/capa_left.webp",
+    "x": 456,
+    "y": 0,
+    "w": 961,
+    "h": 858
+   },
+   "right": {
+    "src": "salas/unica/4am/capa_right.webp",
+    "x": 72,
+    "y": 0,
+    "w": 1033,
+    "h": 859
+   },
+   "back": {
+    "src": "salas/unica/4am/capa_back.webp",
+    "x": 615,
+    "y": 0,
+    "w": 652,
+    "h": 249
+   }
+  },
+  "capas_apagon": {
+   "front": {
+    "src": "salas/unica/4am/capa_apagon_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/4am/capa_apagon_left.webp",
+    "x": 15,
+    "y": 0,
+    "w": 1585,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/4am/capa_apagon_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1586,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/4am/capa_apagon_back.webp",
+    "x": 11,
+    "y": 0,
+    "w": 1578,
+    "h": 700
+   }
+  },
+  "unica": true,
+  "fuegos": [
+   {
+    "id": "rejilla",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 91,
+     "w": 378,
+     "h": 482
+    },
+    "dir": "salas/v2"
+   }
+  ],
+  "rejillas": {
+   "left_abierta": {
+    "src": "salas/unica/4am/rejilla_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/4am/rejilla_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/4am/rejilla_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/4am/rejilla_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/4am/rejilla_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/4am/rejilla_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/4am/rejilla_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/4am/rejilla_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "rejillas_apagon": {
+   "left_abierta": {
+    "src": "salas/unica/4am/rejilla_apagon_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/4am/rejilla_apagon_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/4am/rejilla_apagon_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/4am/rejilla_apagon_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/4am/rejilla_apagon_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/4am/rejilla_apagon_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/4am/rejilla_apagon_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/4am/rejilla_apagon_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "pantalla": {
+   "x": 655,
+   "y": 558,
+   "w": 291,
+   "h": 176
+  },
+  "cables": {
+   "front": [
+    [
+     235.8,
+     124.4,
+     4.3
+    ],
+    [
+     1306.5,
+     156.7,
+     4.2
+    ]
+   ],
+   "left": [
+    [
+     1934.4,
+     -11.7,
+     3.0
+    ],
+    [
+     -463.6,
+     913.3,
+     -2.7
+    ]
+   ],
+   "right": [
+    [
+     1934.4,
+     911.7,
+     -3.0
+    ],
+    [
+     -463.6,
+     -13.3,
+     2.7
+    ]
+   ],
+   "back": [
+    [
+     235.8,
+     775.6,
+     -4.3
+    ],
+    [
+     1306.5,
+     743.3,
+     -4.2
+    ]
+   ]
+  }
+ },
+ "430": {
+  "capas": {
+   "front": {
+    "src": "salas/unica/430/capa_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/430/capa_left.webp",
+    "x": 76,
+    "y": 0,
+    "w": 1524,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/430/capa_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1550,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/430/capa_back.webp",
+    "x": 44,
+    "y": 0,
+    "w": 1545,
+    "h": 758
+   }
+  },
+  "capas_apagon": {
+   "front": {
+    "src": "salas/unica/430/capa_apagon_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/430/capa_apagon_left.webp",
+    "x": 11,
+    "y": 0,
+    "w": 1589,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/430/capa_apagon_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1589,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/430/capa_apagon_back.webp",
+    "x": 11,
+    "y": 0,
+    "w": 1578,
+    "h": 699
+   }
+  },
+  "unica": true,
+  "fuegos": [
+   {
+    "id": "cuadro",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 1232,
+     "y": 0,
+     "w": 292,
+     "h": 498
+    },
+    "luz": {
+     "n": 48,
+     "x": 14,
+     "y": 0,
+     "w": 1586,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 772
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 769
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "right",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "rejilla",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 91,
+     "w": 378,
+     "h": 482
+    },
+    "dir": "salas/v2"
+   }
+  ],
+  "rejillas": {
+   "left_abierta": {
+    "src": "salas/unica/430/rejilla_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/430/rejilla_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/430/rejilla_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/430/rejilla_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 863
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/430/rejilla_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/430/rejilla_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/430/rejilla_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/430/rejilla_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "rejillas_apagon": {
+   "left_abierta": {
+    "src": "salas/unica/430/rejilla_apagon_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/430/rejilla_apagon_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/430/rejilla_apagon_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/430/rejilla_apagon_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/430/rejilla_apagon_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/430/rejilla_apagon_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/430/rejilla_apagon_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/430/rejilla_apagon_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "pantalla": {
+   "x": 655,
+   "y": 558,
+   "w": 291,
+   "h": 176
+  },
+  "cables": {
+   "front": [
+    [
+     244.0,
+     147.7,
+     4.3
+    ],
+    [
+     1296.5,
+     185.2,
+     4.2
+    ],
+    [
+     -353.2,
+     54.9,
+     3.1
+    ]
+   ],
+   "left": [
+    [
+     1951.0,
+     15.0,
+     3.0
+    ],
+    [
+     -489.1,
+     876.6,
+     -2.6
+    ],
+    [
+     1355.0,
+     175.9,
+     4.4
+    ]
+   ],
+   "right": [
+    [
+     1951.0,
+     885.0,
+     -3.0
+    ],
+    [
+     -489.1,
+     23.4,
+     2.6
+    ],
+    [
+     1355.0,
+     724.1,
+     -4.4
+    ]
+   ],
+   "back": [
+    [
+     244.0,
+     752.3,
+     -4.3
+    ],
+    [
+     1296.5,
+     714.8,
+     -4.2
+    ],
+    [
+     -353.2,
+     845.1,
+     -3.1
+    ]
+   ]
+  },
+  "caida": {
+   "n": 20,
+   "fps": 12,
+   "caras": [
+    "front",
+    "left",
+    "right"
+   ],
+   "capas": {
+    "front": [
+     {
+      "src": "salas/unica/430/caida_front_00.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_01.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_02.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_03.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_04.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_05.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_06.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_07.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_08.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_09.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_10.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_11.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_12.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_13.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_14.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_15.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_16.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_17.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_18.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_front_19.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     }
+    ],
+    "left": [
+     {
+      "src": "salas/unica/430/caida_left_00.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_01.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_02.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_03.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_04.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_05.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_06.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_07.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_08.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_09.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_10.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_11.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_12.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_13.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_14.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_15.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_16.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_17.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_18.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_left_19.webp",
+      "x": 15,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     }
+    ],
+    "right": [
+     {
+      "src": "salas/unica/430/caida_right_00.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_01.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_02.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_03.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_04.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_05.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_06.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_07.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_08.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_09.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_10.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_11.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_12.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_13.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_14.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_15.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_16.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_17.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_18.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/430/caida_right_19.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     }
+    ]
+   }
+  }
+ },
+ "5am": {
+  "capas": {
+   "front": {
+    "src": "salas/unica/5am/capa_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/5am/capa_left.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/5am/capa_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/5am/capa_back.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   }
+  },
+  "capas_apagon": {
+   "front": {
+    "src": "salas/unica/5am/capa_apagon_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/5am/capa_apagon_left.webp",
+    "x": 10,
+    "y": 0,
+    "w": 1590,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/5am/capa_apagon_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/5am/capa_apagon_back.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 786
+   }
+  },
+  "unica": true,
+  "fuegos": [
+   {
+    "id": "cuadro",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 1184,
+     "y": 0,
+     "w": 415,
+     "h": 578
+    },
+    "luz": {
+     "n": 48,
+     "x": 12,
+     "y": 0,
+     "w": 1588,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "esquina",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 266,
+     "h": 779
+    },
+    "luz": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1586,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "esquina",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 1331,
+     "y": 0,
+     "w": 269,
+     "h": 779
+    },
+    "luz": {
+     "n": 48,
+     "x": 12,
+     "y": 0,
+     "w": 1588,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "mazo",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 122,
+     "y": 0,
+     "w": 308,
+     "h": 250
+    },
+    "luz": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "right",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1589,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "rejilla",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 91,
+     "w": 378,
+     "h": 482
+    },
+    "dir": "salas/v2"
+   }
+  ],
+  "rejillas": {
+   "left_abierta": {
+    "src": "salas/unica/5am/rejilla_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/5am/rejilla_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/5am/rejilla_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/5am/rejilla_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/5am/rejilla_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/5am/rejilla_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/5am/rejilla_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/5am/rejilla_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "rejillas_apagon": {
+   "left_abierta": {
+    "src": "salas/unica/5am/rejilla_apagon_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/5am/rejilla_apagon_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/5am/rejilla_apagon_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/5am/rejilla_apagon_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/5am/rejilla_apagon_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/5am/rejilla_apagon_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/5am/rejilla_apagon_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/5am/rejilla_apagon_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "pantalla": {
+   "x": 655,
+   "y": 558,
+   "w": 291,
+   "h": 176
+  },
+  "cables": {
+   "front": [
+    [
+     252.1,
+     170.9,
+     4.3
+    ],
+    [
+     1286.5,
+     213.8,
+     4.2
+    ],
+    [
+     -335.3,
+     96.5,
+     3.1
+    ],
+    [
+     1837.9,
+     188.2,
+     3.4
+    ]
+   ],
+   "left": [
+    [
+     1968.1,
+     42.5,
+     2.9
+    ],
+    [
+     -515.6,
+     838.4,
+     -2.6
+    ],
+    [
+     1363.7,
+     200.9,
+     4.4
+    ],
+    [
+     183.4,
+     651.8,
+     -4.4
+    ]
+   ],
+   "right": [
+    [
+     1968.1,
+     857.5,
+     -2.9
+    ],
+    [
+     -515.6,
+     61.6,
+     2.6
+    ],
+    [
+     1363.7,
+     699.1,
+     -4.4
+    ],
+    [
+     183.4,
+     248.2,
+     4.4
+    ]
+   ],
+   "back": [
+    [
+     252.1,
+     729.1,
+     -4.3
+    ],
+    [
+     1286.5,
+     686.2,
+     -4.2
+    ],
+    [
+     -335.3,
+     803.5,
+     -3.1
+    ],
+    [
+     1837.9,
+     711.8,
+     -3.4
+    ]
+   ]
+  },
+  "caida": {
+   "n": 20,
+   "fps": 12,
+   "caras": [
+    "front",
+    "left",
+    "right"
+   ],
+   "capas": {
+    "front": [
+     {
+      "src": "salas/unica/5am/caida_front_00.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_01.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_02.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_03.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_04.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_05.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_06.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_07.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_08.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_09.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_10.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_11.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_12.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_13.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_14.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_15.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_16.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_17.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_18.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_front_19.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     }
+    ],
+    "left": [
+     {
+      "src": "salas/unica/5am/caida_left_00.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_01.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_02.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_03.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_04.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_05.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_06.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_07.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_08.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_09.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_10.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_11.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_12.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_13.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_14.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_15.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_16.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_17.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_18.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_left_19.webp",
+      "x": 14,
+      "y": 0,
+      "w": 1586,
+      "h": 900
+     }
+    ],
+    "right": [
+     {
+      "src": "salas/unica/5am/caida_right_00.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_01.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1585,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_02.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1584,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_03.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_04.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_05.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_06.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_07.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_08.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_09.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_10.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_11.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_12.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_13.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_14.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_15.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_16.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_17.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_18.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/5am/caida_right_19.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1526,
+      "h": 900
+     }
+    ]
+   }
+  }
+ },
+ "final": {
+  "capas": {
+   "front": {
+    "src": "salas/unica/final/capa_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/final/capa_left.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/final/capa_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/final/capa_back.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   }
+  },
+  "capas_apagon": {
+   "front": {
+    "src": "salas/unica/final/capa_apagon_front.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "left": {
+    "src": "salas/unica/final/capa_apagon_left.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "right": {
+    "src": "salas/unica/final/capa_apagon_right.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   },
+   "back": {
+    "src": "salas/unica/final/capa_apagon_back.webp",
+    "x": 0,
+    "y": 0,
+    "w": 1600,
+    "h": 900
+   }
+  },
+  "unica": true,
+  "fuegos": [
+   {
+    "id": "cuadro",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 1184,
+     "y": 0,
+     "w": 415,
+     "h": 578
+    },
+    "luz": {
+     "n": 48,
+     "x": 12,
+     "y": 0,
+     "w": 1588,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "esquina",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 264,
+     "h": 779
+    },
+    "luz": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1586,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "esquina",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 1331,
+     "y": 0,
+     "w": 269,
+     "h": 779
+    },
+    "luz": {
+     "n": 48,
+     "x": 12,
+     "y": 0,
+     "w": 1588,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "mazo",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 122,
+     "y": 0,
+     "w": 308,
+     "h": 250
+    },
+    "luz": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1588,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "pared",
+    "cara": "right",
+    "fuego": {
+     "n": 48,
+     "x": 1036,
+     "y": 0,
+     "w": 564,
+     "h": 629
+    },
+    "luz": {
+     "n": 48,
+     "x": 12,
+     "y": 0,
+     "w": 1588,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "left",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1600,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "part",
+    "cara": "right",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 0,
+     "w": 1589,
+     "h": 900
+    },
+    "dir": "salas/v2"
+   },
+   {
+    "id": "rejilla",
+    "cara": "front",
+    "fuego": {
+     "n": 48,
+     "x": 0,
+     "y": 91,
+     "w": 378,
+     "h": 482
+    },
+    "dir": "salas/v2"
+   }
+  ],
+  "rejillas": {
+   "left_abierta": {
+    "src": "salas/unica/final/rejilla_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/final/rejilla_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/final/rejilla_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/final/rejilla_right_quemada.webp",
+    "x": 800,
+    "y": 31,
+    "w": 800,
+    "h": 850
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/final/rejilla_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/final/rejilla_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/final/rejilla_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/final/rejilla_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "rejillas_apagon": {
+   "left_abierta": {
+    "src": "salas/unica/final/rejilla_apagon_left_abierta.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta": {
+    "src": "salas/unica/final/rejilla_apagon_right_abierta.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada": {
+    "src": "salas/unica/final/rejilla_apagon_left_quemada.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada": {
+    "src": "salas/unica/final/rejilla_apagon_right_quemada.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_abierta_luz": {
+    "src": "salas/unica/final/rejilla_apagon_left_abierta_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_abierta_luz": {
+    "src": "salas/unica/final/rejilla_apagon_right_abierta_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "left_quemada_luz": {
+    "src": "salas/unica/final/rejilla_apagon_left_quemada_luz.webp",
+    "x": 0,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   },
+   "right_quemada_luz": {
+    "src": "salas/unica/final/rejilla_apagon_right_quemada_luz.webp",
+    "x": 800,
+    "y": 0,
+    "w": 800,
+    "h": 900
+   }
+  },
+  "pantalla": {
+   "x": 655,
+   "y": 558,
+   "w": 291,
+   "h": 176
+  },
+  "cables": {
+   "front": [
+    [
+     268.4,
+     217.4,
+     4.3
+    ],
+    [
+     1266.5,
+     271.0,
+     4.2
+    ],
+    [
+     -301.1,
+     176.0,
+     3.2
+    ],
+    [
+     1804.2,
+     270.8,
+     3.5
+    ]
+   ],
+   "left": [
+    [
+     2003.8,
+     100.0,
+     2.9
+    ],
+    [
+     -572.0,
+     757.1,
+     -2.4
+    ],
+    [
+     1381.2,
+     250.9,
+     4.4
+    ],
+    [
+     162.7,
+     592.7,
+     -4.4
+    ]
+   ],
+   "right": [
+    [
+     2003.8,
+     800.0,
+     -2.9
+    ],
+    [
+     -572.0,
+     142.9,
+     2.4
+    ],
+    [
+     1381.2,
+     649.1,
+     -4.4
+    ],
+    [
+     162.7,
+     307.3,
+     4.4
+    ]
+   ],
+   "back": [
+    [
+     268.4,
+     682.6,
+     -4.3
+    ],
+    [
+     1266.5,
+     629.0,
+     -4.2
+    ],
+    [
+     -301.1,
+     724.0,
+     -3.2
+    ],
+    [
+     1804.2,
+     629.2,
+     -3.5
+    ]
+   ]
+  },
+  "caida": {
+   "n": 20,
+   "fps": 12,
+   "caras": [
+    "front",
+    "left",
+    "right"
+   ],
+   "capas": {
+    "front": [
+     {
+      "src": "salas/unica/final/caida_front_00.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_01.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_02.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_03.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_04.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_05.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_06.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_07.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_08.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_09.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_10.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_11.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_12.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_13.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_14.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_15.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_16.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_17.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_18.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_front_19.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     }
+    ],
+    "left": [
+     {
+      "src": "salas/unica/final/caida_left_00.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_01.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_02.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_03.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_04.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_05.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_06.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_07.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_08.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_09.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_10.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_11.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_12.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_13.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_14.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_15.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_16.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_17.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_18.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_left_19.webp",
+      "x": 11,
+      "y": 0,
+      "w": 1589,
+      "h": 900
+     }
+    ],
+    "right": [
+     {
+      "src": "salas/unica/final/caida_right_00.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_01.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_02.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_03.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_04.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_05.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_06.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_07.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_08.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_09.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_10.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_11.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_12.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_13.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_14.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_15.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_16.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_17.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_18.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     },
+     {
+      "src": "salas/unica/final/caida_right_19.webp",
+      "x": 0,
+      "y": 0,
+      "w": 1600,
+      "h": 900
+     }
+    ]
+   }
+  }
+ }
+}
