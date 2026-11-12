@@ -1,0 +1,844 @@
+{
+ "_leeme": "Todos los textos del menú Extras (v1.56). Se pueden editar sin tocar el código. noches = hasta la Noche 5; al6 / al7 = true si se añade esa noche al completarla. No contar aquí nada de las Noches 6 y 7 fuera de lo bloqueado.",
+ "personajes": [
+  {
+   "id": "frozen",
+   "nombre": "El Congelado",
+   "alias": "",
+   "altura": "1,80 m de pie · 1,10 m encogido",
+   "triangulo": "cian",
+   "noches": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "al6": true,
+   "al7": false,
+   "archivo": "SUJETO CRIO-01. Tripulante en hibernación prolongada. El proceso de congelación no se completó. Las lecturas de la cápsula indican actividad cerebral constante durante todo el sueño. Mantener la temperatura dentro de rango. No abrir la cápsula bajo ningún concepto."
+  },
+  {
+   "id": "specimen",
+   "nombre": "El Espécimen",
+   "alias": "",
+   "altura": "1,95 m",
+   "triangulo": "rojo",
+   "noches": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "al6": true,
+   "al7": false,
+   "archivo": "SUJETO LAB-07. Resultado de los experimentos del laboratorio. Tejido de varios donantes unido por sutura. Presenta un tercer brazo funcional y una sonrisa que no puede cerrar. Responde al sonido. Clasificado como agresivo."
+  },
+  {
+   "id": "largo",
+   "nombre": "El Largo",
+   "alias": "también llamado el Alto",
+   "altura": "3,00 m de pie · 2,40 m encorvado",
+   "triangulo": "ámbar",
+   "noches": [
+    2,
+    3,
+    4,
+    5
+   ],
+   "al6": true,
+   "al7": false,
+   "archivo": "SUJETO DESCONOCIDO. No figura en el registro de la tripulación. Demasiado alto para los pasillos de la nave: camina encorvado y su cabeza roza las luces del techo. Destruyó el sistema de cámaras del módulo de control. Sonríe siempre."
+  },
+  {
+   "id": "insecto",
+   "nombre": "El Insecto",
+   "alias": "también llamado el Rastrero",
+   "altura": "0,70 m de alto · 1,60 m de largo",
+   "triangulo": "verde lima",
+   "noches": [
+    2,
+    3,
+    4,
+    5
+   ],
+   "al6": true,
+   "al7": false,
+   "archivo": "SUJETO INV-03. Originado en el invernadero. Se desplaza por suelos, paredes y techos. Sensible a la actualización del sistema y al gas insecticida. Su boca es un anillo de dientes. No dejar la consola sin actualizar."
+  },
+  {
+   "id": "errante",
+   "nombre": "El Errante",
+   "alias": "«El Que Mira»",
+   "altura": "1,80 m",
+   "triangulo": "violeta",
+   "noches": [
+    4,
+    5
+   ],
+   "al6": true,
+   "al7": true,
+   "archivo": "SUJETO SIN CLASIFICAR. Aspecto de tripulante normal. No camina: cambia de posición entre fotogramas. Interfiere en las cámaras cuando se le observa durante demasiado tiempo. Se recomienda no mantener la mirada. Algunos guardias informaron de que lo seguían viendo después de apartar la vista."
+  },
+  {
+   "id": "dislocado",
+   "nombre": "El Dislocado",
+   "alias": "",
+   "altura": "0,50 m de alto · 0,90 m de torso",
+   "triangulo": "magenta",
+   "noches": [
+    5
+   ],
+   "al6": true,
+   "al7": true,
+   "archivo": "TRIPULANTE (EN EL UNIFORME SE LEE «TEC. RIVAS»). Solo se conserva la mitad superior del cuerpo. Se desplaza por los conductos de ventilación arrastrándose con los brazos. Capaz de romper las rejillas de la oficina. Huye de la luz directa."
+  },
+  {
+   "id": "slaimi",
+   "nombre": "Slaimi",
+   "alias": "aliado",
+   "altura": "0,20–0,25 m",
+   "triangulo": "blanco (fijo)",
+   "noches": [
+    4,
+    5
+   ],
+   "al6": true,
+   "al7": true,
+   "archivo": "ORGANISMO NO CATALOGADO. Gelatinoso, translúcido, emite luz propia. No muestra agresividad. Sensible al frío. Parece haberse encariñado con el guardia de noche.",
+   "archivoMuerto": "ORGANISMO NO CATALOGADO. Gelatinoso, translúcido, emitía luz propia. Sensible al frío. Encontrado congelado junto al pasillo del módulo de control. Ya no brilla.",
+   "archivoSinVer": "SIN REGISTROS EN ESTA PARTIDA."
+  },
+  {
+   "id": "aberracion",
+   "nombre": "La Aberración",
+   "alias": "",
+   "altura": "4,20 m de alto · 8 m de largo",
+   "triangulo": "negro con borde rojo oscuro",
+   "noches": [
+    6,
+    7
+   ],
+   "al6": false,
+   "al7": false,
+   "bloqueo": "aberracion",
+   "archivo": "EXPERIMENTO 0. Primer sujeto de la nave, sellado tras la pared del laboratorio. Masa formada por los tripulantes fallidos de criogenia, fundidos entre sí. Se mueve sobre brazos humanos. Varias caras siguen con vida. Los demás sujetos le obedecen. Una de las caras no figura en ningún registro."
+  }
+ ],
+ "cintas": {
+  "bloqueada": "CINTA DAÑADA – ???",
+  "grupoConductos": {
+   "titulo": "Noche 6 – Los conductos",
+   "etiqueta": "Noche 6",
+   "completa": "Completa"
+  },
+  "lista": [
+   {
+    "id": "1",
+    "titulo": "Noche 1 – Bienvenida",
+    "etiqueta": "Noche 1"
+   },
+   {
+    "id": "2",
+    "titulo": "Noche 2 – El turno",
+    "etiqueta": "Noche 2"
+   },
+   {
+    "id": "mujer",
+    "titulo": "Noche 2 – La linterna",
+    "etiqueta": "Noche 2,5"
+   },
+   {
+    "id": "3",
+    "titulo": "Noche 3 – El turno",
+    "etiqueta": "Noche 3"
+   },
+   {
+    "id": "3_5",
+    "titulo": "Noche 3 – Las cámaras rotas",
+    "etiqueta": "Noche 3, 3 AM"
+   },
+   {
+    "id": "4",
+    "titulo": "Noche 4 – Inicio",
+    "etiqueta": "Noche 4"
+   },
+   {
+    "id": "4A",
+    "titulo": "Noche 4 – Ruta A",
+    "etiqueta": "Noche 4 – A"
+   },
+   {
+    "id": "4B",
+    "titulo": "Noche 4 – Ruta B",
+    "etiqueta": "Noche 4 – B"
+   },
+   {
+    "id": "5",
+    "titulo": "Noche 5",
+    "etiqueta": "Noche 5"
+   },
+   {
+    "id": "7",
+    "titulo": "Noche 7 – La última cinta",
+    "etiqueta": "Noche 7"
+   }
+  ]
+ },
+ "sustos": {
+  "aviso": "Contiene sustos con sonido fuerte y violencia",
+  "lista": [
+   {
+    "id": "insecto",
+    "nombre": "El Insecto",
+    "noches": [
+     2,
+     3,
+     4,
+     5
+    ],
+    "al6": true,
+    "donde": "Sale de su rejilla"
+   },
+   {
+    "id": "frozen",
+    "nombre": "El Congelado",
+    "noches": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "al6": true,
+    "donde": "Sale por su compuerta"
+   },
+   {
+    "id": "specimen",
+    "nombre": "El Espécimen",
+    "noches": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "al6": true,
+    "donde": "Por su compuerta abierta"
+   },
+   {
+    "id": "largo",
+    "nombre": "El Largo",
+    "noches": [
+     3,
+     4,
+     5
+    ],
+    "al6": true,
+    "donde": "Por el pasillo central"
+   },
+   {
+    "id": "dislocado",
+    "nombre": "El Dislocado",
+    "noches": [
+     5
+    ],
+    "al6": true,
+    "donde": "Sale de su rejilla rota"
+   },
+   {
+    "id": "errante",
+    "nombre": "El Errante",
+    "noches": [
+     5
+    ],
+    "al6": true,
+    "donde": "A través de las cámaras"
+   },
+   {
+    "id": "aberracion",
+    "nombre": "La Aberración",
+    "noches": [
+     7
+    ],
+    "donde": "Te coge y te come",
+    "bloqueo": "aberracion"
+   }
+  ]
+ },
+ "beta": {
+  "intro": "ARCHIVO BETA. Diseños descartados durante el desarrollo de VIGIA-7. Lo que pudo haber sido.",
+  "categorias": [
+   {
+    "id": "personajes",
+    "nombre": "PERSONAJES",
+    "items": [
+     {
+      "img": "huevo_congelado",
+      "pie": "El Congelado, cabeza de huevo – v0.51 – la cabeza lisa dio paso a una base humana",
+      "despues": "ahora_congelado"
+     },
+     {
+      "img": "huevo_congelado_cara",
+      "pie": "Cara de huevo de El Congelado – v0.51 – ahora tiene rostro cuarteado",
+      "despues": "ahora_congelado"
+     },
+     {
+      "img": "huevo_especimen",
+      "pie": "El Espécimen, cabeza de huevo – v0.51 – pasó a ser tejido unido por sutura",
+      "despues": "ahora_especimen"
+     },
+     {
+      "img": "huevo_especimen_cara",
+      "pie": "Cara de huevo de El Espécimen – v0.51 – ahora, la sonrisa que no cierra",
+      "despues": "ahora_especimen_cara"
+     },
+     {
+      "img": "huevo_largo",
+      "pie": "El Largo, cabeza de huevo – v0.51 – más alto y con cara humana",
+      "despues": "ahora_largo"
+     },
+     {
+      "img": "huevo_largo_cara",
+      "pie": "Cara de huevo de El Largo – v0.51 – ahora, sonrisa rasgada",
+      "despues": "ahora_largo"
+     },
+     {
+      "img": "huevo_insecto",
+      "pie": "El Insecto, cabeza de huevo – v0.51 – le salió el caparazón",
+      "despues": "ahora_insecto"
+     },
+     {
+      "img": "huevo_insecto_cara",
+      "pie": "Cara de huevo de El Insecto – v0.51 – se quedó con su anillo de dientes",
+      "despues": "ahora_insecto"
+     },
+     {
+      "img": "humano_largo",
+      "pie": "El Largo de la primera mezcla – v0.54 – se rediseñó en la v0.55",
+      "despues": "ahora_largo"
+     },
+     {
+      "img": "humano_especimen",
+      "pie": "El Espécimen de la primera mezcla – v0.57 – se rediseñó en la v0.58",
+      "despues": "ahora_especimen"
+     },
+     {
+      "img": "humano_congelado",
+      "pie": "El Congelado de la primera mezcla – v0.60 – le siguieron dos hojas más",
+      "despues": "ahora_congelado"
+     },
+     {
+      "img": "dislocado_v1",
+      "pie": "El Dislocado con mono naranja, 1.ª versión – v0.51 – cabeza de huevo con la mandíbula suelta",
+      "despues": "ahora_dislocado"
+     },
+     {
+      "img": "dislocado_mono",
+      "pie": "El Dislocado con mono naranja, 2.ª versión – v0.79 – perdió el mono y el pelo",
+      "despues": "ahora_dislocado"
+     },
+     {
+      "img": "errante_v1",
+      "pie": "El Errante, ojos antiguos – v0.55 – se le cambiaron los ojos",
+      "despues": "ahora_errante"
+     },
+     {
+      "img": "slaimi_v1",
+      "pie": "Slaimi con núcleo cuadrado – v0.51 – se quitó el cuadrado de detrás de la cara",
+      "despues": "ahora_slaimi"
+     },
+     {
+      "img": "hoja_congelado_v1",
+      "pie": "Hoja de modelo de El Congelado v1 – v0.51 – la primera hoja",
+      "despues": "ahora_congelado"
+     },
+     {
+      "img": "hoja_congelado_v2",
+      "pie": "Hoja de modelo de El Congelado v2 – v0.65 – los pinchos de hielo se descartaron",
+      "despues": "ahora_congelado"
+     },
+     {
+      "img": "boceto_congelado",
+      "pie": "Boceto de silueta: El Congelado – v0.51 – boceto previo al rediseño"
+     },
+     {
+      "img": "boceto_especimen",
+      "pie": "Boceto de silueta: El Espécimen – v0.51 – boceto previo al rediseño"
+     },
+     {
+      "img": "boceto_largo",
+      "pie": "Boceto de silueta: El Largo – v0.51 – boceto previo al rediseño"
+     },
+     {
+      "img": "boceto_insecto",
+      "pie": "Boceto de silueta: El Insecto – v0.51 – boceto previo al rediseño"
+     },
+     {
+      "img": "boceto_errante",
+      "pie": "Boceto de silueta: El Errante – v0.51 – boceto previo al rediseño"
+     },
+     {
+      "img": "boceto_dislocado",
+      "pie": "Boceto de silueta: El Dislocado – v0.51 – boceto previo al rediseño"
+     },
+     {
+      "img": "ab_bola",
+      "pie": "La Aberración, la bola flotante – v0.72 – 1.ª hoja, no aprobada",
+      "despues": "ahora_aberracion",
+      "bloqueo": "aberracion"
+     },
+     {
+      "img": "ab_hoja1",
+      "pie": "Hoja de modelo de la Aberración, 1.ª – v0.72 – descartada entera",
+      "despues": "ahora_aberracion",
+      "bloqueo": "aberracion"
+     },
+     {
+      "img": "ab_v2",
+      "pie": "La Aberración, 2.ª hoja – v0.73 – se quedaron el tamaño, las caras y el desgarro",
+      "despues": "ahora_aberracion",
+      "bloqueo": "aberracion"
+     },
+     {
+      "img": "ab_circulo",
+      "pie": "La Aberración del círculo en la pared – v0.75 – final provisional de la Noche 6",
+      "despues": "ahora_aberracion",
+      "bloqueo": "aberracion"
+     },
+     {
+      "img": "ab_circulo_parte",
+      "pie": "El círculo en la pared, de lejos – v0.75 – se cambió por la cinemática de la v0.80",
+      "bloqueo": "aberracion"
+     }
+    ]
+   },
+   {
+    "id": "camaras",
+    "nombre": "CÁMARAS",
+    "items": [
+     {
+      "img": "cam_030",
+      "pie": "Hangar de frente – v0.30 – desde la v0.54, en una esquina alta y con lente curvada",
+      "despues": "ahora_cam_hangar"
+     },
+     {
+      "img": "cam_053",
+      "pie": "Hangar de frente – v0.53 – la última antes de las cámaras de esquina",
+      "despues": "ahora_cam_hangar"
+     },
+     {
+      "img": "cam_cryo_antigua",
+      "pie": "Criogenia de frente – v0.49 – la sala antes de rehacerla en la v0.50",
+      "despues": "ahora_cam_cryo"
+     },
+     {
+      "img": "cam_cryo_v061",
+      "pie": "Criogenia antes del cambio de luz – v0.65 – se rehízo con el rediseño de El Congelado en la v0.66",
+      "despues": "ahora_cam_cryo"
+     },
+     {
+      "img": "mapa_horizontal",
+      "pie": "Minimapa horizontal – v0.30 – grande y a la derecha",
+      "despues": "mapa_v053"
+     },
+     {
+      "img": "mapa_v053",
+      "pie": "Minimapa de la v0.53 – v0.53 – en la v0.54 pasó a ser pequeño y girado"
+     }
+    ]
+   },
+   {
+    "id": "oficina",
+    "nombre": "OFICINA",
+    "items": [
+     {
+      "img": "oficina_v025",
+      "pie": "Primera oficina en 3D, con la ventana negra – v0.28 – aún sin la Tierra por la ventana",
+      "despues": "ahora_oficina"
+     },
+     {
+      "img": "oficina_v029",
+      "pie": "Oficina de cuatro paredes – v0.29 – la oficina única llegó en la v1.11",
+      "despues": "ahora_oficina"
+     },
+     {
+      "img": "oficina_v030",
+      "pie": "Oficina con mesa partida y cables dibujados – v0.30 – dibujada con código",
+      "despues": "ahora_oficina"
+     },
+     {
+      "img": "oficina_v029_consola",
+      "pie": "La pared blanca de la consola – v0.55 – el blanco se arregló en la v0.65",
+      "despues": "ahora_oficina"
+     },
+     {
+      "img": "oficina_blanca",
+      "pie": "La oficina blanca, con la sombra en la ventana – v0.80 – se quitó en la v0.81",
+      "despues": "ahora_oficina",
+      "bloqueo": "aberracion"
+     },
+     {
+      "img": "oficina_blanca2",
+      "pie": "La oficina blanca, la sombra se va – v0.80 – se quitó en la v0.81",
+      "bloqueo": "aberracion"
+     }
+    ]
+   },
+   {
+    "id": "sustos",
+    "nombre": "JUMPSCARES",
+    "items": [
+     {
+      "img": "susto_insecto_v051",
+      "pie": "El susto de El Insecto, la cara que se acerca – v0.51 – desde la v1.81 sale de su rejilla, trepa por el techo y se cierra sobre la lente",
+      "susto": "insecto",
+      "bloqueo": "susto:insecto"
+     },
+     {
+      "img": "susto_congelado_v066",
+      "pie": "El salto de El Congelado – v0.66 – desde la v1.82 entra agachado por su compuerta dejando escarcha y desde la v1.89 vuelve a acabar con este salto, ya en la oficina",
+      "susto": "frozen",
+      "bloqueo": "susto:frozen"
+     },
+     {
+      "img": "susto_congelado_v182",
+      "pie": "El Congelado – v1.82 – entraba agachado por su compuerta y te golpeaba la lente con las dos palmas; desde la v1.89 salta desde el umbral y acaba con el salto antiguo",
+      "susto": "frozen",
+      "antiguo": "v182",
+      "bloqueo": "susto:frozen"
+     },
+     {
+      "img": "susto_especimen_v057",
+      "pie": "El susto de El Espécimen, la cara que se acerca – v0.57 – desde la v1.83 ataca por su compuerta abierta y desde la v1.87 te da un puñetazo y te come en el suelo",
+      "susto": "specimen",
+      "bloqueo": "susto:specimen"
+     },
+     {
+      "img": "susto_especimen_v183",
+      "pie": "El Espécimen – v1.83 – su tercer brazo agarraba el marco y la cámara y te arrastraba al pasillo; desde la v1.87 te da un puñetazo en la cara, caes y te come fuera de plano",
+      "susto": "specimen",
+      "antiguo": "v183",
+      "bloqueo": "susto:specimen"
+     },
+     {
+      "img": "susto_largo_v055",
+      "pie": "El susto de El Largo, la cara que baja hasta la lente – v0.55 (y en 3D desde el pasillo, v1.78) – desde la v1.84 revienta las lámparas del pasillo y desde la v1.88 te estira y te arranca los brazos",
+      "susto": "largo",
+      "bloqueo": "susto:largo"
+     },
+     {
+      "img": "susto_largo_v184",
+      "pie": "El Largo – v1.84 – sus brazos entraban por las paredes y te rodeaban hasta cerrarse (pantalla roja con grietas); desde la v1.88 te estira los brazos, te los arranca y se apagan las luces",
+      "susto": "largo",
+      "antiguo": "v184",
+      "bloqueo": "susto:largo"
+     },
+     {
+      "img": "susto_dislocado_v079",
+      "pie": "El susto de El Dislocado, la cara que se acerca – v0.79 – desde la v1.85 sale por su rejilla, te tapa la cámara y te arrastra al conducto",
+      "susto": "dislocado",
+      "bloqueo": "susto:dislocado"
+     },
+     {
+      "img": "susto_errante_v056",
+      "pie": "El susto de El Errante, su cara – v0.56 – desde la v1.86 sube la tableta, se acerca en cada parpadeo de la cámara y acaba detrás de ti",
+      "susto": "errante",
+      "bloqueo": "susto:errante"
+     },
+     {
+      "img": "susto_huevo",
+      "pie": "Susto con cabeza de huevo – v0.50 – la cara entraba por la linterna"
+     },
+     {
+      "img": "susto_congelado_v061",
+      "pie": "Susto de El Congelado con pinchos – v0.65 – se rehízo con su diseño nuevo",
+      "despues": "ahora_susto_congelado"
+     },
+     {
+      "img": "susto_dislocado_mono",
+      "pie": "Susto de El Dislocado con el mono – v0.79 – se rehízo con su diseño nuevo",
+      "despues": "ahora_susto_dislocado"
+     },
+     {
+      "img": "susto_ab_pasillo",
+      "pie": "La Aberración apareciendo en el pasillo – v1.47 – desde la compuerta",
+      "despues": "ahora_susto_ab",
+      "bloqueo": "aberracion"
+     },
+     {
+      "img": "susto_ab_pasillo2",
+      "pie": "La Aberración, el golpe final en el pasillo – v1.47 – la v1.48 la cambió por «te coge y te come»",
+      "despues": "ahora_susto_ab",
+      "bloqueo": "aberracion"
+     }
+    ]
+   },
+   {
+    "id": "otros",
+    "nombre": "OTROS",
+    "items": [
+     {
+      "img": "menu_antiguo",
+      "pie": "El menú antiguo – v0.10 – con su ojo de buey"
+     },
+     {
+      "img": "n2_maniqui",
+      "pie": "La 2.5 con enemigo maniquí – v0.50 – con texto de instrucciones"
+     },
+     {
+      "img": "n2_exploracion",
+      "pie": "La 2.5, exploración a oscuras – v0.50 – fondo plano"
+     },
+     {
+      "img": "n2_nota",
+      "pie": "La nota de comandos sobre la oficina – v0.50 – se integró en la oficina"
+     },
+     {
+      "img": "n2_pasillo",
+      "pie": "El pasillo de la Fase 2 con texto montado – v0.50 – sin textos desde la v0.51"
+     },
+     {
+      "img": "n2_reactor",
+      "pie": "El reactor plano – v0.50 – pasó a 3D en la v0.51"
+     },
+     {
+      "img": "n2_apagon",
+      "pie": "El apagón con texto – v0.50 – más limpio en la v0.51"
+     },
+     {
+      "img": "comparacion_1",
+      "pie": "Salas de la Ruta B, antes y después – v0.38 – rehechas en 3D en la v0.39"
+     },
+     {
+      "img": "comparacion_2",
+      "pie": "Comunicaciones, antes y después – v0.38 – paneles y cables en 3D en la v0.39"
+     },
+     {
+      "img": "comparacion_3",
+      "pie": "Ruta B a oscuras, antes y después – v0.38 – rehecha en 3D en la v0.39"
+     },
+     {
+      "img": "comparacion_4",
+      "pie": "Ruta B, antes y después – v0.38 – rehecha en 3D en la v0.39"
+     }
+    ]
+   }
+  ]
+ },
+ "estrellas": {
+  "noche5": "#c8d0d8",
+  "noche7": "#ffcc33"
+ },
+ "retos": [
+  {
+   "id": "tranquilo",
+   "nombre": "Turno tranquilo",
+   "niveles": {
+    "frozen": 5,
+    "specimen": 5,
+    "largo": 5,
+    "insecto": 5,
+    "errante": 5,
+    "dislocado": 5
+   },
+   "extraId": null,
+   "extra": "Ninguno: la noche de calentamiento.",
+   "colorNombre": "Verde menta",
+   "color": "#7fffd4"
+  },
+  {
+   "id": "oscuras",
+   "nombre": "A oscuras",
+   "niveles": {
+    "frozen": 8,
+    "specimen": 8,
+    "largo": 8,
+    "insecto": 8,
+    "errante": 8,
+    "dislocado": 8
+   },
+   "extraId": "sinLinterna",
+   "extra": "Sin linterna. Solo cámaras y sonido.",
+   "colorNombre": "Azul noche",
+   "color": "#3a64d8"
+  },
+  {
+   "id": "ojos",
+   "nombre": "Ojos cerrados",
+   "niveles": {
+    "frozen": 10,
+    "specimen": 10,
+    "largo": 10,
+    "insecto": 10,
+    "errante": 10,
+    "dislocado": 10
+   },
+   "extraId": "camarasRotas",
+   "extra": "Las cámaras están rotas desde las 12:00 (como en la Noche 3 a partir de las 3 AM).",
+   "colorNombre": "Gris estática",
+   "color": "#9aa0a6"
+  },
+  {
+   "id": "reactor",
+   "nombre": "Reactor al límite",
+   "niveles": {
+    "frozen": 10,
+    "specimen": 10,
+    "largo": 10,
+    "insecto": 10,
+    "errante": 10,
+    "dislocado": 10
+   },
+   "extraId": "sinEnfriar",
+   "extra": "Sin enfriamientos del reactor, pero se calienta un 20 % menos.",
+   "colorNombre": "Naranja reactor",
+   "color": "#ff7a1a"
+  },
+  {
+   "id": "plano",
+   "nombre": "Sin plano",
+   "niveles": {
+    "frozen": 10,
+    "specimen": 10,
+    "largo": 10,
+    "insecto": 10,
+    "errante": 10,
+    "dislocado": 10
+   },
+   "extraId": "sinTriangulos",
+   "extra": "No aparecen los triángulos de alerta. Solo sonido y terminal.",
+   "colorNombre": "Verde terminal",
+   "color": "#33ff66"
+  },
+  {
+   "id": "mires",
+   "nombre": "No lo mires",
+   "niveles": {
+    "frozen": 8,
+    "specimen": 8,
+    "largo": 8,
+    "insecto": 8,
+    "errante": 20,
+    "dislocado": 8
+   },
+   "extraId": "noMirar",
+   "extra": "Si miras al Errante una sola vez por las cámaras, pierdes.",
+   "colorNombre": "Violeta",
+   "color": "#a05cff"
+  },
+  {
+   "id": "frio",
+   "nombre": "Frío extremo",
+   "niveles": {
+    "frozen": 20,
+    "specimen": 8,
+    "largo": 8,
+    "insecto": 8,
+    "errante": 8,
+    "dislocado": 8
+   },
+   "extraId": "crioMitad",
+   "extra": "El margen de temperatura de Criogenia es la mitad.",
+   "colorNombre": "Cian hielo",
+   "color": "#3fe6ff"
+  },
+  {
+   "id": "ayudas",
+   "nombre": "Sin ayudas",
+   "niveles": {
+    "frozen": 12,
+    "specimen": 12,
+    "largo": 12,
+    "insecto": 12,
+    "errante": 12,
+    "dislocado": 12
+   },
+   "extraId": "sinAyudas",
+   "extra": "Audio señuelo e insecticida limitados: 10 audios y 8 soltadas en toda la noche.",
+   "colorNombre": "Amarillo alerta",
+   "color": "#ffd83a"
+  },
+  {
+   "id": "conductos",
+   "nombre": "Por los conductos",
+   "niveles": {
+    "frozen": 0,
+    "specimen": 0,
+    "largo": 0,
+    "insecto": 20,
+    "errante": 0,
+    "dislocado": 20
+   },
+   "extraId": "rejillasRotas",
+   "extra": "Las dos rejillas de la oficina están rotas desde las 12:00.",
+   "colorNombre": "Magenta",
+   "color": "#ff2fd0"
+  },
+  {
+   "id": "gigantes",
+   "nombre": "Gigantes",
+   "niveles": {
+    "frozen": 0,
+    "specimen": 20,
+    "largo": 20,
+    "insecto": 0,
+    "errante": 5,
+    "dislocado": 0
+   },
+   "extraId": "puertasLentas",
+   "extra": "Las puertas tardan 1 s en cerrarse.",
+   "colorNombre": "Ámbar",
+   "color": "#ffb020"
+  },
+  {
+   "id": "update",
+   "nombre": "Actualización urgente",
+   "niveles": {
+    "frozen": 10,
+    "specimen": 10,
+    "largo": 10,
+    "insecto": 15,
+    "errante": 10,
+    "dislocado": 10
+   },
+   "extraId": "updateHoras",
+   "extra": "Cada hora el sistema pide «get-update» y hay 10 s para escribirlo.",
+   "colorNombre": "Verde lima",
+   "color": "#a8ff2a"
+  },
+  {
+   "id": "doble",
+   "nombre": "Turno doble",
+   "niveles": {
+    "frozen": 10,
+    "specimen": 10,
+    "largo": 10,
+    "insecto": 10,
+    "errante": 10,
+    "dislocado": 10
+   },
+   "extraId": "dobleVelocidad",
+   "extra": "Todo va al doble de velocidad: la noche dura la mitad, pero los enemigos van el doble de rápido.",
+   "colorNombre": "Rojo",
+   "color": "#ff3030"
+  },
+  {
+   "id": "todos",
+   "nombre": "Todos contra ti",
+   "niveles": {
+    "frozen": 20,
+    "specimen": 20,
+    "largo": 20,
+    "insecto": 20,
+    "errante": 20,
+    "dislocado": 20
+   },
+   "extraId": null,
+   "extra": "Todos al máximo. Sin extra: ya es suficiente.",
+   "colorNombre": "Negro",
+   "color": "#000000"
+  }
+ ]
+}
