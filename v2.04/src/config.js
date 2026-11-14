@@ -9,7 +9,7 @@
 import { dice } from './core/Idioma.js';
 
 export const CONFIG = {
-  VERSION: 'v2.03',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
+  VERSION: 'v2.04',        // se muestra en el menú; subirla con cada cambio (ver CHANGELOG)
 
   // (2026-11-08) La oficina única (src/render/OficinaV2.js, assets/salas/unica/): la misma escena, luz y tono que la
   // oficina 3D. ?oficina=unica / ?oficina=v2 la fuerzan para comparar.
@@ -26,9 +26,10 @@ export const CONFIG = {
   // copyright, Newgrounds, mete la canción») licencia CC BY-NC 3.0 de Newgrounds: libre en un juego WEB con el crédito
   // al artista; en uno descargable, solo con un acuerdo con él. Por eso va en assets/audio/musica/solo_web/: la web
   // (publicar_web.py) la lleva y el .exe (build.py) no. Sin el archivo, el reto va sin música. ACTIVA: false la quita.
-  // VOLUMEN (× el de las opciones), BAJADA con los sonidos importantes.
+  // VOLUMEN (× el de las opciones), BAJADA con los sonidos importantes. (v2.04, el usuario: «baja la música para que esté
+  // de fondo»: 0,34 → 0,17, la mitad, unos −6 dB)
   MUSICA_RETOS: {
-    todos: { ACTIVA: true, ARCHIVO: 'assets/audio/musica/solo_web/duelo_maestro.ogg', VOLUMEN: 0.34, BAJADA: 0.45, DESFASE: 0.3 },
+    todos: { ACTIVA: true, ARCHIVO: 'assets/audio/musica/solo_web/duelo_maestro.ogg', VOLUMEN: 0.17, BAJADA: 0.45, DESFASE: 0.3 },
   },
   SECONDS_PER_HOUR: 60,   // segundos reales que dura cada hora de juego
   NIGHT_HOURS: 6,         // de 12 AM a 6 AM
