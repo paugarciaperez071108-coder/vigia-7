@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vigía-7</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    canvas { display: block; width: 100vw; height: 100vh; user-select: none; }
+    .message {
+      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; color: #e8eef5; font: 18px/1.6 "Courier New", monospace; text-align: center;
+      background: #000;
+    }
+    .message[hidden] { display: none; }
+    .message code { background: #1d232b; padding: 0.15em 0.4em; }
+    /* (v1.91) aviso sin WebGL2 (src/main.js) */
+    .message { overflow-y: auto; }
+    .aviso3d { max-width: 860px; text-align: left; font-size: 16px; line-height: 1.55; margin: auto; }
+    .aviso3d h1 { font-size: 24px; color: #ff6a5a; margin: 0 0 0.8em; text-align: center; }
+    .aviso3d h2 { font-size: 18px; color: #7fd7a8; margin: 1.2em 0 0.4em; }
+    .aviso3d ul { padding-left: 1.2em; margin: 0; }
+    .aviso3d li { margin: 0.35em 0; }
+    .aviso3d b { color: #ffffff; }
+    .aviso3d button {
+      display: block; margin: 1.6em auto 0; padding: 0.7em 1.6em; cursor: pointer;
+      font: bold 17px "Courier New", monospace; color: #bff5d3; background: #10261b;
+      border: 2px solid #4fd08a; border-radius: 3px;
+    }
+    .aviso3d button:hover, .aviso3d button:focus { background: #1b4a33; outline: none; }
+    /* (v1.92) selector de idioma, la primera vez (src/main.js) */
+    .idiomas { margin: auto; text-align: center; }
+    .idiomas h1 { font: bold 64px "Courier New", monospace; color: #e8eef5; margin: 0 0 0.5em; letter-spacing: 2px; }
+    .idiomas .elige { font-size: 22px; color: #7dffb0; margin: 0 0 1.4em; }
+    .idiomas .botones { display: flex; gap: 28px; justify-content: center; }
+    .idiomas button {
+      min-width: 240px; padding: 0.8em 1.2em; cursor: pointer;
+      font: bold 26px "Courier New", monospace; color: #9fd8b4; background: rgba(10,16,14,0.6);
+      border: 2px solid rgba(125,255,176,0.35); border-radius: 0;
+    }
+    .idiomas button.marcado { color: #d8ffe8; background: rgba(125,255,176,0.14); border-color: #7dffb0; }
+    .idiomas button:focus { outline: none; }
+    .idiomas .nota { font-size: 15px; color: rgba(232,238,245,0.45); margin: 1.6em 0 -1em; }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="msg" class="message" hidden></div>
+
+  <!-- Los módulos ES6 no funcionan con doble clic (file://). Este
+       script normal sí se ejecuta y explica cómo arrancar el juego. -->
+  <script>
+    if (location.protocol === 'file:') {
+      var m = document.getElementById('msg');
+      m.innerHTML = '<div><b>Vigía-7 necesita un servidor local.</b><br><br>' +
+        'En una terminal, dentro de la carpeta del juego:<br>' +
+        '<code>python servidor.py</code> (o doble clic en <code>jugar.bat</code>)<br><br>' +
+        'Después abre <code>http://localhost:8001</code><br><br><br>' +
+        '<b>VIGIA-7 needs a local server.</b><br><br>' +
+        'In a terminal, inside the game folder: <code>python servidor.py</code><br>' +
+        'Then open <code>http://localhost:8001</code></div>';
+      m.hidden = false;
+    }
+  </script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
