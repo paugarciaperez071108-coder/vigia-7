@@ -1,0 +1,14 @@
+{
+ "camara": "b",
+ "pantalla": {
+  "x": 725,
+  "y": 490,
+  "w": 119,
+  "h": 92
+ },
+ "tiempos_render_s": {
+  "b_normal": 53.3,
+  "b_apagon": 42.8
+ },
+ "script": "tools/3d/menu/fondo_menu.py"
+}
