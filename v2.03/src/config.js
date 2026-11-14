@@ -21,12 +21,14 @@ export const CONFIG = {
   HEIGHT: 900,
 
   // --- Reloj ---
-  // (v1.99) La música de los retos: «Lunar Abyss» (Lchavasse) en el «Duelo maestro» (id 'todos'), de las 12:00 a las
-  // 6:00 (el archivo ya dura 360 s: tools/musica/duelo_maestro.py). SOLO EN LOCAL hasta que el usuario confirme el permiso
-  // del autor: assets/audio/musica/privada/ no se publica (publicar_web.py, build.py); sin el archivo, el reto va sin
-  // música. ACTIVA: false la quita también aquí. VOLUMEN (× el de las opciones), BAJADA con los sonidos importantes.
+  // (v1.99) La música de los retos: «Lunar Abyss» (lchavasse) en el «Duelo maestro» (id 'todos'), de las 12:00 a las
+  // 6:00 (el archivo ya dura 360 s: tools/musica/duelo_maestro.py). (v2.03, el usuario: «es de una web de libre
+  // copyright, Newgrounds, mete la canción») licencia CC BY-NC 3.0 de Newgrounds: libre en un juego WEB con el crédito
+  // al artista; en uno descargable, solo con un acuerdo con él. Por eso va en assets/audio/musica/solo_web/: la web
+  // (publicar_web.py) la lleva y el .exe (build.py) no. Sin el archivo, el reto va sin música. ACTIVA: false la quita.
+  // VOLUMEN (× el de las opciones), BAJADA con los sonidos importantes.
   MUSICA_RETOS: {
-    todos: { ACTIVA: true, ARCHIVO: 'assets/audio/musica/privada/duelo_maestro.ogg', VOLUMEN: 0.34, BAJADA: 0.45, DESFASE: 0.3 },
+    todos: { ACTIVA: true, ARCHIVO: 'assets/audio/musica/solo_web/duelo_maestro.ogg', VOLUMEN: 0.34, BAJADA: 0.45, DESFASE: 0.3 },
   },
   SECONDS_PER_HOUR: 60,   // segundos reales que dura cada hora de juego
   NIGHT_HOURS: 6,         // de 12 AM a 6 AM

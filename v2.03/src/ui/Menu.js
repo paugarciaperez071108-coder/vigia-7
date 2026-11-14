@@ -42,11 +42,11 @@ export const CREDITOS = () => [
   [dice('creditos.musica'), ''],
   [dice('creditos.menu'), `«Clair de lune» — Claude Debussy ${dice('creditos.debussy_nota_menu')}`],
   [dice('creditos.noche7'), `«Flamewall» — Camellia. ${dice('creditos.camellia_nota_menu')}`],
+  [dice('creditos.duelo'), `«Lunar Abyss» — lchavasse. ${dice('creditos.lchavasse_nota_menu')}`],     // (v2.03)
   [dice('creditos.voces'), ''],
   ['', dice('creditos.voces_nota_menu')],
   [dice('creditos.gracias_a'), ''],
   ['', dice('creditos.foto_nota_menu')],
-  ['', ''],
   ['', dice('creditos.originales')],
 ];
 const CONFIRM = {

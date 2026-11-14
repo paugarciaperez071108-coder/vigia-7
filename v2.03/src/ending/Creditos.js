@@ -87,6 +87,10 @@ export class Creditos {
     hueco(20);
     add('«Flamewall» — Camellia', 32, '#e8eef5');
     add(dice('creditos.camellia_nota'), 22, '#8fa3b5', 60);
+    hueco(20);
+    // (v2.03) la del Duelo maestro: CC BY-NC 3.0 de Newgrounds, que pide el crédito al artista
+    add('«Lunar Abyss» — lchavasse', 32, '#e8eef5');
+    add(dice('creditos.lchavasse_nota'), 22, '#8fa3b5', 60);
     hueco(130);
     // (v1.97, el usuario: «añade lo que queda a los créditos») las voces de las cintas, la megafonía y las de las 4 AM
     // son voces sintéticas de Microsoft (edge-tts: tools/generar_cinta.py y los demás), no grabaciones propias
