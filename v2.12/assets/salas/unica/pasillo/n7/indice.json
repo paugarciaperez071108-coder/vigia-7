@@ -1,0 +1,84 @@
+{
+ "hueco": [
+  620,
+  242,
+  360,
+  480
+ ],
+ "rect": [
+  520,
+  160,
+  560,
+  640
+ ],
+ "fps": 12,
+ "dist": {
+  "lampara": 5.0,
+  "balanceo": 9.6,
+  "chispas": 2.6,
+  "vapor": 8.2,
+  "fuego": 36.0,
+  "humo": 0.0,
+  "caida430": 2.6,
+  "caida5am": 7.7
+ },
+ "estados": {
+  "4am": {
+   "oscuro": "4am_oscuro",
+   "luz": "4am_luz"
+  },
+  "430": {
+   "oscuro": "430_oscuro",
+   "luz": "430_luz"
+  },
+  "5am": {
+   "oscuro": "5am_oscuro",
+   "luz": "5am_luz"
+  },
+  "rastro": {
+   "oscuro": "rastro_oscuro",
+   "luz": "rastro_luz"
+  }
+ },
+ "bucles": {
+  "lampara": {
+   "4am": "lampara",
+   "430": "lampara_430",
+   "5am": "lampara_5am"
+  },
+  "fuego": 32,
+  "chispas": 24,
+  "vapor_oscuro": 32,
+  "vapor_luz": 32,
+  "humo_oscuro": 32,
+  "humo_luz": 32,
+  "balanceo": {
+   "4am": {
+    "pref": "balanceo",
+    "n": 24
+   },
+   "430": {
+    "pref": "balanceo_430",
+    "n": 24
+   },
+   "5am": {
+    "pref": "balanceo_5am",
+    "n": 24
+   }
+  }
+ },
+ "caidas": {
+  "430": {
+   "oscuro": 20,
+   "luz": 20
+  },
+  "5am": {
+   "oscuro": 20,
+   "luz": 20
+  }
+ },
+ "marco": {
+  "normal": "rastro_marco",
+  "apagon": "rastro_marco_apagon"
+ }
+}
