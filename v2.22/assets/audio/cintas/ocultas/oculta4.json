@@ -1,0 +1,56 @@
+{
+ "duration": 17.89,
+ "subtitles": [
+  {
+   "start": 2.2,
+   "end": 3.53,
+   "text": "El de la cápsula."
+  },
+  {
+   "start": 3.48,
+   "end": 5.05,
+   "text": "Me han contado quién es."
+  },
+  {
+   "start": 5.05,
+   "end": 6.82,
+   "text": "Trabajaba en las válvulas."
+  },
+  {
+   "start": 6.82,
+   "end": 9.45,
+   "text": "Bajó el circuito más de la cuenta y se quedó allí dentro."
+  },
+  {
+   "start": 9.45,
+   "end": 10.34,
+   "text": "Lo sacaron muerto."
+  },
+  {
+   "start": 11.19,
+   "end": 12.53,
+   "text": "Y ahora respira."
+  },
+  {
+   "start": 12.48,
+   "end": 15.25,
+   "text": "Dicen que si está a su temperatura, sigue siendo él."
+  },
+  {
+   "start": 15.25,
+   "end": 16.09,
+   "text": "Que me reconocería."
+  },
+  {
+   "start": 16.24,
+   "end": 17.14,
+   "text": "No pienso comprobarlo."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.6,
+   "efecto": "pitido_sube"
+  }
+ ]
+}

@@ -1,0 +1,70 @@
+{
+ "duration": 23.36,
+ "subtitles": [
+  {
+   "start": 0.8,
+   "end": 2.67,
+   "text": "No está en las cámaras."
+  },
+  {
+   "start": 2.62,
+   "end": 4.52,
+   "text": "He ido sala por sala."
+  },
+  {
+   "start": 4.52,
+   "end": 5.98,
+   "text": "No hay nadie."
+  },
+  {
+   "start": 5.98,
+   "end": 7.59,
+   "text": "Es una bacteria."
+  },
+  {
+   "start": 7.59,
+   "end": 9.68,
+   "text": "Nadie sabe de dónde salió."
+  },
+  {
+   "start": 9.68,
+   "end": 11.36,
+   "text": "Si lo ves… es que ya la tienes."
+  },
+  {
+   "start": 12.21,
+   "end": 13.9,
+   "text": "Y hace otra cosa."
+  },
+  {
+   "start": 13.85,
+   "end": 16.51,
+   "text": "Al que murió en la esclusa… lo conserva."
+  },
+  {
+   "start": 16.51,
+   "end": 17.95,
+   "text": "Como si lo guardara para algo."
+  },
+  {
+   "start": 19.2,
+   "end": 21.29,
+   "text": "Lo estoy viendo ahora."
+  },
+  {
+   "start": 21.24,
+   "end": 22.61,
+   "text": "Detrás de la grabadora."
+  }
+ ],
+ "effects": [
+  {
+   "t": 0.0,
+   "efecto": "respiracion"
+  },
+  {
+   "t": 18.1,
+   "efecto": "estatica"
+  }
+ ]
+}

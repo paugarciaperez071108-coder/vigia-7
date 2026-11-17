@@ -1,0 +1,56 @@
+{
+ "duration": 15.94,
+ "subtitles": [
+  {
+   "start": 0.0,
+   "end": 1.2,
+   "text": "Primer turno."
+  },
+  {
+   "start": 1.15,
+   "end": 2.52,
+   "text": "Prueba de grabadora."
+  },
+  {
+   "start": 2.52,
+   "end": 4.21,
+   "text": "Me han dado tres normas."
+  },
+  {
+   "start": 4.21,
+   "end": 5.68,
+   "text": "No dejar el puesto."
+  },
+  {
+   "start": 5.68,
+   "end": 7.25,
+   "text": "Apuntar la temperatura."
+  },
+  {
+   "start": 7.25,
+   "end": 8.44,
+   "text": "Y no abrir la sala del fondo."
+  },
+  {
+   "start": 9.29,
+   "end": 11.57,
+   "text": "Les he preguntado qué hay en la sala del fondo."
+  },
+  {
+   "start": 11.52,
+   "end": 12.91,
+   "text": "Se han reído."
+  },
+  {
+   "start": 12.91,
+   "end": 14.08,
+   "text": "Los dos."
+  },
+  {
+   "start": 14.08,
+   "end": 15.19,
+   "text": "Pero ninguno me ha contestado."
+  }
+ ],
+ "effects": []
+}
